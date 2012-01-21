@@ -5,7 +5,7 @@ var Server = require(__dirname + '/../').Server;
 var utils = require(__dirname + '/../lib/utils');
 
 describe('The server', function() {
-  it('should have an object of system errors', function() {
+  it('should have an object of errors', function() {
     Server.should.have.property('errors');
   });
 });
@@ -13,23 +13,25 @@ describe('The server', function() {
 describe('An instance of the server', function() {
   var server = new Server();
 
-  should.exist(server.method);
-  server.method.should.be.a('function');
+  it('should have the correct methods', function() {
+    should.exist(server.method);
+    server.method.should.be.a('function');
 
-  should.exist(server.methods);
-  server.methods.should.be.a('function');
+    should.exist(server.methods);
+    server.methods.should.be.a('function');
 
-  should.exist(server.call);
-  server.call.should.be.a('function');
+    should.exist(server.call);
+    server.call.should.be.a('function');
 
-  should.exist(server.hasMethod);
-  server.hasMethod.should.be.a('function');
+    should.exist(server.hasMethod);
+    server.hasMethod.should.be.a('function');
 
-  should.exist(server.removeMethod);
-  server.removeMethod.should.be.a('function');
+    should.exist(server.removeMethod);
+    server.removeMethod.should.be.a('function');
 
-  should.exist(server.errors);
-  server.errors.should.be.a('object');
+    should.exist(server.errorMessages);
+    server.errorMessages.should.be.a('object');
+  });
 
   it('should allow a single method to be added and removed', function() {
     var methodName = 'subtract';
@@ -44,7 +46,7 @@ describe('An instance of the server', function() {
     server.hasMethod(methodName).should.be.false;
   });
 
-  it('should not allow a method with an reserved name to be added', function() {
+  it('should not allow a method with a reserved name to be added', function() {
     var methodName = 'rpc.test';
     server.hasMethod(methodName).should.be.false;
     (function() {
@@ -64,6 +66,18 @@ describe('An instance of the server', function() {
       });
     }).should.throw();
     server.hasMethod(methodName).should.be.false;
+  });
+
+  it('should allow standard error messages to be changed', function(done) {
+    var newMsg = 'Parse Error!';
+    server.errorMessages[Server.errors.PARSE_ERROR] = newMsg;
+    server.call('invalid request', function(err, result) {
+      shouldBeValidError(err);
+      should.not.exist(result)
+      err.error.code.should.equal(Server.errors.PARSE_ERROR);
+      err.error.message.should.be.a('string').and.equal(newMsg);
+      done();
+    });
   });
 });
 

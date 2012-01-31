@@ -1,14 +1,23 @@
 var assert = require('assert');
 var should = require('should');
 
-var Server = require(__dirname + '/../').Server;
-var utils = require(__dirname + '/../lib/utils');
+var jayson = require(__dirname + '/../');
+var Server = jayson.server;
+var utils = jayson.utils;
 
 describe('The server', function() {
   it('should have an object of errors', function() {
     Server.should.have.property('errors');
   });
 });
+
+describe('The server constructor', function() {
+  var ctor = jayson.server;
+  it('should invoked without "new" return the correct instance anyway', function() {
+    var instance = new ctor();
+    instance.should.be.an.instanceof(jayson.server);
+  });
+})
 
 describe('An instance of the server', function() {
   var server = new Server();
@@ -33,7 +42,7 @@ describe('An instance of the server', function() {
     server.errorMessages.should.be.a('object');
   });
 
-  it('should allow a single method to be added and removed', function() {
+  it('should allow a method to be added and removed', function() {
     var methodName = 'subtract';
     server.hasMethod(methodName).should.be.false;
     (function() {
@@ -91,38 +100,38 @@ describe('An invalid JSON object', function() {
     }).should.throw();
   });
 
-  it('used in a request should callback with parse-error', shouldBeError(server, request, -32700));
+  it('used in a request should callback with a Parse Error', shouldBeError(server, request, -32700));
 
 });
 
-describe('A request with the "jsonrpc"-property that is faulty', function() {
+describe('A request with a "jsonrpc"-property that is faulty', function() {
   var server = getServer();
   describe('by being non-existant', function() {
     var request = getValidRequest();
     delete request.jsonrpc;
-    it('should used in a request callback with a request-error', shouldBeError(server, request, -32600));
+    it('should used in a request callback with a Request Error', shouldBeError(server, request, -32600));
   });
 
   describe('by being of the wrong value', function() {
     var request = getValidRequest();
     request.jsonrpc = "1.0";
-    it('should used in a request callback with a request-error', shouldBeError(server, request, -32600));
+    it('should used in a request callback with a Request Error', shouldBeError(server, request, -32600));
   });
 
 });
 
-describe('A request with the "method"-property that is faulty', function() {
+describe('A request with a "method"-property that is faulty', function() {
   var server = getServer();
   describe('by being of the wrong type', function() {
     var request = getValidRequest();
     request.method = true;
-    it('should used in a request callback with a request-error', shouldBeError(server, request, -32600));
+    it('should used in a request callback with a Request Error', shouldBeError(server, request, -32600));
   });
 
   describe('by referring to a nonexistent method', function() {
     var request = getValidRequest();
     request.method = "subtract";
-    it('should used in a request callback with a method not found-error', shouldBeError(server, request, -32601));
+    it('should used in a request callback with a Method Not Found Error', shouldBeError(server, request, -32601));
   });
 });
 
@@ -131,7 +140,7 @@ describe('A request with the "id"-property being faulty', function() {
   describe('by being of the wrong type', function() {
     var request = getValidRequest();
     request.id = true;
-    it('should used in a request callback with a request-error', shouldBeError(server, request, -32600));
+    it('should used in a request callback with a Request Error', shouldBeError(server, request, -32600));
   });
 });
 
@@ -140,7 +149,7 @@ describe('A request with the "params"-property being faulty', function() {
   describe('by being of the wrong type', function() {
     var request = getValidRequest();
     request.params = "1";
-    it('should used in a request callback with a request-error', shouldBeError(server, request, -32600));
+    it('should used in a request callback with a Request Error', shouldBeError(server, request, -32600));
   });
 });
 
@@ -158,7 +167,7 @@ describe('An invalid request without an "id"-property', function() {
       done();
     });
   });
-  it('should return an empty response if request could be interpreted', function(done) {
+  it('should return an empty response if the request could be interpreted', function(done) {
     var request = getValidRequest();
     delete request.id;
     request.method = 'subtract'; // Does not exist
@@ -186,13 +195,37 @@ describe('A valid request to the "add"-method', function() {
 
 describe('A notification request', function() {
   var server = getServer();
-  it('should callback empty', function(done) {
-    var request = getValidRequest();
-    delete request.id;
-    server.call(request, function(err, result) {
-      should.not.exist(err);
-      should.not.exist(result)
-      done();
+  describe('that is valid', function() {
+    it('should callback empty', function(done) {
+      var request = getValidRequest();
+      delete request.id;
+      server.call(request, function(err, result) {
+        should.not.exist(err);
+        should.not.exist(result)
+        done();
+      });
+    });
+  });
+  describe('that is invalid by being unparseable', function() {
+    it('should callback with an Parse Error', function(done) {
+      var request = 'completely invalid json';
+      server.call(request, function(err, result) {
+        should.not.exist(result);
+        should.exist(err, err.id);
+        shouldBeValidError(err);
+        err.error.code.should.be.a('number').and.equal(-32700);
+        should.equal(err.id, null);
+        done();
+      });
+    });
+  });
+  describe('that is invalid by referring to a non-existent method', function() {
+    it('should callback empty', function(done) {
+      var request = utils.request('add', [5, 7], null);
+      server.call(request, function(err, result) {
+        should.not.exist(err, result);
+        done();
+      });
     });
   });
 });

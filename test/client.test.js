@@ -6,14 +6,18 @@ var jayson = require(__dirname + '/..');
 var serverMethods = {
   add: function(a, b, callback) { callback(null, a + b); },
   error: function(shouldError, callback) {
-    if(shouldError) return  callback(this.error(-1000, 'An error message'));
+    if(shouldError) return callback(this.error(-1000, 'An error message'));
     callback();
   }
 };
 
-describe('An in-process client', function() {
+describe('A client', function() {
   var server = jayson.server(serverMethods);
-  var client = jayson.client.process(server);
+  var client = jayson.client(server);
+
+  it('should be an instance of the right object', function() {
+    client.should.be.an.instanceof(jayson.client);
+  });
 
   it('should successfully be able to request the "add"-method', function(done) {
     client.request('add', [5, 10], function(err, error, result) {

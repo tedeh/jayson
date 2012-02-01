@@ -1,4 +1,3 @@
-var assert = require('assert');
 var should = require('should');
 
 var jayson = require(__dirname + '/..');
@@ -41,7 +40,7 @@ describe('A client', function() {
     });
   });
 
-  it('should return the response as-is to the callback is so specified', function(done) {
+  it('should return the response as-is to the callback if so specified', function(done) {
     client.request('add', [11, 9], function(err, response) {
       arguments.length.should.equal(2);
       should.not.exist(err);

@@ -179,6 +179,21 @@ describe('An invalid request without an "id"-property', function() {
   });
 });
 
+describe('A valid request to the "divide"-method with named parameters', function() {
+  var server = getServer();
+  it('returns the correct value', function(done) {
+    var request = getValidRequest();
+    request.method = 'divide';
+    request.params = {b: 3, a: 9};
+    server.call(request, function(err, result) {
+      should.not.exist(err);
+      shouldBeValidResult(result);
+      result.result.should.equal(9 / 3);
+      done();
+    });
+  });
+});
+
 describe('A valid request to the "add"-method', function() {
   var server = getServer();
   it('returns the sum of the passed parameters', function(done) {
@@ -312,7 +327,8 @@ function getServer() {
       process.nextTick(function() {
         callback(null, a + b);
       });
-    }
+    },
+    divide: function(a, b, callback) { callback(null, a / b); }
   });
 }
 

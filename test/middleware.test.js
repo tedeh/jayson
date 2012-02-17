@@ -49,18 +49,6 @@ describe('A HTTP Server', function() {
       });
     });
 
-    it('should successfully be able to request "divide" with named parameters', function(done) {
-      var params = {b: 3, a: 12};
-      client.request('divide', params, function(err, error, response) {
-        should.not.exist(err);
-        should.not.exist(error);
-        should.exist(response);
-        response.should.be.a('number');
-        response.should.equal(params.a / params.b);
-        done();
-      });
-    });
-
     it('should successfully be able to receive a deliberate error from the server', function(done) {
       client.request('error', [], function(err, error, response) {
         should.not.exist(err);

@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "should": "*",
-    "mocha": "*"
+    "mocha": "*",
+    "express": "*"
   }
 }

@@ -17,6 +17,9 @@
     "node": ">= 0.5.0 < 0.7.0"
   },
   "scripts": { "test": "make test" },
+  "dependencies": {
+    "commander": ">= 0.5.2"
+  },
   "devDependencies": {
     "should": "*",
     "mocha": "*"

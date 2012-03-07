@@ -141,4 +141,15 @@ describe('A client', function() {
     });
   });
 
+  it('should return nothing if fed a notification-only batch request', function(done) {
+    var batch = [
+      client.request('add', [5, 2], null),
+      client.request('add', [7, 6], null)
+    ];
+    client.request(batch, function(err, response) {
+      should.not.exist(err, response);
+      done();
+    });
+  });
+
 });

@@ -5,21 +5,28 @@ var jayson = require(__dirname + '/../');
 var Server = jayson.server;
 var utils = jayson.utils;
 
-describe('The server', function() {
+describe('The Server', function() {
   it('should have an object of errors', function() {
     Server.should.have.property('errors');
   });
 });
 
-describe('The server constructor', function() {
+describe('The Server Constructor', function() {
   var ctor = jayson.server;
   it('should invoked without "new" return the correct instance anyway', function() {
     var instance = new ctor();
     instance.should.be.an.instanceof(jayson.server);
   });
 })
+  
+// main instance of server
+var server = new Server({
+  add: function(a, b, callback) { callback(null, a + b); },
+  divide: function(a, b, callback) { callback(null, a / b); }
+});
 
 describe('An instance of the server', function() {
+
   var server = new Server();
 
   it('should have the correct methods', function() {
@@ -91,7 +98,6 @@ describe('An instance of the server', function() {
 });
 
 describe('An invalid JSON object', function() {
-  var server = getServer();
   var request = 'I am an invalid JSON string';
 
   it('should not be parsable without throwing an error', function() {
@@ -105,7 +111,6 @@ describe('An invalid JSON object', function() {
 });
 
 describe('A request with a "jsonrpc"-property that is faulty', function() {
-  var server = getServer();
   describe('by being non-existant', function() {
     var request = getValidRequest();
     delete request.jsonrpc;
@@ -121,7 +126,6 @@ describe('A request with a "jsonrpc"-property that is faulty', function() {
 });
 
 describe('A request with a "method"-property that is faulty', function() {
-  var server = getServer();
   describe('by being of the wrong type', function() {
     var request = getValidRequest();
     request.method = true;
@@ -136,7 +140,6 @@ describe('A request with a "method"-property that is faulty', function() {
 });
 
 describe('A request with the "id"-property being faulty', function() {
-  var server = getServer();
   describe('by being of the wrong type', function() {
     var request = getValidRequest();
     request.id = true;
@@ -145,7 +148,6 @@ describe('A request with the "id"-property being faulty', function() {
 });
 
 describe('A request with the "params"-property being faulty', function() {
-  var server = getServer();
   describe('by being of the wrong type', function() {
     var request = getValidRequest();
     request.params = "1";
@@ -154,7 +156,6 @@ describe('A request with the "params"-property being faulty', function() {
 });
 
 describe('An invalid request without an "id"-property', function() {
-  var server = getServer();
   it('should return an error response with id as null if the request could not be interpreted', function(done) {
     var request = getValidRequest();
     delete request.id;
@@ -180,7 +181,6 @@ describe('An invalid request without an "id"-property', function() {
 });
 
 describe('A valid request to the "divide"-method with named parameters', function() {
-  var server = getServer();
   it('returns the correct value', function(done) {
     var request = getValidRequest();
     request.method = 'divide';
@@ -195,7 +195,6 @@ describe('A valid request to the "divide"-method with named parameters', functio
 });
 
 describe('A valid request to the "add"-method', function() {
-  var server = getServer();
   it('returns the sum of the passed parameters', function(done) {
     var request = getValidRequest();
     var expectedSum = request.params.reduce(function(curr, prev) { return curr + prev; }, 0);
@@ -209,14 +208,12 @@ describe('A valid request to the "add"-method', function() {
 });
 
 describe('A notification request', function() {
-  var server = getServer();
   describe('that is valid', function() {
     it('should callback empty', function(done) {
       var request = getValidRequest();
       delete request.id;
       server.call(request, function(err, result) {
-        should.not.exist(err);
-        should.not.exist(result)
+        should.not.exist(err, result);
         done();
       });
     });
@@ -246,13 +243,11 @@ describe('A notification request', function() {
 });
 
 describe('An empty batch request', function() {
-  var server = getServer();
   var request = [];
   it('should callback with an invalid request-error', shouldBeError(server, request, -32600));
 });
 
 describe('A batch request with only invalid requests', function() {
-  var server = getServer();
   var request = [1, 2, 3];
   it('should callback with an invalid request-error', function(done) {
     server.call(request, function(err, results) {
@@ -265,7 +260,6 @@ describe('A batch request with only invalid requests', function() {
 });
 
 describe('A batch request with only notifications', function() {
-  var server = getServer();
   var request = [
     getValidRequest(),
     getValidRequest()
@@ -284,7 +278,6 @@ describe('A batch request with only notifications', function() {
 });
 
 describe('A mixed-request batch', function() {
-  var server = getServer();
   var requests = [];
   var amount = 3;
   while(amount--) requests.push(getValidRequest());
@@ -322,14 +315,6 @@ describe('A mixed-request batch', function() {
 
 // prepares a mock server with an "add"-method
 function getServer() {
-  return new Server({
-    add: function(a, b, callback) {
-      process.nextTick(function() {
-        callback(null, a + b);
-      });
-    },
-    divide: function(a, b, callback) { callback(null, a / b); }
-  });
 }
 
 // prepares a mock request to an "add"-method

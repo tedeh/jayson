@@ -18,7 +18,8 @@
   },
   "scripts": { "test": "make test" },
   "dependencies": {
-    "commander": ">= 0.5.2"
+    "commander": ">= 0.5.2",
+    "eyes": "*"
   },
   "devDependencies": {
     "should": "*",

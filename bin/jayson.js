@@ -12,18 +12,23 @@ var eyes = require('eyes');
 // initialize program and define arguments
 program.version('1.0.0')
        .option('-m, --method [name]', 'Method', String)
-       .option('-p, --params [json]', 'Array or Object to use as parameters', JSON.parse)
-       .option('-s, --server [path]', 'Path or URL to server', url.parse)
-       .option('-q, --quiet', 'Only output the return value and any errors', Boolean)
+       .option('-p, --params [json]', 'Array or Object to use as parameters', jayson.utils.parse)
+       .option('-s, --server [path]', 'Path or URL to server', parseServer)
+       .option('-q, --quiet', 'Only output the response value and any errors', Boolean)
+       .option('-j, --json', 'Only output the response value as JSON (implies quiet)', Boolean)
        .option('-c, --color', 'Color output', Boolean)
        .parse(process.argv);
 
-var serverName = program.server ? url.format(program.server) : null;
+var serverName = program.server
+               ? url.format(program.server)
+               : (program.server && program.server.socketPath || null);
 
 var inspect = eyes.inspector({
   stream: null,
   styles: program.color ? eyes.defaults.styles : {all: false}
 });
+
+if(program.json) program.quiet = true;
 
 // wrapper for printing output
 var print = {
@@ -60,11 +65,23 @@ print.out(
   Array.isArray(program.params) ? program.params.join(', ') : JSON.stringify(program.params)
 );
 
-client.request(program.method, program.params, function(err, error, result) {
+client.request(program.method, program.params, function(err, response) {
   if(err) throw err;
-  if(error) {
-    print.out(true, false, '%s', inspect(error));
-  } else {
-    print.out(true, false, '%s', inspect(result));
+  if(!response || program.json) {
+    console.log(jayson.utils.stringify(response).replace("\n", ""));
+    process.exit(0);
   }
+  print.out(true, false, '%s', inspect(response));
+  process.exit(response.error ? response.error.code : 0);
 });
+
+
+// basically a wrapper around url.parse but supports specifying a socket
+function parseServer(value) {
+  var socketDefinition = /^socket:(.+)/;
+  var parse = url.parse(value);
+  if(socketDefinition.test(value)) {
+    return {socketPath: (socketDefinition.exec(value) || []).pop()};
+  }
+  return parse;
+}

@@ -66,7 +66,10 @@ print.out(
 );
 
 client.request(program.method, program.params, function(err, response) {
-  if(err) throw err;
+  if(err) {
+    print.err(err);
+    process.exit(-1);
+  }
   if(!response || program.json) {
     console.log(jayson.utils.stringify(response).replace("\n", ""));
     process.exit(0);

@@ -1,6 +1,7 @@
 var should = require('should');
 var jayson = require(__dirname + '/..');
 var exec = require('child_process').exec;
+var url = require('url');
 
 var methods = {
   add: function(a, b, callback) { callback(null, a + b); }
@@ -25,18 +26,20 @@ describe('The binary', function() {
     var server = jayson.server(methods);
     var path = __dirname + '/bin.test.socket';
     var http = server.http();
+
     before(function(done) {
       http.listen(path, done);
     });
+
     after(function(done) {
       http.on('close', done);
       http.close();
     });
-    it('should be callable with the binary and the --json switch', function(done) {
+
+    it('should be callable', function(done) {
       var args = getArgs('socket:' + path, 'add', [1, 2]);
       exec(args, function(err, stdout, stderr) {
         should.not.exist(err);
-        stderr.should.equal('');
         var json = {};
         (function() {
           json = jayson.utils.parse(stdout);
@@ -44,9 +47,47 @@ describe('The binary', function() {
         json.should.have.property('id');
         json.should.have.property('result');
         json.result.should.equal(3);
+        stderr.should.equal('');
         done();
       });
     });
+  });
+  describe('and a HTTP port server', function() {
+    var server = jayson.server(methods);
+    var http = server.http();
+    var hostname = 'localhost';
+    var port = 3000;
+    var urlStr = url.format({
+      port: port,
+      protocol: 'http',
+      hostname: hostname
+    });
+
+    before(function(done) {
+      http.listen(port, hostname, done);
+    });
+
+    after(function(done) {
+      http.on('close', done);
+      http.close();
+    });
+
+    it('should be callable', function(done) {
+      var args = getArgs(urlStr, 'add', [3, 4]);
+      exec(args, function(err, stdout, stderr) {
+        should.not.exist(err);
+        var json = {};
+        (function() {
+          json = jayson.utils.parse(stdout);
+        }).should.not.throw();
+        json.should.have.property('id');
+        json.should.have.property('result');
+        json.result.should.equal(7);
+        stderr.should.equal('');
+        done();
+      });
+    });
+
   });
 });
 

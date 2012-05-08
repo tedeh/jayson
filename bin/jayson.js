@@ -81,10 +81,9 @@ client.request(program.method, program.params, function(err, response) {
 
 // basically a wrapper around url.parse but supports specifying a socket
 function parseServer(value) {
-  var socketDefinition = /^socket:(.+)/;
-  var parse = url.parse(value);
-  if(socketDefinition.test(value)) {
+  // is it a socket? begins with ...
+  if(/^socket:(.+)/.test(value)) {
     return {socketPath: (socketDefinition.exec(value) || []).pop()};
   }
-  return parse;
+  return url.parse(value);
 }

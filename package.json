@@ -6,7 +6,7 @@
   "keywords": ["jsonrpc", "rpc", "json", "jsonrpc-2.0", "socket.io", "middleware", "connect"],
   "author": "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",
   "maintainers": "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",
-  "bin": "./bin/jayson.js",
+  "bin": "./bin/jayson",
   "repository": {
     "type": "git",
     "url": "git://github.com/tedeh/jayson.git"

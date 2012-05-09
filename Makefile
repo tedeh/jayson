@@ -1,4 +1,5 @@
 test:
 	@./node_modules/.bin/mocha
 
-.PHONY: test
+compile:
+	@node ./bin/builder.js

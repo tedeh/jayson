@@ -24,6 +24,7 @@
   "devDependencies": {
     "should": "*",
     "mocha": "*",
-    "express": "*"
+    "express": "*",
+    "uglify-js": "*"
   }
 }

@@ -37,7 +37,12 @@ describe('The binary', function() {
     });
 
     it('should be callable', function(done) {
-      var args = getArgs('socket:' + path, 'add', [1, 2]);
+      var args = formatArgs(binaryPath, {
+        socket: path,
+        method: 'add',
+        params: JSON.stringify([1, 2]),
+        json: true
+      });
       exec(args, function(err, stdout, stderr) {
         should.not.exist(err);
         var json = {};
@@ -73,7 +78,12 @@ describe('The binary', function() {
     });
 
     it('should be callable', function(done) {
-      var args = getArgs(urlStr, 'add', [3, 4]);
+      var args = formatArgs(binaryPath, {
+        url: urlStr,
+        method: 'add',
+        params: JSON.stringify([3, 4]),
+        json: true
+      });
       exec(args, function(err, stdout, stderr) {
         should.not.exist(err);
         var json = {};
@@ -91,11 +101,14 @@ describe('The binary', function() {
   });
 });
 
-function getArgs(server, method, params) {
-  params = params || {};
-  return binaryPath
-       + ' --server ' + server
-       + ' --method ' + method
-       + ' --json'
-       + ' --params "' + JSON.stringify(params) + '"';
+function formatArgs(binary, args) {
+  var buf = binary;
+  for(var arg in args) {
+    var value = args[arg];
+    buf += ' --' + arg;
+    if(typeof(value) === 'string') {
+      buf += ' "' + value + '"';
+    }
+  }
+  return buf;
 }

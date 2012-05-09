@@ -13,15 +13,12 @@ var eyes = require('eyes');
 program.version('1.0.0')
        .option('-m, --method [name]', 'Method', String)
        .option('-p, --params [json]', 'Array or Object to use as parameters', jayson.utils.parse)
-       .option('-s, --server [path]', 'Path or URL to server', parseServer)
+       .option('-u, --url [url]', 'URL to server', url.parse)
+       .option('-s, --socket [path]', 'Path to UNIX socket', parseSocket)
        .option('-q, --quiet', 'Only output the response value and any errors', Boolean)
        .option('-j, --json', 'Only output the response value as JSON (implies quiet)', Boolean)
        .option('-c, --color', 'Color output', Boolean)
        .parse(process.argv);
-
-var serverName = program.server
-               ? url.format(program.server)
-               : (program.server && program.server.socketPath || null);
 
 var inspect = eyes.inspector({
   stream: null,
@@ -30,7 +27,7 @@ var inspect = eyes.inspector({
 
 if(program.json) program.quiet = true;
 
-// wrapper for printing output
+// wrapper for printing output (colored, quiet or what not)
 var print = {
   out: function(isRecv, mutable, format) {
     var tokens = Array.prototype.slice.call(arguments, 3);
@@ -42,20 +39,19 @@ var print = {
       var direction = isRecv ? ' -> ' : ' <- ';
       format = (program.color ? eyes.stylize(direction, 'bold', {}) : direction) + format;
       format = (program.color ? eyes.stylize('%s', 'yellow', {}) : '%s') + format
-      tokens.unshift(serverName);
+      tokens.unshift(url.format(getServer()));
     }
     console.log.apply(console, [format].concat(tokens));
   },
   err: console.error
 };
 
-// arguments correct?
-if(!program.method || !program.params || !program.server) {
+if(!validateArguments()) {
   print.err(program.helpInformation());
   process.exit(-1);
 }
 
-var client = jayson.client.http(program.server);
+var client = jayson.client.http(getServer());
 
 print.out(
   false,
@@ -78,13 +74,21 @@ client.request(program.method, program.params, function(err, response) {
   process.exit(response.error ? response.error.code : 0);
 });
 
+// do we have all arguments to proceed?
+function validateArguments() {
+  return Boolean(
+    program.method
+    && program.params
+    && (program.url || program.socket)
+  );
+}
 
-// basically a wrapper around url.parse but supports specifying a socket
-function parseServer(value) {
-  // is it a socket? begins with ...
-  var definition = /^socket:(.+)/;
-  if(definition.test(value)) {
-    return {socketPath: (definition.exec(value) || []).pop()};
-  }
-  return url.parse(value);
+// gets the correct connection object
+function getServer() {
+  return program.url || program.socket;
+}
+
+// parses a socket
+function parseSocket(value) {
+  return {socketPath: path.normalize(value)};
 }

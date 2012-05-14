@@ -3,3 +3,5 @@ test:
 
 compile:
 	@node ./bin/builder.js
+
+.PHONY: compile test

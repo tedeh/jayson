@@ -14,9 +14,9 @@ program.version('1.0.0')
        .option('-m, --method [name]', 'Method', String)
        .option('-p, --params [json]', 'Array or Object to use as parameters', jayson.utils.parse)
        .option('-u, --url [url]', 'URL to server', url.parse)
-       .option('-s, --socket [path]', 'Path to UNIX socket', parseSocket)
        .option('-q, --quiet', 'Only output the response value and any errors', Boolean)
-       .option('-j, --json', 'Only output the response value as JSON (implies quiet)', Boolean)
+       .option('-s, --socket [path]', 'Path to UNIX socket', parseSocket)
+       .option('-j, --json', 'Only output the response value as JSON (implies --quiet)', Boolean)
        .option('-c, --color', 'Color output', Boolean)
        .parse(process.argv);
 
@@ -25,70 +25,65 @@ var inspect = eyes.inspector({
   styles: program.color ? eyes.defaults.styles : {all: false}
 });
 
+// quiet is implied if json is specified
 if(program.json) program.quiet = true;
 
-// wrapper for printing output (colored, quiet or what not)
-var print = {
-  out: function(isRecv, mutable, format) {
-    var tokens = Array.prototype.slice.call(arguments, 3);
-    format = typeof(format) === 'string' ? format : '';
-    if(program.quiet && mutable) return;
+var server = program.url || program.socket;
 
-    // append some tokens if not quiet
-    if(!program.quiet) {
-      var direction = isRecv ? ' -> ' : ' <- ';
-      format = (program.color ? eyes.stylize(direction, 'bold', {}) : direction) + format;
-      format = (program.color ? eyes.stylize('%s', 'yellow', {}) : '%s') + format
-      tokens.unshift(url.format(getServer()));
-    }
-    console.log.apply(console, [format].concat(tokens));
-  },
-  err: console.error
+// wrapper for printing different kinds of output
+var std = {
+  out: getPrinter(false),
+  err: getPrinter(true)
 };
 
-if(!validateArguments()) {
-  print.err(program.helpInformation());
+// do we have all arguments to do something meaningful?
+if(!(program.method && program.params && (program.url || program.socket))) {
+  std.err(program.helpInformation(), true);
   process.exit(-1);
 }
 
-var client = jayson.client.http(getServer());
+var client = jayson.client.http(server);
 
-print.out(
-  false,
-  true,
-  program.color ? eyes.stylize('%s(%s)', 'magenta', {}) : '%s(%s)',
+std.out(
+  colorize('magenta', '-> %s(%s)'),
   program.method,
   Array.isArray(program.params) ? program.params.join(', ') : JSON.stringify(program.params)
 );
 
 client.request(program.method, program.params, function(err, response) {
   if(err) {
-    print.err(err);
-    process.exit(-1);
+    std.err(colorize('red', '<- %s'), err.stack);
+    return process.exit(-1);
   }
+
   if(!response || program.json) {
-    console.log(jayson.utils.stringify(response).replace("\n", ""));
-    process.exit(0);
+    std.out('%s', jayson.utils.stringify(response).replace("\n", ""), true);
+    return process.exit(0);
   }
-  print.out(true, false, '%s', inspect(response));
+
+  std.out('<- %s', inspect(response), true);
   process.exit(response.error ? response.error.code : 0);
 });
-
-// do we have all arguments to proceed?
-function validateArguments() {
-  return Boolean(
-    program.method
-    && program.params
-    && (program.url || program.socket)
-  );
-}
-
-// gets the correct connection object
-function getServer() {
-  return program.url || program.socket;
-}
 
 // parses a socket
 function parseSocket(value) {
   return {socketPath: path.normalize(value)};
+}
+
+function colorize(color, format) {
+  return program.color
+       ? eyes.stylize(format, color, {}) 
+       : format;
+}
+
+function getPrinter(isError) {
+  var out = isError ? console.error : console.log;
+  return function(format) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    // last argument (boolean) may indicate if this particular output should disregard --quiet
+    var isNoisy = typeof(args[args.length - 1]) === 'boolean' ? args.pop() : false;
+    if(!isNoisy && program.quiet) return;
+    args.unshift(format);
+    return out.apply(console, args);
+  }
 }

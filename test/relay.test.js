@@ -1,7 +1,7 @@
 var should = require('should');
 var jayson = require(__dirname + '/..');
 
-describe('A jayson relay server', function() {
+describe('A Jayson relay server', function() {
 
   var serverBack = jayson.server({
     add: function(a, b, callback) {
@@ -11,7 +11,7 @@ describe('A jayson relay server', function() {
 
   var serverFront = null;
 
-  it('should correctly be created', function() {
+  it('should be created succesfully', function() {
     var client = jayson.client(serverBack);
     (function() {
       serverFront = jayson.server({ add: client });

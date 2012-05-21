@@ -242,94 +242,99 @@ describe('A notification request', function() {
   });
 });
 
-describe('An empty batch request', function() {
-  var request = [];
-  it('should callback with an invalid request-error', shouldBeError(server, request, -32600));
-});
+describe('a jayson server', function() {
 
-describe('A batch request with only invalid requests', function() {
-  var request = [1, 2, 3];
-  it('should callback with an invalid request-error', function(done) {
-    server.call(request, function(err, results) {
-      should.not.exist(err);
-      shouldBeValidBatchResult(results);
-      results.forEach(shouldBeValidError);
-      done();
-    });
-  });
-});
-
-describe('A batch request with only notifications', function() {
-  var request = [
-    getValidRequest(),
-    getValidRequest()
-  ];
-
-  // Removes the id to make notification
-  request.forEach(function(r) { delete r.id; });
-
-  it('should callback with a completely empty response', function(done) {
-    server.call(request, function(err, results) {
-      should.not.exist(err);
-      should.not.exist(results);
-      done();
-    });
-  });
-});
-
-describe('A mixed-request batch', function() {
-  var requests = [];
-  var amount = 3;
-  while(amount--) requests.push(getValidRequest());
-
-  // Notification
-  delete requests[0].id;
-  
-  // Invalid request
-  requests[1] = 'invalid request';
-
-  it('should callback with a length of 2', function(done) {
-    server.call(requests, function(err, results) {
-      should.not.exist(err);
-      shouldBeValidBatchResult(results);
-      results.should.be.instanceof(Array);
-      results.should.have.lengthOf(2);
-      done();
-    });
+  var server = jayson.server({
+    add: function(a, b, callback) { callback(null, a + b); },
+    add_slow: function(a, b, isSlow, callback) {
+      if(!isSlow) return callback(null, a + b);
+      setTimeout(callback.bind(callback, null, a + b), 15);
+    }
   });
 
-  it('should callback one error and one succesful response', function(done) {
-    server.call(requests, function(err, results) {
-      var success = false, error = false;
-      for(var i = 0, il = results.length; i < il; i++) {
-        var result = results[i];
-        if(result.error) error = result;
-        if(result.result) success = result;
-      }
-      shouldBeValidResult(success);
-      shouldBeValidError(error);
-      done();
+  describe('receiving batch requests', function() {
+
+    // helper to create batches
+    var client = jayson.client(server);
+
+    it('should handle an empty batch', function(done) {
+      server.call([], function(err, response) {
+        should.not.exist(response);
+        should.exist(err, err.error, err.error.code);
+        err.error.code.should.equal(-32600);
+        done();
+      });
+    });
+
+    it('should handle a batch with only invalid requests', function(done) {
+      server.call([1, 2, 3], function(err, response) {
+        should.not.exist(err);
+        should.exist(response);
+        response.should.be.instanceof(Array).and.have.length(3);
+        response.forEach(function(response) {
+          should.exist(response, response.error, response.error.code);
+          response.error.code.should.equal(-32600);
+        });
+        done();
+      });
+    });
+
+    it('should handle a batch with only notifications', function(done) {
+       var requests = [
+        client.request('add', [3, 4], null),
+        client.request('add', [4, 5], null)
+      ];
+      server.call(requests, function(err, responses) {
+        should.not.exist(err, responses);
+        done();
+      });
+    });
+
+    it('should handle mixed requests', function(done) {
+      var requests = [
+        client.request('add', [1, 1], null),
+        'invalid request',
+        client.request('add', [2, 2])
+      ];
+      server.call(requests, function(err, responses) {
+        should.not.exist(err);
+        should.exist(responses);
+        responses.should.be.instanceof(Array).and.have.length(2);
+        should.exist(responses[0], responses[0].error, responses[0].error.code);
+        should.exist(responses[1], responses[1].result);
+        responses[0].error.code.should.equal(-32600);
+        responses[1].result.should.equal(2 + 2);
+        done();
+      });
+    });
+
+    it('should be able return method invocations in correct order', function(done) {
+      var requests = [
+        client.request('add_slow', [1, 1, true]),
+        client.request('add_slow', [1, 2, false])
+      ];
+      server.call(requests, function(err, responses) {
+        should.not.exist(err);
+        should.exist(responses);
+        responses.should.be.instanceof(Array);
+        responses.should.have.length(2);
+        should.exist(responses[0], responses[0].result, responses[1], responses[1].result);
+        responses[0].result.should.equal(2);
+        responses[1].result.should.equal(3);
+        done();
+      });
     });
   });
-});
 
-// prepares a mock server with an "add"-method
-function getServer() {
-}
+});
 
 // prepares a mock request to an "add"-method
-function getValidRequest () {
+function getValidRequest() {
   var params = [
     Math.round(Math.random() * 100),
     Math.round(Math.random() * 100)
   ]
   return utils.request('add', params);
-}
-
-function shouldBeValidBatchResult(results) {
-  should.exist(results);
-  results.should.be.instanceof(Array);
-  results.length.should.be.above(0);
 }
 
 function shouldBeValidResult(response) {

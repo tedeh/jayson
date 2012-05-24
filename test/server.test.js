@@ -252,6 +252,38 @@ describe('a jayson server', function() {
     }
   });
 
+  describe('with a reviver and a replacer', function() {
+    var options = {
+      reviver: function(k, v) {
+        if(v && typeof(v.$date) === 'number') return new Date(v.$date);
+        return v;
+      },
+      replacer: function(k, v) {
+        if(v instanceof Date) return {'$date': v.getTime()};
+        return v;
+      }
+    };
+    var server = jayson.server({
+      addOneSecond: function(date, callback) {
+        if(!(date instanceof Date)) return callback(true);
+        date.setTime(date.getTime() + 1000);
+        return callback(null, date);
+      }
+    }, options);
+    it('should be able to revive a Date object', function(done) {
+      var date = new Date();
+      var dateSerialized = {$date: date.getTime()};
+      var request = JSON.stringify(utils.request('addOneSecond', [dateSerialized]));
+      server.call(request, function(err, response) {
+        should.not.exist(err);
+        should.exist(response, response.result);
+        response.result.should.be.an.instanceof(Date);
+        response.result.getTime().should.equal(date.getTime() + 1000);
+        done();
+      });
+    });
+  });
+
   describe('receiving batch requests', function() {
 
     // helper to create batches

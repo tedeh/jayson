@@ -32,9 +32,9 @@ describe('jayson http', function() {
 
     it('should be an instance of jayson.client', support.clientInstance(client));
 
-    it('should be able to request a method on the server', support.clientRequest(client));
+    it('should be able to request a success-method on the server', support.clientRequest(client));
 
-    it('should be able to request a method on the server', support.clientError(client));
+    it('should be able to request an error-method on the server', support.clientError(client));
 
     it('should support reviving and replacing', support.clientReviveReplace(client));
 

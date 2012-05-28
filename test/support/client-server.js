@@ -66,13 +66,14 @@ exports.clientError = function(client) {
 exports.clientReviveReplace = function(client) {
   return function(done) {
     var now = new Date();
+    var nowTime = now.getTime(); // so we can directly manipulate the instance
     client.request('addOneSecond', [now], function(err, error, result) {
       should.not.exist(err);
       should.not.exist(error);
       should.exist(result);
       result.should.be.instanceof(Date);
       var time = result.getTime();
-      time.should.equal(now.getTime() + 1000);
+      time.should.equal(nowTime + 1000);
       done();
     });
   };

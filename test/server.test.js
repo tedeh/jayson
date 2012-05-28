@@ -80,7 +80,8 @@ describe('jayson server instance', function() {
     var newMsg = 'Parse Error!';
     server.errorMessages[jayson.server.errors.PARSE_ERROR] = newMsg;
     server.call('invalid request', function(err, response) {
-      should.exist(err, err.error);
+      should.exist(err);
+      should.exist(err.error);
       should.not.exist(response);
       err.error.code.should.equal(jayson.server.errors.PARSE_ERROR);
       err.error.message.should.be.a('string').and.equal(newMsg);
@@ -100,7 +101,9 @@ describe('jayson server instance', function() {
 
     it('should callback a "Parse Error"', function(done) {
       server.call(request, function(err, response) {
-        should.exist(err, err.error, err.error.code);
+        should.exist(err);
+        should.exist(err.error);
+        should.exist(err.error.code);
         should.not.exist(response);
         err.error.code.should.equal(-32700); // "Parse Error"
         done();
@@ -115,18 +118,22 @@ describe('jayson server instance', function() {
       var request = utils.request('add', []);
       request.jsonrpc = '1.0';
       server.call(request, function(err, response) {
-        should.exist(err, err.error, err.error.code);
+        should.exist(err);
+        should.exist(err.error);
+        should.exist(err.error.code);
         should.not.exist(response);
         err.error.code.should.equal(-32600); // "Request Error"
         done();
       });
     });
 
-    it('should callback a "Request Error" by having wrong value', function(done) {
+    it('should callback a "Request Error" by non-existent', function(done) {
       var request = utils.request('add', []);
       delete request.jsonrpc;
       server.call(request, function(err, response) {
-        should.exist(err, err.error, err.error.code);
+        should.exist(err);
+        should.exist(err.error);
+        should.exist(err.error.code);
         should.not.exist(response);
         err.error.code.should.equal(-32600); // "Request Error"
         done();
@@ -141,7 +148,9 @@ describe('jayson server instance', function() {
       var request = utils.request('add', []);
       request.method = true;
       server.call(request, function(err, response) {
-        should.exist(err, err.error, err.error.code);
+        should.exist(err);
+        should.exist(err.error);
+        should.exist(err.error.code);
         should.not.exist(response);
         err.error.code.should.equal(-32600); // "Request Error"
         done();
@@ -152,7 +161,9 @@ describe('jayson server instance', function() {
       var request = utils.request('add', []);
       request.method = 'subtract';
       server.call(request, function(err, response) {
-        should.exist(err, err.error, err.error.code);
+        should.exist(err);
+        should.exist(err.error);
+        should.exist(err.error.code);
         should.not.exist(response);
         err.error.code.should.equal(-32601); // "Method Not Found Error"
         done();
@@ -167,7 +178,9 @@ describe('jayson server instance', function() {
       var request = utils.request('add', []);
       request.id = true;
       server.call(request, function(err, response) {
-        should.exist(err, err.error, err.error.code);
+        should.exist(err);
+        should.exist(err.error);
+        should.exist(err.error.code);
         should.not.exist(response);
         err.error.code.should.equal(-32600); // "Request Error"
         done();
@@ -182,7 +195,9 @@ describe('jayson server instance', function() {
       var request = utils.request('add', []);
       request.params = '1';
       server.call(request, function(err, response) {
-        should.exist(err, err.error, err.error.code);
+        should.exist(err);
+        should.exist(err.error);
+        should.exist(err.error.code);
         should.not.exist(response);
         err.error.code.should.equal(-32600); // "Request Error"
         done();
@@ -200,8 +215,9 @@ describe('jayson server instance', function() {
       request = JSON.stringify(request);
       request = request.slice(0, request.length - 5);
       server.call(request, function(err, response) {
-        should.exist(err, err.id);
+        should.exist(err);
         should.not.exist(response);
+        err.should.have.ownProperty('id');
         should.strictEqual(err.id, null);
         done();
       });
@@ -212,7 +228,8 @@ describe('jayson server instance', function() {
       // make invalid
       delete request.id;
       server.call(request, function(err, response) {
-        should.not.exist(err, response);
+        should.not.exist(err);
+        should.not.exist(response);
         done();
       });
     });
@@ -225,13 +242,35 @@ describe('jayson server instance', function() {
       var a = 3, b = 9;
       var request = utils.request('add', [a, b]);
       server.call(request, function(err, response) {
-        if(err) return done(err);
-        should.exist(response, response.result);
+        should.not.exist(err);
+        should.exist(response);
+        should.exist(response.result);
         response.result.should.equal(a + b);
         done();
       });
     });
 
+  });
+
+  // TODO Needed?
+  describe('request to a method that does not callback anything', function() {
+    before(function() {
+      server.method('empty', function(arg, callback) { callback(); })
+    });
+
+    it('should return a result regardless', function(done) {
+      var request = utils.request('empty', [true]);
+      server.call(request, function(err, response) {
+        should.not.exist(err);
+        should.exist(response);
+        response.should.have.ownProperty('result');
+        done();
+      });
+    });
+
+    after(function() {
+      server.removeMethod('empty');
+    });
   });
 
   describe('named parameters', function() {
@@ -240,8 +279,9 @@ describe('jayson server instance', function() {
       var a = 9, b = 2;
       var request = utils.request('add', {a: 9, b: 2});
       server.call(request, function(err, response) {
-        if(err) return done(err);
-        should.exist(response, response.result);
+        should.not.exist(err);
+        should.exist(response);
+        should.exist(response.result);
         response.result.should.equal(a + b);
         done();
       });
@@ -254,7 +294,7 @@ describe('jayson server instance', function() {
     it('should handle a valid notification request', function(done) {
       var request = utils.request('add', [3, -3], null);
       server.call(request, function(err, response) {
-        if(err) return done(err);
+        should.not.exist(err);
         should.not.exist(response);
         done();
       });
@@ -264,8 +304,8 @@ describe('jayson server instance', function() {
       // non-existent method, should ignore
       var request = utils.request('subtract', [5, 7], null);
       server.call(request, function(err, result) {
-        if(err) return done(err);
         should.not.exist(err);
+        should.not.exist(result);
         done();
       });
     });
@@ -299,7 +339,8 @@ describe('jayson server instance', function() {
       var request = JSON.stringify(utils.request('addOneSecond', [dateSerialized]));
       server.call(request, function(err, response) {
         should.not.exist(err);
-        should.exist(response, response.result);
+        should.exist(response);
+        should.exist(response.result);
         response.result.should.be.an.instanceof(Date);
         response.result.getTime().should.equal(date.getTime() + 1000);
         done();
@@ -313,7 +354,9 @@ describe('jayson server instance', function() {
     it('should handle an empty batch', function(done) {
       server.call([], function(err, response) {
         should.not.exist(response);
-        should.exist(err, err.error, err.error.code);
+        should.exist(err);
+        should.exist(err.error);
+        should.exist(err.error.code);
         err.error.code.should.equal(-32600);
         done();
       });
@@ -325,7 +368,9 @@ describe('jayson server instance', function() {
         should.exist(response);
         response.should.be.instanceof(Array).and.have.length(3);
         response.forEach(function(response) {
-          should.exist(response, response.error, response.error.code);
+          should.exist(response);
+          should.exist(response.error);
+          should.exist(response.error.code);
           response.error.code.should.equal(-32600);
         });
         done();
@@ -338,7 +383,8 @@ describe('jayson server instance', function() {
         utils.request('add', [4, 5], null)
       ];
       server.call(requests, function(err, responses) {
-        should.not.exist(err, responses);
+        should.not.exist(err);
+        should.not.exist(responses);
         done();
       });
     });
@@ -353,8 +399,11 @@ describe('jayson server instance', function() {
         should.not.exist(err);
         should.exist(responses);
         responses.should.be.instanceof(Array).and.have.length(2);
-        should.exist(responses[0], responses[0].error, responses[0].error.code);
-        should.exist(responses[1], responses[1].result);
+        should.exist(responses[0]);
+        should.exist(responses[0].error);
+        should.exist(responses[0].error.code);
+        should.exist(responses[1]);
+        should.exist(responses[1].result);
         responses[0].error.code.should.equal(-32600);
         responses[1].result.should.equal(2 + 2);
         done();
@@ -371,7 +420,10 @@ describe('jayson server instance', function() {
         should.exist(responses);
         responses.should.be.instanceof(Array);
         responses.should.have.length(2);
-        should.exist(responses[0], responses[0].result, responses[1], responses[1].result);
+        should.exist(responses[0]);
+        should.exist(responses[0].result);
+        should.exist(responses[1]);
+        should.exist(responses[1].result);
         responses[0].result.should.equal(2);
         responses[1].result.should.equal(3);
         done();

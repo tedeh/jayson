@@ -5,12 +5,13 @@ var path = require('path');
 var url = require('url');
 var util = require('util');
 
+var pkg = require('../package.json');
 var jayson = require('../');
 var program = require('commander');
 var eyes = require('eyes');
 
 // initialize program and define arguments
-program.version('1.0.0')
+program.version(pkg.version)
        .option('-m, --method [name]', 'Method', String)
        .option('-p, --params [json]', 'Array or Object to use as parameters', jayson.utils.parse)
        .option('-u, --url [url]', 'URL to server', url.parse)
@@ -28,21 +29,19 @@ var inspect = eyes.inspector({
 // quiet is implied if json is specified
 if(program.json) program.quiet = true;
 
-var server = program.url || program.socket;
-
 // wrapper for printing different kinds of output
 var std = {
   out: getPrinter(false),
   err: getPrinter(true)
 };
 
-// do we have all arguments to do something meaningful?
+// do we have all arguments required to do something?
 if(!(program.method && program.params && (program.url || program.socket))) {
   std.err(program.helpInformation(), true);
-  process.exit(-1);
+  return process.exit(-1);
 }
 
-var client = jayson.client.http(server);
+var client = jayson.client.http(program.url || program.socket);
 
 std.out(
   colorize('magenta', '-> %s(%s)'),
@@ -65,7 +64,6 @@ client.request(program.method, program.params, function(err, response) {
   process.exit(response.error ? response.error.code : 0);
 });
 
-// parses a socket
 function parseSocket(value) {
   return {socketPath: path.normalize(value)};
 }

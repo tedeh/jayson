@@ -20,7 +20,7 @@ describe('jayson fork', function() {
 
   describe('client', function() {
 
-    var server = jayson.server.fork(__dirname + '/support/fork');
+    var server = jayson.server.fork(__dirname + '/support/fork', support.options);
 
     var client = jayson.client.fork(server, {
       reviver: support.options.reviver,
@@ -34,6 +34,10 @@ describe('jayson fork', function() {
     it('should be able to request an error-method on the server', support.clientError(client));
 
     it('should support reviving and replacing', support.clientReviveReplace(client));
+
+    it('should be able to handle a notification', support.clientNotification(client));
+
+    it('should be able to handle a batch request', support.clientBatch(client));
 
     after(function() {
       server.kill();

@@ -90,3 +90,29 @@ exports.clientReviveReplace = function(client) {
     });
   };
 };
+
+exports.clientNotification = function(client) {
+  return function(done) {
+    client.request('add', [3, 4], null, function(err) {
+      arguments.length.should.equal(0);
+      done();
+    });
+  };
+};
+
+exports.clientBatch = function(client) {
+  return function(done) {
+    var batch = [
+      client.request('add', [4, 9]),
+      client.request('add', [10, 22])
+    ];
+    client.request(batch, function(err, responses) {
+      should.not.exist(err);
+      should.exist(responses);
+      responses.should.be.instanceof(Array).and.have.length(2);
+      responses[0].result.should.equal(4 + 9);
+      responses[1].result.should.equal(10 + 22);
+      done();
+    });
+  };
+};

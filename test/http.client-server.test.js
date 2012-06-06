@@ -38,6 +38,10 @@ describe('jayson http', function() {
 
     it('should support reviving and replacing', support.clientReviveReplace(client));
 
+    it('should be able to handle a notification', support.clientNotification(client));
+
+    it('should be able to handle a batch request', support.clientBatch(client));
+
   });
 
   after(function() {

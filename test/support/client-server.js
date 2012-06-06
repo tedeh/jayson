@@ -1,9 +1,6 @@
 var should = require('should');
 var jayson = require(__dirname + '/../../');
 
-// TODO Remove
-Date.prototype.toJSON = function() { return {$date: this.getTime()}; };
-
 exports.methods = {
   add: function(a, b, callback) {
     callback(null, a + b);
@@ -11,21 +8,37 @@ exports.methods = {
   error: function(callback) {
     callback(this.error(-1000, 'An error message'));
   },
-  addOneSecond: function(date, callback) {
-    if(!(date instanceof Date)) return callback(this.error(-1000, 'Argument not a "Date"'));
-    date.setTime(date.getTime() + 1000);
-    callback(null, date);
+  incrementCounterBy: function(counter, value, callback) {
+    if(!(counter instanceof Counter)) {
+      return callback(this.error(-1000, 'Argument not an instance of Counter'));
+    }
+    counter.incrementBy(value);
+    callback(null, counter);
   }
 };
 
+var Counter = exports.Counter = function(value) {
+  this.count = typeof(value) === 'number' ? value : 0;
+};
+
+Counter.prototype.incrementBy = function(value) {
+  this.count += value;
+};
+
 exports.options = {
-  reviver: function(k, v) {
-    if(v && typeof(v.$date) === 'number') return new Date(v.$date);
-    return v;
+  reviver: function(key, value) {
+    if(value && value.$class === 'counter') {
+      var obj = new Counter;
+      for(var prop in value.$props) obj[prop] = value.$props[prop];
+      return obj;
+    }
+    return value;
   },
-  replacer: function(k, v) {
-    if(v instanceof Date) return {$date: v.getTime()};
-    return v;
+  replacer: function(key, value) {
+    if(value instanceof Counter) {
+      return {$class: 'counter', $props: {count: value.count}};
+    }
+    return value;
   }
 };
 
@@ -65,15 +78,14 @@ exports.clientError = function(client) {
 
 exports.clientReviveReplace = function(client) {
   return function(done) {
-    var now = new Date();
-    var nowTime = now.getTime(); // so we can directly manipulate the instance
-    client.request('addOneSecond', [now], function(err, error, result) {
+    var a = 2, b = 1;
+    var instance = new Counter(a);
+    client.request('incrementCounterBy', [instance, b], function(err, error, result) {
       should.not.exist(err);
       should.not.exist(error);
       should.exist(result);
-      result.should.be.instanceof(Date);
-      var time = result.getTime();
-      time.should.equal(nowTime + 1000);
+      result.should.be.instanceof(Counter);
+      result.count.should.equal(a + b);
       done();
     });
   };

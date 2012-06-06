@@ -6,6 +6,7 @@ module.exports = jayson.server({
       if(n < 2) return n;
       return fib(n - 1) + fib(n - 2);
     };
+    var result = fib(n);
     callback(null, fib(n));
   }
 });

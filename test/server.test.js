@@ -1,5 +1,6 @@
 var should = require('should');
 var jayson = require(__dirname + '/../');
+var support = require(__dirname + '/support/client-server');
 var utils = jayson.utils;
 
 describe('jayson server object', function() {
@@ -313,35 +314,18 @@ describe('jayson server instance', function() {
 
   describe('reviver and replacer', function() {
 
-    var options = {
-      reviver: function(k, v) {
-        if(v && typeof(v.$date) === 'number') return new Date(v.$date);
-        return v;
-      },
-      replacer: function(k, v) {
-        if(v instanceof Date) return {'$date': v.getTime()};
-        return v;
-      }
-    };
+    var server = jayson.server(support.methods, support.options);
 
-    var server = jayson.server({
-      addOneSecond: function(date, callback) {
-        if(!(date instanceof Date)) return callback(true);
-        date.setTime(date.getTime() + 1000);
-        return callback(null, date);
-      }
-    }, options);
-
-    it('should be able to revive a Date object', function(done) {
-      var date = new Date();
-      var dateSerialized = {$date: date.getTime()};
-      var request = JSON.stringify(utils.request('addOneSecond', [dateSerialized]));
+    it('should be able to an instantiated object', function(done) {
+      var a = 4, b = -3;
+      var counter = new support.Counter(a);
+      var request = JSON.stringify(utils.request('incrementCounterBy', [counter, b]), support.options.replacer);
       server.call(request, function(err, response) {
         should.not.exist(err);
         should.exist(response);
         should.exist(response.result);
-        response.result.should.be.an.instanceof(Date);
-        response.result.getTime().should.equal(date.getTime() + 1000);
+        response.result.should.be.an.instanceof(support.Counter);
+        response.result.count.should.equal(a + b);
         done();
       });
     });

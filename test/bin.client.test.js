@@ -1,101 +1,82 @@
 var should = require('should');
 var jayson = require(__dirname + '/..');
+var support = require('./support/client-server');
+
 var exec = require('child_process').exec;
-var url = require('url');
 
-var methods = {
-  add: function(a, b, callback) { callback(null, a + b); }
-};
+var bin = __dirname + '/../bin/jayson.js';
 
-var binaryPath = __dirname + '/../bin/jayson.js';
+describe('jayson binary', function() {
 
-describe('A HTTP server', function() {
-  var server = jayson.server(methods);
-  var http = server.http();
+  var server = jayson.server(support.methods, support.options);
 
-  it('should be able to listen to a temporary socket', function(done) {
-    http.listen(__dirname + '/bin.test.socket', done);
-  });
+  var http = null;
 
-  after(function(done) {
-    http.on('close', done);
-    http.close();
-  });
+  describe('port server', function() {
 
-});
+    var hostname = 'localhost';
+    var port = 1337;
+    var url = require('url').format({
+      port: port,
+      protocol: 'http',
+      hostname: hostname
+    });
 
-describe('A HTTP socket server', function() {
-  var server = jayson.server(methods);
-  var path = __dirname + '/bin.test.socket';
-  var http = server.http();
-
-  before(function(done) {
-    http.listen(path, done);
-  });
+    before(function(done) {
+      http = server.http();
+      http.listen(port, hostname, done);
+    });
 
   it('should be callable', function(done) {
-    var args = formatArgs(binaryPath, {
-      socket: path,
-      method: 'add',
-      params: JSON.stringify([1, 2]),
-      json: true
-    });
-    exec(args, function(err, stdout, stderr) {
-      should.not.exist(err);
-      var json = {};
-      (function() {
-        json = JSON.parse(stdout);
-      }).should.not.throw();
-      json.should.have.property('id');
-      json.should.have.property('result');
-      json.result.should.equal(3);
-      stderr.should.equal('');
-      done();
-    });
-  });
-
-  after(function(done) {
-    http.on('close', done);
-    http.close();
-  });
-});
-
-describe('A HTTP port server', function() {
-  var server = jayson.server(methods);
-  var http = server.http();
-  var hostname = 'localhost';
-  var port = 3000;
-  var urlStr = url.format({
-    port: port,
-    protocol: 'http',
-    hostname: hostname
-  });
-
-  before(function(done) {
-    http.listen(port, hostname, done);
-  });
-
-  it('should be callable', function(done) {
-    var args = formatArgs(binaryPath, {
-      url: urlStr,
-      method: 'add',
-      params: JSON.stringify([3, 4]),
-      json: true
+    var a = 3, b = 4;
+    var args = formatArgs(bin, {
+      url: url, method: 'add', json: true,
+      params: JSON.stringify([a, b])
     });
     exec(args, function(err, stdout, stderr) {
       should.not.exist(err);
       should.exist(stdout, stderr);
-      var json = {};
-      (function() { json = jayson.utils.parse(stdout); }).should.not.throw();
+      var json = JSON.parse(stdout);
       json.should.have.property('id');
       json.should.have.property('result');
-      json.result.should.equal(7);
+      json.result.should.equal(a + b);
       stderr.should.equal('');
       done();
     });
   });
 
-  after(function(done) {
+  });
+
+  describe('socket server', function() {
+
+    var socketPath = __dirname + '/support/bin.test.socket';
+
+    before(function(done) {
+      http = server.http();
+      http.listen(socketPath, done);
+    });
+
+    it('should be callable', function(done) {
+      var a = 1, b = 2;
+      var args = formatArgs(bin, {
+        socket: socketPath, method: 'add', json: true,
+        params: JSON.stringify([a, b])
+      });
+      exec(args, function(err, stdout, stderr) {
+        should.not.exist(err);
+        var json = JSON.parse(stdout);
+        json.should.have.property('id');
+        json.should.have.property('result');
+        json.result.should.equal(a + b);
+        stderr.should.equal('');
+        done();
+      });
+    });
+
+  });
+
+  afterEach(function(done) {
+    if(!http) done();
     http.on('close', done);
     http.close();
   });

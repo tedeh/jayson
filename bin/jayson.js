@@ -13,7 +13,7 @@ var eyes = require('eyes');
 // initialize program and define arguments
 program.version(pkg.version)
        .option('-m, --method [name]', 'Method', String)
-       .option('-p, --params [json]', 'Array or Object to use as parameters', jayson.utils.parse)
+       .option('-p, --params [json]', 'Array or Object to use as parameters', JSON.parse)
        .option('-u, --url [url]', 'URL to server', url.parse)
        .option('-q, --quiet', 'Only output the response value and any errors', Boolean)
        .option('-s, --socket [path]', 'Path to UNIX socket', parseSocket)
@@ -56,7 +56,7 @@ client.request(program.method, program.params, function(err, response) {
   }
 
   if(!response || program.json) {
-    std.out('%s', JSON.stringify(response)).replace("\n", ""), true);
+    std.out('%s', JSON.stringify(response).replace("\n", ""), true);
     return process.exit(0);
   }
 

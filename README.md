@@ -58,8 +58,8 @@ client.request('add', [1, 1], function(err, error, response) {
 ## Installation
 
 Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by
-running `npm install jayson`. Do a global install with `npm install --global
-jayson` if you want to use the CLI interface from anywhere on your system.
+executing `npm install jayson` in your shell. Do a global install with `npm install --global
+jayson` if you want to use the jayson command line client from anywhere on your system.
 
 ## Requirements
 
@@ -72,7 +72,7 @@ install`.
 
 - Change directory to the repository root
 - Install the testing framework
-  ([mocha](https://github.com/visionmedia/mocha) and
+  ([mocha](https://github.com/visionmedia/mocha) together with
   [should](https://github.com/visionmedia/should.js)) by executing `npm install
   --dev`
 - Run the tests with `make test` or `npm test`
@@ -81,49 +81,56 @@ install`.
 
 ### Client
 
+The client classes are all available by using `require('jayson').client`.
+
+#### Client interfaces
+
+* `client.http` Client that enables interfacing with HTTP protocols. See [http.request](http://nodejs.org/docs/v0.6.19/api/http.html#http_http_request_options_callback) for supported options.
+* `client.jquery`
+
 #### Notification requests
 
 #### Batch requests
 
 ### Server
 
-The server (and everything related to it) is accesible as `require
-('jayson').server`. It supports several interfaces which are accesible as properties of a
-server instance.
+The server classes are all available with `require('jayson').server`. The server sports several interfaces that can be accessed as properties of an instance of `require('jayson').server` (long for `JaysonServer`). 
 
 #### Server interfaces
 
-* `server.http` - A HTTP server that inherits from [http.Server](http://nodejs.org/docs/latest/api/http.html#http_class_http_server)
-* `server.https` - A HTTPS server that inherits from [https.Server](http://nodejs.org/docs/latest/api/https.html#https_class_https_server)
-* `server.middleware` - A method that returns a [Connect](http://www.senchalabs.org/connect/)/[Express](http://expressjs.com/) compatible middleware
+* `server` - Base interface for a server that supports receiving JSON-RPC 2.0 requests.
+* `server.http` - HTTP server that inherits from [http.Server](http://nodejs.org/docs/latest/api/http.html#http_class_http_server).
+* `server.https` - HTTPS server that inherits from [https.Server](http://nodejs.org/docs/latest/api/https.html#https_class_https_server).
+* `server.middleware` - Method that returns a [Connect](http://www.senchalabs.org/connect/)/[Express](http://expressjs.com/) compatible middleware.
 
-##### Using multiple interfaces at the same time
+##### Using many interfaces at the same time
 
-A Jayson server can use multiple interfaces at the same time. 
+A Jayson server can use many interfaces at the same time.
 
-Example of a server that listens has both an `http` and a `https` interface:
+Example of a server that listens has both a `http` and a `https` interface:
 
-    // server.js
-    var jayson = require('jayson');
+```javascript
+var jayson = require('jayson');
 
-    var server = jayson.server({
-      add: function(a, b, callback) { return callback(null, a + b); }
-    });
+ var server = jayson.server({
+   add: function(a, b, callback) { return callback(null, a + b); }
+ });
 
-    // http is now an instance of require('http').Server
-    var http = server.http();
+ // http is now an instance of require('http').Server
+ var http = server.http();
 
-    // https is now an instance of require('https').Server
-    var https = server.https({
-      cert: require('fs').readFileSync('mycert.pem'),
-      key require('fs').readFileSync('mykey.pem')
-    });
+ // https is now an instance of require('https').Server
+ var https = server.https({
+   cert: require('fs').readFileSync('cert.pem'),
+   key require('fs').readFileSync('key.pem')
+ });
 
-    http.listen(80); // let http listen to localhost:3000
+ http.listen(80); // let http listen to localhost:3000
 
-    https.listen(443) // let https listen to localhost:443
+ https.listen(443); // let https listen to localhost:443
+```
 
-#### Methods of the Server instance
+#### Server methods
 
 ##### Server([methods[, [options]]])
 
@@ -135,7 +142,7 @@ invoked with `new`.
 
 ##### Server.prototype.method(name[, definition])
 
-Adds a method to the server. Returns void.
+Adds a method to the server.
 
 * `name` (String) Name of method
 * `definition` (Function|JaysonClient) Function definition that can be either a regular JavaScript function that must take a callback as the last argument, or an instance of `jayson.Client` for relay functionality.
@@ -175,38 +182,39 @@ might be used to delegate computationally expensive functions into a separate
 fork/thread/server or to abstract a cluster of servers behind a common
 interface. Example:
 
-    // server_public.js
-    var jayson = require('jayson');
+```javascript
+// server_public.js
+var jayson = require('jayson');
 
-    // create a server where "add" will relay a localhost-only server
-    var server = jayson.server({
-      add: jayson.client.http({
-        hostname: 'localhost',
-        port: 3001
-      })
-    });
+// create a server where "add" will relay a localhost-only server
+var server = jayson.server({
+  add: jayson.client.http({
+    hostname: 'localhost',
+    port: 3001
+  })
+});
 
-    // let the server listen to *:3000
-    server.http().listen(3000, '0.0.0.0');
+// let the server listen to *:3000
+server.http().listen(3000, '0.0.0.0');
+```
 
+```javascript
+// server_private.js
+var jayson = require('jayson');
 
-    // server_private.js
-    var jayson = require('jayson');
+var server = jayson.server({
+  add: function(a, b, callback) {
+    callback(null, a + b);
+  }
+});
 
-    var server = jayson.server({
-      add: function(a, b, callback) {
-        callback(null, a + b);
-      }
-    });
-
-    // let the private server listen to localhost:3001
-    server.http().listen(3001);
+// let the private server listen to localhost:3001
+server.http().listen(3001);
+```
 
 ### Revivers and Replacers
 
-The data format JSON is great in all its simplicity, but it lacks support for
-expressing dates and similar class instances in a non-destructive
-manner. Fortunately the JSON methods in JavaScript (`JSON.parse` and
+JSON is a great data format, but it lacks support for representing types other than those defined in the (JSON specification)[http://www.json.org/] Fortunately the JSON methods in JavaScript (`JSON.parse` and
 `JSON.stringify`) provides options for custom serialization/deserialization
 routines. Jayson allows you to pass your own routines as options to both clients
 and servers.
@@ -215,80 +223,85 @@ Simple example transferring the state of an object between a client and a server
 
 Shared code between the server and the client:
 
-    // shared.js
-    var MyCounter = exports.myCounter = function(value) {
-      this.count = value || 0;
-    };
+```javascript
+// shared.js
+var Counter = exports.Counter = function(value) {
+  this.count = value || 0;
+};
 
-    MyCounter.prototype.increment = function() {
-      this.count += 1;
-    };
+Counter.prototype.increment = function() {
+  this.count += 1;
+};
 
-    exports.replacer = function(key, value) {
-      if(value instanceof MyCounter) {
-        return {$class: 'myCounter', $props: {count: value.count}};
-      }
-      return value;
-    };
+exports.replacer = function(key, value) {
+  if(value instanceof Counter) {
+    return {$class: 'counter', $props: {count: value.count}};
+  }
+  return value;
+};
 
-    exports.reviver = function(key, value) {
-      if(v && v.$class in exports) {
-        var obj = new exports[v.$class];
-        for(var prop in v.$props) obj[prop] = v.$props[prop];
-        return obj;
-      }
-      return value;
-    };
+exports.reviver = function(key, value) {
+  if(v && v.$class === 'counter') {
+    var obj = new Counter;
+    for(var prop in v.$props) obj[prop] = v.$props[prop];
+    return obj;
+  }
+  return value;
+};
+```
 
 The server:
 
-    // server.js
-    var jayson = require('jayson');
-    var shared = require('./shared');
+```javascript
+// server.js
+var jayson = require('jayson');
+var shared = require('./shared');
 
-    // Set the reviver/replacer options
-    var options = {
-      reviver: shared.reviver,
-      replacer: shared.replacer
-    };
+// Set the reviver/replacer options
+var options = {
+  reviver: shared.reviver,
+  replacer: shared.replacer
+};
 
-    // create a server
-    var server = jayson.server({
-      increment: function(myCounter, callback) {
-        myCounter.increment();
-        callback(null, instance);
-      }
-    }, options);
+// create a server
+var server = jayson.server({
+  increment: function(counter, callback) {
+    counter.increment();
+    callback(null, instance);
+  }
+}, options);
 
-    // let the server listen to localhost:3000
-    server.http().listen(3000);
+// let the server listen to for http connections on localhost:3000
+server.http().listen(3000);
+```
 
 And a client invoking "increment" on the above server:
 
-    // client.js
-    var jayson = require('jayson');
-    var shared = require('./shared');
+```javascript
+// client.js
+var jayson = require('jayson');
+var shared = require('./shared');
 
-    // create a client with the shared reviver and replacer
-    var client = jayson.client.http({
-      port: 3000,
-      hostname: 'localhost',
-      reviver: shared.reviver,
-      replacer: shared.replacer
-    });
+// create a client with the shared reviver and replacer
+var client = jayson.client.http({
+  port: 3000,
+  hostname: 'localhost',
+  reviver: shared.reviver,
+  replacer: shared.replacer
+});
 
-    // the object
-    var instance = new shared.myCounter(2);
+// the object
+var instance = new shared.Counter(2);
 
-    // invoke "increment"
-    client.request('increment', [instance], function(err, error, response) {
-      if(err) throw err;
-      console.log(response instanceof shared.myCounter); // true
-      console.log(response.count); // 3!
-    });
+// invoke "increment"
+client.request('increment', [instance], function(err, error, response) {
+  if(err) throw err;
+  console.log(response instanceof shared.Counter); // true
+  console.log(response.count); // 3!
+});
+```
 
-Also note that it is possible to define a `toJSON` method for any JavaScript object. Unfortunately there is
-no `fromJSON` so the _reviver_ always has to be set up manually.
+Instead of using a replacer, it is possible to define a `toJSON` method for any JavaScript object. Unfortunately there is no corresponding method to define for reviving objects, so the _reviver_ always has to be set up manually.
 
 ### Contributing
 

@@ -132,6 +132,8 @@ var jayson = require('jayson');
 
 #### Server methods
 
+The Server class is accessible with `require('jayson').Server`.
+
 ##### Server([methods[, [options]]])
 
 Constructor for a server. Will return an instance of `Server` even if not

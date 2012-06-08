@@ -18,35 +18,39 @@ that does it right yourself.
 
 A simple example of a JSON-RPC 2.0 server using HTTP:
 
-    // server.js
-    var jayson = require('jayson');
+```javascript
+// server.js
+var jayson = require('jayson');
 
-    // create a server
-    var server = jayson.server({
-      add: function(a, b, callback) {
-        callback(null, a + b);
-      }
-    });
+// create a server
+var server = jayson.server({
+  add: function(a, b, callback) {
+    callback(null, a + b);
+  }
+});
 
-    // let a http server listen to localhost:3000
-    server.http().listen(3000);
+// let a http server listen to localhost:3000
+server.http().listen(3000);
+```
 
 And a client invoking "add" on the above server:
 
-    // client.js
-    var jayson = require('jayson');
+```javascript
+// client.js
+var jayson = require('jayson');
 
-    // create a client
-    var client = jayson.client.http({
-      port: 3000,
-      hostname: 'localhost'
-    });
+// create a client
+var client = jayson.client.http({
+  port: 3000,
+  hostname: 'localhost'
+});
 
-    // invoke "add"
-    client.request('add', [1, 1], function(err, error, response) {
-      if(err) throw err;
-      console.log(response); // 2!
-    });
+// invoke "add"
+client.request('add', [1, 1], function(err, error, response) {
+  if(err) throw err;
+  console.log(response); // 2!
+});
+```
 
 
 ## Features

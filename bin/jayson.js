@@ -56,7 +56,7 @@ client.request(program.method, program.params, function(err, response) {
   }
 
   if(!response || program.json) {
-    std.out('%s', jayson.utils.stringify(response).replace("\n", ""), true);
+    std.out('%s', JSON.stringify(response)).replace("\n", ""), true);
     return process.exit(0);
   }
 

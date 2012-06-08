@@ -95,8 +95,7 @@ server instance.
 
 ##### Using multiple interfaces at the same time
 
-A Jayson server can use multiple interfaces at the same time. When invoking an interface method, the method
-returns an instance of the class that represents the interface which can then be accesed by itself.
+A Jayson server can use multiple interfaces at the same time. 
 
 Example of a server that listens has both an `http` and a `https` interface:
 
@@ -107,10 +106,10 @@ Example of a server that listens has both an `http` and a `https` interface:
       add: function(a, b, callback) { return callback(null, a + b); }
     });
 
-    // http is a separate instance of require('http').Server
+    // http is now an instance of require('http').Server
     var http = server.http();
 
-    // https is separate instance of require('https').Server
+    // https is now an instance of require('https').Server
     var https = server.https({
       cert: require('fs').readFileSync('mycert.pem'),
       key require('fs').readFileSync('mykey.pem')
@@ -124,10 +123,10 @@ Example of a server that listens has both an `http` and a `https` interface:
 
 ##### Server([methods[, [options]]])
 
-Constructor method for a server. Will return an instance of `Server` even if not
+Constructor for a server. Will return an instance of `Server` even if not
 invoked with `new`.
 
-* `methods` (Object) Object of methods (name -> func) to assign to this instance
+* `methods` (Object) Object of name and method pairs (name -> func)
 * `options` (Object) Object of settings that will propagate to all interfaces
 
 ##### Server.prototype.method(name[, definition])
@@ -135,7 +134,7 @@ invoked with `new`.
 Adds a method to the server. Returns void.
 
 * `name` (String) Name of method
-* `definition` (Function|JaysonClient) Function definition that can be either a regular JavaScript function that must take a callback as the last argument, or an instance of `jayson.client` for relay functionality.
+* `definition` (Function|JaysonClient) Function definition that can be either a regular JavaScript function that must take a callback as the last argument, or an instance of `jayson.Client` for relay functionality.
 
 ##### Server.prototype.hasMethod(name)
 
@@ -145,8 +144,7 @@ Checks if a method with `name` exists on the server. Returns a `Boolean`.
 
 ##### Server.prototype.removeMethod(name)
 
-Removes a method from the server. Returns nothing regardless of if the method was removed
-or not.
+Removes a method from the server. Returns void.
 
 * `name` (String) Name of method
 

@@ -44,7 +44,7 @@ describe('A HTTP socket server', function() {
       should.not.exist(err);
       var json = {};
       (function() {
-        json = jayson.utils.parse(stdout);
+        json = JSON.parse(stdout);
       }).should.not.throw();
       json.should.have.property('id');
       json.should.have.property('result');

@@ -52,8 +52,15 @@ client.request('add', [1, 1], function(err, error, response) {
 });
 ```
 
-
 ## Features
+
+* Servers that listen to many interfaces at once
+* Supports HTTP client and server connections
+* jQuery AJAX client
+* Automatic request relaying to other servers 
+* Simple process forking for expensive computations
+* JSON Reviving and Replacing for advanced (de)serialization of objects
+* Fully tested to comply with the [official specification][jsonrpc-spec]
 
 ## Installation
 
@@ -87,7 +94,7 @@ The client classes are all available by using `require('jayson').client`.
 
 * `client` Base class for interfacing with a server.
 * `client.http` HTTP interface. See [http.request](http://nodejs.org/docs/v0.6.19/api/http.html#http_http_request_options_callback) for supported options.
-* `client.fork` Node.js child_process/fork interface that typically only used internally.
+* `client.fork` Node.js child_process/fork interface.
 * `client.jquery` Wrapper around `jQuery.ajax`.
 
 #### Notification requests
@@ -132,7 +139,7 @@ server.http().listen(3000);
 
 #### Batch requests
 
-A batch consists of several requests that are processed at the same time on the server. Doing a batch request is refreshingly simple in Jayson, and consists of creating an Array that holds callback-less requests that is then fed into a `client.prototype.request` call itself.
+A batch consists of several requests that are processed at the same time on the server. Doing a batch request is very simple in Jayson, and consists of creating an Array that holds callback-less requests that is then fed into a `client.prototype.request` call itself.
 
 ```javascript
 // client.js
@@ -436,6 +443,12 @@ client.request('increment', [instance], function(err, error, response) {
 ```
 
 Instead of using a replacer, it is possible to define a `toJSON` method for any JavaScript object. Unfortunately there is no corresponding method to define for reviving objects, so the _reviver_ always has to be set up manually.
+
+### Forking
+
+It is possible to create an automatic fork.
+
+TODO Document forking.
 
 ### Contributing
 

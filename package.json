@@ -23,7 +23,7 @@
   "devDependencies": {
     "should": "*",
     "mocha": "*",
-    "express": "*",
+    "connect": "*",
     "uglify-js": "*"
   }
 }

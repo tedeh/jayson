@@ -1,22 +1,23 @@
 # Jayson
 
-Jayson is a JSON-RPC 2.0 compliant (at the time of writing [version
-2011-12-11][jsonrpc-spec]) server and client written in JavaScript that wants to
-be as clean and simple to use as possible. 
+Jayson is a [JSON-RPC 2.0 compliant][jsonrpc-spec] server and client written in [nodejs/javascript][node.js] that wants to be as simple as possible to use.
 
 [jsonrpc-spec]: http://jsonrpc.org/spec.html 
 [node.js]: http://nodejs.org/
 
-## Rationale / Why
+## Features
 
-Current implementations of JSON-RPC in node.js are either outdated, unmaintained or
-not simple enough to use. The appropriate course of action when other libraries
-do not do it properly is of course to reinvent the wheel and write an implementation
-that does it right yourself.
+* Servers that listen to many interfaces at once
+* Supports HTTP client and server connections
+* jQuery AJAX client
+* Automatic request relaying to other servers 
+* Simple process forking for expensive computations
+* JSON Reviving and Replacing for advanced (de)serialization of objects
+* Fully tested to comply with the [official specification][jsonrpc-spec]
 
 ## Example
 
-A simple example of a JSON-RPC 2.0 server using HTTP:
+A basic JSON-RPC 2.0 server using HTTP:
 
 ```javascript
 // server.js
@@ -29,11 +30,11 @@ var server = jayson.server({
   }
 });
 
-// let a http server listen to localhost:3000
+// Bind a http interface to the server and let it listen to localhost:3000
 server.http().listen(3000);
 ```
 
-And a client invoking "add" on the above server:
+A client invoking `add` on the above server:
 
 ```javascript
 // client.js
@@ -52,28 +53,17 @@ client.request('add', [1, 1], function(err, error, response) {
 });
 ```
 
-## Features
-
-* Servers that listen to many interfaces at once
-* Supports HTTP client and server connections
-* jQuery AJAX client
-* Automatic request relaying to other servers 
-* Simple process forking for expensive computations
-* JSON Reviving and Replacing for advanced (de)serialization of objects
-* Fully tested to comply with the [official specification][jsonrpc-spec]
-
 ## Installation
 
-Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by
-executing `npm install jayson` in your shell. Do a global install with `npm install --global
-jayson` if you want to use the jayson command line client from anywhere on your system.
+Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want to the `jayson` client binary in your PATH.
 
 ## Requirements
 
-Jayson does not have any dependencies that cannot be resolved with a simple `npm
-install`.
+Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It has been tested with the following node.js versions:
 
-- node.js (>= 0.5.0 < 0.7.0)
+- node.js v0.4.12 (stable) (should work on all v0.4.x versions)
+- node.js v0.6.18 (stable) (should work all v0.6.x versions)
+- node.js v0.7.10 (dev) (probably works on all v0.7.x versions)
 
 ### Running tests
 
@@ -88,18 +78,20 @@ install`.
 
 ### Client
 
-The client classes are all available by using `require('jayson').client`.
+The client classes are available as the `Client` or `client` property of `require('jayson')`.
 
 #### Client interfaces
 
-* `client` Base class for interfacing with a server.
-* `client.http` HTTP interface. See [http.request](http://nodejs.org/docs/v0.6.19/api/http.html#http_http_request_options_callback) for supported options.
-* `client.fork` Node.js child_process/fork interface.
-* `client.jquery` Wrapper around `jQuery.ajax`.
+* `Client` Base class for interfacing with a server.
+* `Client.http` HTTP interface. See [http.request](http://nodejs.org/docs/v0.6.19/api/http.html#http_http_request_options_callback) for supported options.
+* `Client.fork` Node.js child_process/fork interface.
+* `Client.jquery` Wrapper around `jQuery.ajax`.
 
 #### Notification requests
 
 Notification requests are for cases where the reply from the server is not important and should be ignored. This is accomplished by setting the `id` property of a request object to `null`.
+
+A client doing a notification request:
 
 ```javascript
 // client.js
@@ -115,6 +107,7 @@ client.request('ping', [], null, function(err) {
   // request was received successfully
 });
 ```
+A server:
 
 ```javascript
 // server.js
@@ -188,6 +181,7 @@ server.http().listen(3000);
 ##### Notes
 
 * See the [Official JSON-RPC 2.0 Specification][jsonrpc-spec] for additional information on how Jayson handles different types of batches, mainly with regards to notifications, request errors and so forth.
+* There is no guarantee that the results will be in the same order as request Array `request`. To find the right result, compare the ID from the batch with the ID in the result.
 
 #### Client interfaces
 
@@ -209,24 +203,31 @@ The Client class is accessible via `require('jayson').Client`. All interfaces in
 
 ##### Client.prototype.request(method, params, [id, [callback]])
 
-Requests a method on the bound server.
+Creates a request and executes it, or returns a request object.
 
-* `method` (String) Name of method to call
-* `params` (Object|Array) Parameters to pass to the method.
-* `[id]` (String|Number) Optional ID. If null, indicates a notification request.
-* `[callback]` (Function) Optional callback. If not set, returns a request (typically used for creating batches) rather than immediately dispatching it.
+* `method` `String` Name of method to call
+* `params` `Object|Array` Parameters to pass to the method.
+* `[id]` `String|Number` Optional ID. If null, indicates a notification request.
+* `[callback]` Function` Optional callback. If not set, returns a request (typically used for creating batches) rather than immediately dispatching it.
 
 ### Server
 
-The server classes are all available with `require('jayson').Server`. The server sports several interfaces that can be accessed as properties of an instance of `require('jayson').Server` (long for `JaysonServer`). 
+The server classes are available as the `Server` or `server` property of `require('jayson')`.
+
+The server also sports several interfaces that can be accessed as properties of an instance of `Server`.
 
 #### Server interfaces
 
-* `server` - Base interface for a server that supports receiving JSON-RPC 2.0 requests.
-* `server.http` - HTTP server that inherits from [http.Server](http://nodejs.org/docs/latest/api/http.html#http_class_http_server).
-* `server.https` - HTTPS server that inherits from [https.Server](http://nodejs.org/docs/latest/api/https.html#https_class_https_server).
-* `server.middleware` - Method that returns a [Connect](http://www.senchalabs.org/connect/)/[Express](http://expressjs.com/) compatible middleware.
-* `server.fork` Creates a child process that can take requests via `client.fork`
+* `Server` - Base interface for a server that supports receiving JSON-RPC 2.0 requests.
+* `Server.http` - HTTP server that inherits from [http.Server][nodejs_doc_http_server].
+* `Server.https` - HTTPS server that inherits from [https.Server][nodejs_doc_http_server].
+* `Server.middleware` - Method that returns a [Connect][connect]/[Express][express] compatible middleware function.
+* `Server.fork` Creates a child process that can take requests via `client.fork`
+
+[nodejs_doc_http_server]: http://nodejs.org/docs/latest/api/http.html#http_class_http_server
+[nodejs_doc_https_server]: http://nodejs.org/docs/latest/api/https.html#https_class_https_server
+[connect]: http://www.senchalabs.org/connect/
+[express]: http://expressjs.com/
 
 ##### Server.http(s)
 
@@ -244,32 +245,34 @@ TODO Document the fork server.
 
 A Jayson server can use many interfaces at the same time.
 
-Example of a server that listens has both a `http` and a `https` interface:
+Example of a server that listens has both can take both `http` and a `https` requests:
 
 ```javascript
 var jayson = require('jayson');
 
- var server = jayson.server({
-   add: function(a, b, callback) { return callback(null, a + b); }
- });
+var server = jayson.server({
+  add: function(a, b, callback) { return callback(null, a + b); }
+});
 
- // http is now an instance of require('http').Server
- var http = server.http();
+// http is now an instance of require('http').Server
+var http = server.http();
 
- // https is now an instance of require('https').Server
- var https = server.https({
-   cert: require('fs').readFileSync('cert.pem'),
-   key require('fs').readFileSync('key.pem')
- });
+// https is now an instance of require('https').Server
+var https = server.https({
+  cert: require('fs').readFileSync('cert.pem'),
+  key require('fs').readFileSync('key.pem')
+});
 
- http.listen(80); // let http listen to localhost:3000
+http.listen(80); // let http listen to localhost:3000
 
- https.listen(443); // let https listen to localhost:443
+https.listen(443); // let https listen to localhost:443
 ```
 
 #### Using the server as a relay
 
-Passing an instance of a client as a method (to the server) allows the server to relay incoming RPC calls to the corresponding method on the server the client is pointing to. This might be used to delegate computationally expensive functions into a separate fork/thread/server or to abstract a cluster of servers behind a common interface. Example:
+Passing an instance of a client as a method (to the server) allows the server to relay incoming requests to another server. This might be used to delegate computationally expensive functions into a separate fork/server or to abstract a cluster of servers behind a common interface.
+
+A public server listening on *:3000:
 
 ```javascript
 // server_public.js
@@ -287,6 +290,8 @@ var server = jayson.server({
 server.http().listen(3000, '0.0.0.0');
 ```
 
+A private server listening on localhost:3001:
+
 ```javascript
 // server_private.js
 var jayson = require('jayson');
@@ -301,11 +306,14 @@ var server = jayson.server({
 server.http().listen(3001);
 ```
 
+Every request to `add` on the public server will now relay the request to the private server.
+
 #### Server events
 
 In addition to specific events that certain interfaces emit, all servers will emit the following events:
 
 * `request` Emitted when the server receives a request
+* `response` Emitted when the server is returning a response
 
 #### Server methods
 

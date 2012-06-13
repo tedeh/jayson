@@ -17,7 +17,7 @@ Jayson is a [JSON-RPC 2.0 compliant][jsonrpc-spec] server and client written in 
 
 ## Example
 
-A basic JSON-RPC 2.0 server using HTTP:
+A very basic JSON-RPC 2.0 server via HTTP:
 
 ```javascript
 // server.js
@@ -55,15 +55,15 @@ client.request('add', [1, 1], function(err, error, response) {
 
 ## Installation
 
-Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want to the `jayson` client binary in your PATH.
+Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want the `jayson` client binary in your PATH.
 
 ## Requirements
 
 Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It has been tested with the following node.js versions:
 
-- node.js v0.4.12 (stable) (should work on all v0.4.x versions)
-- node.js v0.6.18 (stable) (should work all v0.6.x versions)
-- node.js v0.7.10 (dev) (probably works on all v0.7.x versions)
+- node.js v0.4.12 (stable branch) (should work on all v0.4.x versions)
+- node.js v0.6.18 (stable branch) (should work all v0.6.x versions)
+- node.js v0.7.10 (dev branch) (probably works on all v0.7.x versions)
 
 ### Running tests
 
@@ -78,7 +78,7 @@ Jayson does not have any special dependencies that cannot be resolved with a sim
 
 ### Client
 
-The client classes are available as the `Client` or `client` property of `require('jayson')`.
+The client is available as the `Client` or `client` property of `require('jayson')`.
 
 #### Client interfaces
 
@@ -86,6 +86,8 @@ The client classes are available as the `Client` or `client` property of `requir
 * `Client.http` HTTP interface. See [http.request](http://nodejs.org/docs/v0.6.19/api/http.html#http_http_request_options_callback) for supported options.
 * `Client.fork` Node.js child_process/fork interface.
 * `Client.jquery` Wrapper around `jQuery.ajax`.
+
+[nodejs_doc_http_request]
 
 #### Notification requests
 
@@ -348,7 +350,7 @@ Removes a method from the server. Returns void.
 
 ##### Server.prototype.error([code[, message[, data]]])
 
-Returns a JSON-RPC error object. Can be used to generate a custom error inside a method or to intentionally return [one of the official JSON-RPC 2.0 errors](http://www.jsonrpc.org/specification#error_object). The error returned by this method can be used as the first argument to a RPC method callback.
+Returns a JSON-RPC error object. Can be used to generate a custom error inside a method or to intentionally return [one of the official JSON-RPC 2.0 errors][jsonrpc-spec#error_object]. The error returned by this method can be used as the first argument to a RPC method callback.
 
 * `code` (Number) Optional integer code
 * `message` (String) Optional string description
@@ -363,7 +365,7 @@ Calls a method on the server instance. Normally not used directly but can be use
 
 ### Revivers and Replacers
 
-JSON is a great data format, but it lacks support for representing types other than those defined in the (JSON specification)[http://www.json.org/] Fortunately the JSON methods in JavaScript (`JSON.parse` and
+JSON is a great data format, but it lacks support for representing types other than those defined in the [JSON specification][jsonrpc-spec] Fortunately the JSON methods in JavaScript (`JSON.parse` and
 `JSON.stringify`) provides options for custom serialization/deserialization
 routines. Jayson allows you to pass your own routines as options to both clients
 and servers.

@@ -61,9 +61,9 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It has been tested with the following node.js versions:
 
-- node.js v0.4.12 (stable branch) (should work on all v0.4.x versions)
-- node.js v0.6.18 (stable branch) (should work all v0.6.x versions)
-- node.js v0.7.10 (dev branch) (probably works on all v0.7.x versions)
+- node.js v0.4.x (stable branch)
+- node.js v0.6.x (stable branch)
+- node.js v0.7.x (dev branch)
 
 ### Running tests
 
@@ -130,22 +130,23 @@ server.http().listen(3000);
 * Any value that the server returns will be discarded when doing a notification request.
 * Omitting the third argument `null` to `client.prototype.request` does not generate a notification request. This argument has to be set explicitly to `null` for this to happen.
 * Network errors and the like will still reach the callback. When the callback is invoked (with or without error) one can be certain that the server has received the request.
-* See the [Official JSON-RPC 2.0 Specification][jsonrpc-spec] for additional information on how Jayson handles notifications that are erroneous or has other errors.
+* See the [Official JSON-RPC 2.0 Specification][jsonrpc-spec] for additional information on how Jayson handles notifications that are erroneous.
 
 #### Batch requests
 
-A batch consists of several requests that are processed at the same time on the server. Doing a batch request is very simple in Jayson, and consists of creating an Array that holds callback-less requests that is then fed into a `client.prototype.request` call itself.
+A batch request is an array of individual requests that are sent to the server as one. Doing a batch request is very simple in Jayson and consists of constructing an `Array` of individual requests (created by not passing a callback to `Client.prototype.request`) that is then passed into `Client.prototype.request`. 
+
+Client example in `examples/batch_request/client.js`:
 
 ```javascript
-// client.js
-var jayson = require('jayson');
+var jayson = require(__dirname + '/../..');
 var client = jayson.client.http({
   host: 'localhost',
   port: 3000
 });
 
 var batch = [
-  client.request('subtract', [10, 5]),
+  client.request('does_not_exist', [10, 5]),
   client.request('add', [1, 1]),
   client.request('add', [0, 0], null) // a notification
 ];
@@ -154,18 +155,22 @@ var batch = [
 client.request(batch, function(err, errors, successes) {
   if(err) throw err;
   // errors is an array of the requests that errored
+  console.log('errors', errors);
   // successes is an array of requests that succeded
+  console.log('successes', successes);
 });
 
 // callback takes two arguments (second type of callback)
 client.request(batch, function(err, responses) {
   if(err) throw err;
   // responses is an array of errors and successes together
+  console.log('responses', responses);
 });
 ```
 
+Server example in `examples/batch_request/server.js`:
+
 ```javascript
-// server.js
 var jayson = require('jayson');
 
 var server = jayson.server({

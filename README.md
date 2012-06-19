@@ -134,9 +134,9 @@ server.http().listen(3000);
 
 #### Batch requests
 
-A batch request is an array of individual requests that are sent to the server as one. Doing a batch request is very simple in Jayson and consists of constructing an `Array` of individual requests (created by not passing a callback to `Client.prototype.request`) that is then passed into `Client.prototype.request`. 
+A batch request is an array of individual requests that are sent to the server as one. Doing a batch request is very simple in Jayson and consists of constructing an `Array` of individual requests (created by not passing a callback to `Client.prototype.request`) that is then itself passed to `Client.prototype.request`. 
 
-Client example in `examples/batch_request/client.js`:
+Client example in `examples/batch_request/client.js`
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -151,7 +151,14 @@ var batch = [
   client.request('add', [0, 0], null) // a notification
 ];
 
-// callback takes three arguments (first type of callback)
+// callback takes two arguments (first type of callback)
+client.request(batch, function(err, responses) {
+  if(err) throw err;
+  // responses is an array of errors and successes together
+  console.log('responses', responses);
+});
+
+// callback takes three arguments (second type of callback)
 client.request(batch, function(err, errors, successes) {
   if(err) throw err;
   // errors is an array of the requests that errored
@@ -159,26 +166,16 @@ client.request(batch, function(err, errors, successes) {
   // successes is an array of requests that succeded
   console.log('successes', successes);
 });
-
-// callback takes two arguments (second type of callback)
-client.request(batch, function(err, responses) {
-  if(err) throw err;
-  // responses is an array of errors and successes together
-  console.log('responses', responses);
-});
 ```
 
-Server example in `examples/batch_request/server.js`:
+Server example in `examples/batch_request/server.js`
 
 ```javascript
-var jayson = require('jayson');
+var jayson = require(__dirname + '/../..');
 
 var server = jayson.server({
   add: function(a, b, callback) {
     callback(null, a + b);
-  },
-  subtract: function(a, b, callback) {
-    callback(null, a - b);
   }
 });
 
@@ -188,7 +185,7 @@ server.http().listen(3000);
 ##### Notes
 
 * See the [Official JSON-RPC 2.0 Specification][jsonrpc-spec] for additional information on how Jayson handles different types of batches, mainly with regards to notifications, request errors and so forth.
-* There is no guarantee that the results will be in the same order as request Array `request`. To find the right result, compare the ID from the batch with the ID in the result.
+* There is no guarantee that the results will be in the same order as request Array `request`. To find the right result, compare the ID from the request with the ID in the result yourself.
 
 #### Client interfaces
 
@@ -279,7 +276,7 @@ https.listen(443); // let https listen to localhost:443
 
 Passing an instance of a client as a method (to the server) allows the server to relay incoming requests to another server. This might be used to delegate computationally expensive functions into a separate fork/server or to abstract a cluster of servers behind a common interface.
 
-A public server listening on *:3000:
+Public server listening on * in `examples/relay/server_public.js` 
 
 ```javascript
 // server_public.js
@@ -297,7 +294,7 @@ var server = jayson.server({
 server.http().listen(3000, '0.0.0.0');
 ```
 
-A private server listening on localhost:3001:
+Private server listening on localhost:3001 in `examples/relay/server_private.js` 
 
 ```javascript
 // server_private.js
@@ -313,7 +310,7 @@ var server = jayson.server({
 server.http().listen(3001);
 ```
 
-Every request to `add` on the public server will now relay the request to the private server.
+Every request to `add` on the public server will now relay the request to the private server. See the client example in `examples/relay/client.js`.
 
 #### Server events
 

@@ -83,11 +83,11 @@ The client is available as the `Client` or `client` property of `require('jayson
 #### Client interfaces
 
 * `Client` Base class for interfacing with a server.
-* `Client.http` HTTP interface. See [http.request](http://nodejs.org/docs/v0.6.19/api/http.html#http_http_request_options_callback) for supported options.
+* `Client.http` HTTP interface. See [http.request][nodejs_doc_http_request] for supported options.
 * `Client.fork` Node.js child_process/fork interface.
 * `Client.jquery` Wrapper around `jQuery.ajax`.
 
-[nodejs_doc_http_request]
+[nodejs_doc_http_request]: http://nodejs.org/docs/v0.6.19/api/http.html#http_http_request_options_callback
 
 #### Notification requests
 
@@ -243,7 +243,25 @@ TODO Document the middleware interface.
 
 ##### Server.fork
 
-TODO Document the fork server.
+Creating an instance of Server.fork immediately spawns a child process that listens for JSON-RPC requests on the built-in communications channel. See the "Forking" section for more info on how to implement this.
+
+In addition to the shared options, Server.fork supports the following custom ones:
+
+* `wait` (Boolean) Wait for the require'd server to emit `ready` before passing it requests. Should be used for setting up the server.
+
+###### Server.fork.prototype.child
+
+Will contain a reference to the child process created by `Server.fork.prototype.spawn()`.
+
+###### Server.fork.prototype.spawn()
+
+Spawn a child process if one does not already exist.
+
+###### Server.fork.prototype.kill()
+
+Kills the existing child process. Any arguments to this function are passed to [ChildProcess.prototype.kill][nodejs_doc_child_process_kill].
+
+[nodejs_doc_child_process_kill]: http://nodejs.org/docs/v0.6.19/api/all.html#all_class_childprocess
 
 ##### Using many interfaces at the same time
 
@@ -276,7 +294,7 @@ https.listen(443); // let https listen to localhost:443
 
 Passing an instance of a client as a method (to the server) allows the server to relay incoming requests to another server. This might be used to delegate computationally expensive functions into a separate fork/server or to abstract a cluster of servers behind a common interface.
 
-Public server listening on * in `examples/relay/server_public.js` 
+Public server listening on *:3000 in `examples/relay/server_public.js` 
 
 ```javascript
 // server_public.js
@@ -314,7 +332,7 @@ Every request to `add` on the public server will now relay the request to the pr
 
 #### Server events
 
-In addition to specific events that certain interfaces emit, all servers will emit the following events:
+In addition to events that are specific to a certain interface, all servers will emit the following events:
 
 * `request` Emitted when the server receives an interpretable request. First argument is the request object.
 * `response` Emitted when the server is returning a response. First argument is the request object, the second is the response object.
@@ -454,15 +472,74 @@ client.request('increment', [instance], function(err, error, response) {
 });
 ```
 
-Instead of using a replacer, it is possible to define a `toJSON` method for any JavaScript object. Unfortunately there is no corresponding method to define for reviving objects, so the _reviver_ always has to be set up manually.
+##### Notes
+
+* Instead of using a replacer, it is possible to define a `toJSON` method for any JavaScript object. Unfortunately there is no corresponding method for reviving objects (how would that work?!), so the _reviver_ always has to be set up manually.
 
 ### Forking
 
-It is possible to create an automatic fork.
+It is possible (and _simple_) to create automatic forks with jayson using the node.js `child_process` core library. This might be used for expensive or blocking calculations and to provide some separation from the main server thread.
 
-TODO Document forking.
+The forking server class is available as `jayson.server.fork` and takes a file as the first option. This file will be require'd and should `module.exports` a
+
+The main server in `examples/forking/server.js`
+
+```javascript
+var jayson = require(__dirname + '/../..');
+
+// creates a fork
+var fork = jayson.server.fork(__dirname + '/fork');
+
+var front = jayson.server({
+  fib: jayson.client.fork(fork) // connects "fib" to the fork
+});
+
+// let the front server listen to localhost:3000
+front.http().listen(3000);
+```
+
+The forked server in `examples/forking/fork.js`
+
+```javascript
+// export "fib" for forking
+exports.fib = function(n, callback) {
+  function fib(n) {
+    if(n < 2) return n;
+    return fib(n - 1) + fib(n - 2);
+  };
+  var result = fib(n);
+  callback(null, fib(n));
+};
+```
+
+A client doing a fibonacci request in `examples/forking/client.js`
+
+```javascript
+var jayson = require(__dirname + '/../..');
+
+var client = jayson.client.http({
+  port: 3000,
+  hostname: 'localhost'
+});
+
+// request "fib" on the server
+client.request('fib', [15], function(err, response) {
+  console.log(response);
+});
+```
+
+#### Notes
+
+* A child_process is spawned immediately 
+* To specify options for the forked server, `module.exports` an instance of `jayson.Server` instead of exporting plain methods.
+* Listen for `uncaughtException` if you want the fork to keep running indefinitely
 
 ### Contributing
 
 Highlighting [issues](https://github.com/tedeh/jayson/issues) or submitting pull
 requests on [Github](https://github.com/tedeh/jayson) is most welcome.
+
+### TODO
+
+* `jayson.Server.fork.deferred` - Deferred forking for those _really_ expensive/memory intensive calculations
+* Streaming

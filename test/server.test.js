@@ -89,6 +89,43 @@ describe('jayson server instance', function() {
     });
   });
 
+  describe('event handlers', function() {
+
+    it('should emit "request" upon a request', function(done) {
+      var id = 'a_testy_id';
+      var params = [9, 2];
+      var method = 'add';
+      var request = utils.request(method, params, id);
+      server.once('request', function(request) {
+        should.exist(request);
+        request.id.should.equal(id);
+        request.params.should.equal(params);
+        request.method.should.equal(method);
+        done();
+      });
+      server.call(request);
+    });
+
+    it('should emit "response" upon a response', function(done) {
+      var a = 5, b = 2;
+      var id = 'another_testy_id';
+      var params = [a, b];
+      var method = 'add';
+      var request = utils.request(method, params, id);
+      server.once('response', function(request, response) {
+        should.exist(request);
+        request.id.should.equal(id);
+        request.params.should.equal(params);
+        request.method.should.equal(method);
+        should.exist(response);
+        response.result.should.equal(a + b);
+        done();
+      });
+      server.call(request);
+    });
+
+  });
+
   describe('invalid request with wrong format', function() {
 
     var request = 'I am a completely invalid request';
@@ -236,7 +273,7 @@ describe('jayson server instance', function() {
 
   });
 
-  describe('simple request', function() {
+  describe('request', function() {
 
     it('should return the expected result', function(done) {
       var a = 3, b = 9;

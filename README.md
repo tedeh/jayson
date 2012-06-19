@@ -314,8 +314,8 @@ Every request to `add` on the public server will now relay the request to the pr
 
 In addition to specific events that certain interfaces emit, all servers will emit the following events:
 
-* `request` Emitted when the server receives a request
-* `response` Emitted when the server is returning a response
+* `request` Emitted when the server receives an interpretable request. First argument is the request object.
+* `response` Emitted when the server is returning a response. First argument is the request object, the second is the response object.
 
 #### Server methods
 

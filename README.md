@@ -261,7 +261,7 @@ Spawn a child process if one does not already exist.
 
 Kills the existing child process. Any arguments to this function are passed to [ChildProcess.prototype.kill][nodejs_doc_child_process_kill].
 
-[nodejs_doc_child_process_kill]: http://nodejs.org/docs/v0.6.19/api/all.html#all_class_childprocess
+[nodejs_doc_child_process_kill]: http://nodejs.org/docs/latest/api/child_process.html#child_process_child_process
 
 ##### Using many interfaces at the same time
 

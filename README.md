@@ -61,9 +61,9 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It has been tested with the following node.js versions:
 
-- node.js v0.4.x (stable branch)
-- node.js v0.6.x (stable branch)
-- node.js v0.7.x (dev branch)
+- node.js v0.4.x
+- node.js v0.6.x
+- node.js v0.8.x
 
 ### Running tests
 
@@ -80,7 +80,7 @@ Jayson does not have any special dependencies that cannot be resolved with a sim
 
 The client is available as the `Client` or `client` property of `require('jayson')`.
 
-#### Client interfaces
+#### Interfaces
 
 * `Client` Base class for interfacing with a server.
 * `Client.http` HTTP interface. See [http.request][nodejs_doc_http_request] for supported options.
@@ -89,7 +89,7 @@ The client is available as the `Client` or `client` property of `require('jayson
 
 [nodejs_doc_http_request]: http://nodejs.org/docs/v0.6.19/api/http.html#http_http_request_options_callback
 
-#### Notification requests
+#### Notifications
 
 Notification requests are for cases where the reply from the server is not important and should be ignored. This is accomplished by setting the `id` property of a request object to `null`.
 
@@ -132,7 +132,7 @@ server.http().listen(3000);
 * Network errors and the like will still reach the callback. When the callback is invoked (with or without error) one can be certain that the server has received the request.
 * See the [Official JSON-RPC 2.0 Specification][jsonrpc-spec] for additional information on how Jayson handles notifications that are erroneous.
 
-#### Batch requests
+#### Batches
 
 A batch request is an array of individual requests that are sent to the server as one. Doing a batch request is very simple in Jayson and consists of constructing an `Array` of individual requests (created by not passing a callback to `Client.prototype.request`) that is then itself passed to `Client.prototype.request`. 
 
@@ -187,6 +187,15 @@ server.http().listen(3000);
 * See the [Official JSON-RPC 2.0 Specification][jsonrpc-spec] for additional information on how Jayson handles different types of batches, mainly with regards to notifications, request errors and so forth.
 * There is no guarantee that the results will be in the same order as request Array `request`. To find the right result, compare the ID from the request with the ID in the result yourself.
 
+#### Callback syntactic sugar
+
+When the length (number of arguments) of a client callback function is either 2 or 3 it receives slightly different values when invoked.
+
+* 2 arguments: first argument is an error or `null`, second argument is the response object as returned (containing _either_ a `result` or a `error` property) or `null` for notifications.
+* 3 arguments: first argument is an error or null, second argument is a JSON-RPC `error` property or `null` (if success), third argument is a JSON-RPC `result` property or `null` (if error).
+
+When doing a batch request with a 3-length callback, the second argument will be an array of requests with a `error` property and the third argument will be an array of requests with a `result` property.
+
 #### Client interfaces
 
 ##### Client.http
@@ -201,26 +210,13 @@ TODO Document the fork client
 
 TODO Document the jquery client
 
-#### Client methods
-
-The Client class is accessible via `require('jayson').Client`. All interfaces inherit the following methods from this class:
-
-##### Client.prototype.request(method, params, [id, [callback]])
-
-Creates a request and executes it, or returns a request object.
-
-* `method` `String` Name of method to call
-* `params` `Object|Array` Parameters to pass to the method.
-* `[id]` `String|Number` Optional ID. If null, indicates a notification request.
-* `[callback]` Function` Optional callback. If not set, returns a request (typically used for creating batches) rather than immediately dispatching it.
-
 ### Server
 
 The server classes are available as the `Server` or `server` property of `require('jayson')`.
 
 The server also sports several interfaces that can be accessed as properties of an instance of `Server`.
 
-#### Server interfaces
+#### Interfaces
 
 * `Server` - Base interface for a server that supports receiving JSON-RPC 2.0 requests.
 * `Server.http` - HTTP server that inherits from [http.Server][nodejs_doc_http_server].
@@ -233,41 +229,11 @@ The server also sports several interfaces that can be accessed as properties of 
 [connect]: http://www.senchalabs.org/connect/
 [express]: http://expressjs.com/
 
-##### Server.http(s)
-
-TODO Document the http interface.
-
-##### Server.middleware
-
-TODO Document the middleware interface.
-
-##### Server.fork
-
-Creating an instance of Server.fork immediately spawns a child process that listens for JSON-RPC requests on the built-in communications channel. See the "Forking" section for more info on how to implement this.
-
-In addition to the shared options, Server.fork supports the following custom ones:
-
-* `wait` (Boolean) Wait for the require'd server to emit `ready` before passing it requests. Should be used for setting up the server.
-
-###### Server.fork.prototype.child
-
-Will contain a reference to the child process created by `Server.fork.prototype.spawn()`.
-
-###### Server.fork.prototype.spawn()
-
-Spawn a child process if one does not already exist.
-
-###### Server.fork.prototype.kill()
-
-Kills the existing child process. Any arguments to this function are passed to [ChildProcess.prototype.kill][nodejs_doc_child_process_kill].
-
-[nodejs_doc_child_process_kill]: http://nodejs.org/docs/latest/api/child_process.html#child_process_child_process
-
-##### Using many interfaces at the same time
+#### Using many server interfaces at the same time
 
 A Jayson server can use many interfaces at the same time.
 
-Example of a server that listens has both can take both `http` and a `https` requests:
+Example of a server that listens to both `http` and a `https` requests:
 
 ```javascript
 var jayson = require('jayson');
@@ -292,7 +258,7 @@ https.listen(443); // let https listen to localhost:443
 
 #### Using the server as a relay
 
-Passing an instance of a client as a method (to the server) allows the server to relay incoming requests to another server. This might be used to delegate computationally expensive functions into a separate fork/server or to abstract a cluster of servers behind a common interface.
+Passing an instance of a client as a method to the server makes the server relay incoming requests to wherever the client is pointing to. This might be used to delegate computationally expensive functions into a separate fork/server or to abstract a cluster of servers behind a common interface.
 
 Public server listening on *:3000 in `examples/relay/server_public.js` 
 
@@ -330,65 +296,16 @@ server.http().listen(3001);
 
 Every request to `add` on the public server will now relay the request to the private server. See the client example in `examples/relay/client.js`.
 
-#### Server events
+#### Events
 
 In addition to events that are specific to a certain interface, all servers will emit the following events:
 
 * `request` Emitted when the server receives an interpretable request. First argument is the request object.
 * `response` Emitted when the server is returning a response. First argument is the request object, the second is the response object.
 
-#### Server methods
-
-The Server class is accessible via `require('jayson').Server`.
-
-##### Server([methods[, [options]]])
-
-Constructor for a server. Will return an instance of `Server` even if not
-invoked with `new`.
-
-* `methods` (Object) Object of name and method pairs (name -> func)
-* `options` (Object) Object of settings that will propagate to all interfaces
-
-##### Server.prototype.method(name[, definition])
-
-Adds a method to the server.
-
-* `name` (String) Name of method
-* `definition` (Function|JaysonClient) Function definition that can be either a regular JavaScript function that must take a callback as the last argument, or an instance of `jayson.Client` for relay functionality.
-
-##### Server.prototype.hasMethod(name)
-
-Checks if a method with `name` exists on the server. Returns a `Boolean`.
-
-* `name` (String) Name of method
-
-##### Server.prototype.removeMethod(name)
-
-Removes a method from the server. Returns void.
-
-* `name` (String) Name of method
-
-##### Server.prototype.error([code[, message[, data]]])
-
-Returns a JSON-RPC error object. Can be used to generate a custom error inside a method or to intentionally return [one of the official JSON-RPC 2.0 errors][jsonrpc-spec#error_object]. The error returned by this method can be used as the first argument to a RPC method callback.
-
-* `code` (Number) Optional integer code
-* `message` (String) Optional string description
-* `data` (Object) Optional object with additional data
-
-##### Server.prototype.call(request[, callback])
-
-Calls a method on the server instance. Normally not used directly but can be used to pass raw JSON-RPC requests.
-
-* `request` (Object|Array) JSON-RPC 2.0 request object or an array of batch requests
-* `callback` (Function) Optional function that will be called on request completion
-
 ### Revivers and Replacers
 
-JSON is a great data format, but it lacks support for representing types other than those defined in the [JSON specification][jsonrpc-spec] Fortunately the JSON methods in JavaScript (`JSON.parse` and
-`JSON.stringify`) provides options for custom serialization/deserialization
-routines. Jayson allows you to pass your own routines as options to both clients
-and servers.
+JSON is a great data format, but it lacks support for representing types other than the simple ones defined in the [JSON specification][jsonrpc-spec]. Fortunately the JSON methods in JavaScript (`JSON.parse` and `JSON.stringify`) provides options for custom serialization/deserialization routines. Jayson allows you to pass your own routines as options to both clients and servers.
 
 Simple example transferring the state of an object between a client and a server:
 
@@ -474,13 +391,13 @@ client.request('increment', [instance], function(err, error, response) {
 
 ##### Notes
 
-* Instead of using a replacer, it is possible to define a `toJSON` method for any JavaScript object. Unfortunately there is no corresponding method for reviving objects (how would that work?!), so the _reviver_ always has to be set up manually.
+* Instead of using a replacer, it is possible to define a `toJSON` method for any JavaScript object. Unfortunately there is no corresponding method for reviving objects (that would not work, obviously), so the _reviver_ always has to be set up manually.
 
 ### Forking
 
 It is possible (and _simple_) to create automatic forks with jayson using the node.js `child_process` core library. This might be used for expensive or blocking calculations and to provide some separation from the main server thread.
 
-The forking server class is available as `jayson.server.fork` and takes a file as the first option. This file will be require'd and should `module.exports` a
+The forking server class is available as `jayson.Server.Fork` and takes a file as the first option. This file will be require'd by jayson and should export any methods that are to be made available to clients.
 
 The main server in `examples/forking/server.js`
 
@@ -531,7 +448,7 @@ client.request('fib', [15], function(err, response) {
 #### Notes
 
 * A child_process is spawned immediately 
-* To specify options for the forked server, `module.exports` an instance of `jayson.Server` instead of exporting plain methods.
+* To specify options (such as a reviver and a replacer) for the forked server, `module.exports` an instance of `jayson.Server` instead of exporting plain methods.
 * Listen for `uncaughtException` if you want the fork to keep running indefinitely
 
 ### Contributing

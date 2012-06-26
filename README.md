@@ -61,7 +61,6 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It has been tested with the following node.js versions:
 
-- node.js v0.4.x
 - node.js v0.6.x
 - node.js v0.8.x
 

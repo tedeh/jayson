@@ -9,4 +9,6 @@ var server = jayson.server({
 });
 
 // let the server listen to *:3000
-server.http().listen(3000, '0.0.0.0');
+server.http().listen(3000, function() {
+  console.log('Listening on *:3000');
+});

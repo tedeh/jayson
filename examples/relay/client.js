@@ -5,6 +5,7 @@ var client = jayson.client.http({
   port: 3000 // the port of the public server
 });
 
-client.request('add', [5, 9], function(err, result) {
-  console.log('result', result);
+client.request('add', [5, 9], function(err, error, result) {
+  if(err) throw err;
+  console.log(result); // 14!
 });

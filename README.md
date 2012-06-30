@@ -196,19 +196,30 @@ When the length (number of arguments) of a client callback function is either 2 
 
 When doing a batch request with a 3-length callback, the second argument will be an array of requests with a `error` property and the third argument will be an array of requests with a `result` property.
 
-#### Client interfaces
+#### Client interfaces and options
+
+Every client supports these options:
+
+* `reviver` -> Function to use as a JSON reviver
+* `replacer` -> Function to use as a JSON replacer
 
 ##### Client.http
 
-TODO Document the HTTP client
+Uses the same options as [http.request][nodejs_docs_http_request] (which also enables the use of https) in addition to these options:
+
+* `encoding` -> String that determines the encoding to use and defaults to utf8
+
+[nodejs_docs_http_request]: http://nodejs.org/docs/latest/api/http.html#http_http_request_options_callback
 
 ##### Client.fork
 
-TODO Document the fork client
+Uses the same options as the base class.
 
 ##### Client.jquery
 
-TODO Document the jquery client
+The jQuery Client is stand-alone from the other classes and should preferably be compiled with `make compile` which outputs different flavors into the `build` directory. Supports inclusion via AMD. Uses the same options as [jQuery.ajax][jquery_docs_ajax] and exposes itself as $.jayson with the same arguments as `Client.prototype.request`.
+
+[jquery_docs_ajax]: http://api.jquery.com/jQuery.ajax/
 
 ### Server
 
@@ -216,7 +227,7 @@ The server classes are available as the `Server` or `server` property of `requir
 
 The server also sports several interfaces that can be accessed as properties of an instance of `Server`.
 
-#### Interfaces
+#### Server interfaces and options
 
 * `Server` - Base interface for a server that supports receiving JSON-RPC 2.0 requests.
 * `Server.http` - HTTP server that inherits from [http.Server][nodejs_doc_http_server].
@@ -455,7 +466,6 @@ client.request('fib', [15], function(err, response) {
 
 * A child_process is spawned immediately 
 * To specify options (such as a reviver and a replacer) for the forked server, `module.exports` an instance of `jayson.Server` instead of exporting plain methods.
-* Listen for `uncaughtException` if you want the fork to keep running indefinitely
 
 ### Contributing
 
@@ -468,3 +478,4 @@ requests on [Github](https://github.com/tedeh/jayson) is most welcome.
 * Streaming
 * Middleware-like support for defining server methods
 * Integration with the Cluster API
+* Benchmarks

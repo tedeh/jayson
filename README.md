@@ -136,7 +136,7 @@ server.http().listen(3000);
 
 A batch request is an array of individual requests that are sent to the server as one. Doing a batch request is very simple in Jayson and consists of constructing an `Array` of individual requests (created by not passing a callback to `Client.prototype.request`) that is then itself passed to `Client.prototype.request`. 
 
-Client example in `examples/batch_request/client.js`
+Client example in `examples/batch_request/client.js`:
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -168,7 +168,7 @@ client.request(batch, function(err, errors, successes) {
 });
 ```
 
-Server example in `examples/batch_request/server.js`
+Server example in `examples/batch_request/server.js`:
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -317,10 +317,9 @@ JSON is a great data format, but it lacks support for representing types other t
 
 Simple example transferring the state of an object between a client and a server:
 
-Shared code between the server and the client:
+Shared code between the server and the client in `examples/reviving_and_replacing/shared.js`:
 
 ```javascript
-// shared.js
 var Counter = exports.Counter = function(value) {
   this.count = value || 0;
 };
@@ -337,20 +336,19 @@ exports.replacer = function(key, value) {
 };
 
 exports.reviver = function(key, value) {
-  if(v && v.$class === 'counter') {
+  if(value && value.$class === 'counter') {
     var obj = new Counter;
-    for(var prop in v.$props) obj[prop] = v.$props[prop];
+    for(var prop in value.$props) obj[prop] = value.$props[prop];
     return obj;
   }
   return value;
 };
 ```
 
-The server:
+Server in `examples/reviving_and_replacing/server.js`:
 
 ```javascript
-// server.js
-var jayson = require('jayson');
+var jayson = require(__dirname + '/../..');
 var shared = require('./shared');
 
 // Set the reviver/replacer options
@@ -363,7 +361,7 @@ var options = {
 var server = jayson.server({
   increment: function(counter, callback) {
     counter.increment();
-    callback(null, instance);
+    callback(null, counter);
   }
 }, options);
 
@@ -371,11 +369,10 @@ var server = jayson.server({
 server.http().listen(3000);
 ```
 
-And a client invoking "increment" on the above server:
+A client in `examples/reviving_and_replacing/client.js` invoking "increment" on the server:
 
 ```javascript
-// client.js
-var jayson = require('jayson');
+var jayson = require(__dirname + '/../..');
 var shared = require('./shared');
 
 // create a client with the shared reviver and replacer
@@ -386,14 +383,15 @@ var client = jayson.client.http({
   replacer: shared.replacer
 });
 
-// the object
+// create the object
 var instance = new shared.Counter(2);
 
 // invoke "increment"
-client.request('increment', [instance], function(err, error, response) {
+client.request('increment', [instance], function(err, error, result) {
   if(err) throw err;
-  console.log(response instanceof shared.Counter); // true
-  console.log(response.count); // 3!
+  console.log(result instanceof shared.Counter); // true
+  console.log(result.count); // 3!
+  console.log(instance === result); // false - it won't be the same object, naturally
 });
 ```
 

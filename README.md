@@ -60,7 +60,7 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ### Binary client
 
-A binary client is available as `bin/jayson.js` and should be available as `jayson` if you installed the package with the `--global` switch. Run `jayson --help` to see how it works.
+There is a binary client in `bin/jayson.js` and it should be available as `jayson` if you installed the package with the `--global` switch. Run `jayson --help` to see how it works.
 
 ## Requirements
 

@@ -13,6 +13,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 * Automatic request relaying to other servers 
 * Simple process forking for expensive computations
 * JSON Reviving and Replacing for advanced (de)serialization of objects
+* Binary client
 * Extensively tested to comply with the [official specification][jsonrpc-spec]
 
 ## Example
@@ -56,6 +57,10 @@ client.request('add', [1, 1], function(err, error, response) {
 ## Installation
 
 Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want the `jayson` client binary in your PATH.
+
+### Binary client
+
+A binary client is available as `bin/jayson.js` and should be available as `jayson` if you installed the package with the `--global` switch. Run `jayson --help` to see how it works.
 
 ## Requirements
 

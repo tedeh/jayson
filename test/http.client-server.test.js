@@ -1,6 +1,7 @@
 var should = require('should');
 var jayson = require(__dirname + '/..');
 var support = require('./support/client-server');
+var ClientResponse = require('http').IncomingMessage;
 
 describe('jayson http', function() {
 
@@ -41,6 +42,15 @@ describe('jayson http', function() {
     it('should be able to handle a notification', support.clientNotification(client));
 
     it('should be able to handle a batch request', support.clientBatch(client));
+
+    it('should emit an event with the http response', function(done) {
+      client.on('http response', function(res) {
+        should.exist(res);
+        res.should.be.instanceof(ClientResponse);
+        done();
+      });
+      client.request('add', [9, 4], function(err, response) {});
+    });
 
   });
 

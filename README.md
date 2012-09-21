@@ -207,6 +207,7 @@ Every client supports these options:
 
 * `reviver` -> Function to use as a JSON reviver
 * `replacer` -> Function to use as a JSON replacer
+* `idGenerator` -> Function to generate request ids with. If omitted, Jayson will just generate a "random" number like this: `Math.round(Math.random() * Math.pow(2, 24))`
 
 ##### Client.http
 
@@ -320,7 +321,7 @@ server.http().listen(3001, '127.0.0.1', function() {
 
 Every request to `add` on the public server will now relay the request to the private server. See the client example in `examples/relay/client.js`.
 
-#### Events
+#### Server events
 
 In addition to events that are specific to a certain interface, all servers will emit the following events:
 

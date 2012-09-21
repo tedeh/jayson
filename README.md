@@ -207,7 +207,7 @@ Every client supports these options:
 
 * `reviver` -> Function to use as a JSON reviver
 * `replacer` -> Function to use as a JSON replacer
-* `idGenerator` -> Function to generate request ids with. If omitted, Jayson will just generate a "random" number like this: `Math.round(Math.random() * Math.pow(2, 24))`
+* `generator` -> Function to generate request ids with. If omitted, Jayson will just generate a "random" number like this: `Math.round(Math.random() * Math.pow(2, 24))`
 
 ##### Client.http
 

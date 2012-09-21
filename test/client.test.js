@@ -54,14 +54,14 @@ describe('jayson client instance', function() {
 
   it('should support specifying a request id generator', function(done) {
     var ordinal = 0, a = 9, b = 2;
-    client.options.idGenerator = function(request) { return ordinal++; };
+    client.options.generator = function(request) { return ordinal++; };
     client.request('add', [a, b], function(err, response) {
       should.not.exist(err);
       should.exist(response);
       response.should.have.property('result', a + b);
       response.should.have.property('id', 0);
       ordinal.should.equal(1);
-      delete client.options.idGenerator;
+      delete client.options.generator;
       done();
     });
   });

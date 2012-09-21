@@ -40,7 +40,7 @@ describe('jayson client instance', function() {
 
   it('should support reviving and replacing', support.clientReviveReplace(client));
 
-  it('should return the response as received if given a two-param callback', function(done) {
+  it('should return the response as received if given a callback with arity 2', function(done) {
     var a = 11, b = 9;
     client.request('add', [a, b], function(err, response) {
       arguments.length.should.equal(2);
@@ -48,6 +48,50 @@ describe('jayson client instance', function() {
       should.exist(response);
       should.exist(response.result);
       response.result.should.equal(a + b);
+      done();
+    });
+  });
+
+  it('should support specifying a request id generator', function(done) {
+    var ordinal = 0, a = 9, b = 2;
+    client.options.generator = function(request) { return ordinal++; };
+    client.request('add', [a, b], function(err, response) {
+      should.not.exist(err);
+      should.exist(response);
+      response.should.have.property('result', a + b);
+      response.should.have.property('id', 0);
+      ordinal.should.equal(1);
+      delete client.options.generator;
+      done();
+    });
+  });
+
+  it('should emit "request" when a request is dispatched', function(done) {
+    var a = 6, b = 9, hasFired = false;
+    client.once('request', function(request) {
+      hasFired = true;
+      should.exist(request);
+      request.params.should.include(a).and.include(b).and.have.lengthOf(2);
+    });
+    client.request('add', [a, b], function(err) {
+      if(err) return done(err);
+      hasFired.should.be.ok;
+      done();
+    });
+  });
+
+  it('should emit "response" when a response is received', function(done) {
+    var a = 8, b = 10, hasFired = false;
+    client.once('response', function(request, response) {
+      hasFired = true;
+      should.exist(request);
+      request.params.should.include(a).and.include(b).and.have.lengthOf(2);
+      should.exist(response);
+      response.should.have.property('result', a + b);
+    });
+    client.request('add', [a, b], function(err) {
+      if(err) return done(err);
+      hasFired.should.be.ok;
       done();
     });
   });

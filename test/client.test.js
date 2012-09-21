@@ -66,12 +66,28 @@ describe('jayson client instance', function() {
     });
   });
 
-  it('should emit request just as the request is dispatched', function(done) {
+  it('should emit "request" when a request is dispatched', function(done) {
     var a = 6, b = 9, hasFired = false;
     client.once('request', function(request) {
       hasFired = true;
       should.exist(request);
-      request.params.should.include(6).and.include(9).and.have.lengthOf(2);
+      request.params.should.include(a).and.include(b).and.have.lengthOf(2);
+    });
+    client.request('add', [a, b], function(err) {
+      if(err) return done(err);
+      hasFired.should.be.ok;
+      done();
+    });
+  });
+
+  it('should emit "response" when a response is received', function(done) {
+    var a = 8, b = 10, hasFired = false;
+    client.once('response', function(request, response) {
+      hasFired = true;
+      should.exist(request);
+      request.params.should.include(a).and.include(b).and.have.lengthOf(2);
+      should.exist(response);
+      response.should.have.property('result', a + b);
     });
     client.request('add', [a, b], function(err) {
       if(err) return done(err);

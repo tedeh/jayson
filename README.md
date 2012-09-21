@@ -209,6 +209,13 @@ Every client supports these options:
 * `replacer` -> Function to use as a JSON replacer
 * `generator` -> Function to generate request ids with. If omitted, Jayson will just generate a "random" number like this: `Math.round(Math.random() * Math.pow(2, 24))`
 
+#### Client events
+
+A client will emit the following events (in addition to any special ones emitted by a specific interface):
+
+* `request` Emitted when a client is just about to dispatch a request. First argument is the request object.
+* `response` Emitted when a client has just received a reponse. First argument is the request object, second argument is the response as received.
+
 ##### Client.http
 
 Uses the same options as [http.request][nodejs_docs_http_request] (which also enables the use of https) in addition to these options:
@@ -283,7 +290,7 @@ https.listen(443, function() {
 
 Passing an instance of a client as a method to the server makes the server relay incoming requests to wherever the client is pointing to. This might be used to delegate computationally expensive functions into a separate fork/server or to abstract a cluster of servers behind a common interface.
 
-Public server in `examples/relay/server_public.js` listening on *:3000:
+Public server in `examples/relay/server_public.js` listening on `*:3000`:
 
 ```javascript
 var jayson = require(__dirname + '/../..');

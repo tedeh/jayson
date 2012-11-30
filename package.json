@@ -25,6 +25,7 @@
     "should": "*",
     "mocha": "*",
     "connect": "*",
-    "uglify-js": "*"
+    "uglify-js": "*",
+    "blanket": "*"
   }
 }

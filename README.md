@@ -13,7 +13,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 * Automatic request relaying to other servers 
 * Simple process forking for expensive computations
 * JSON Reviving and Replacing for advanced (de)serialization of objects
-* Binary client
+* CLI client
 * Extensively tested to comply with the [official specification][jsonrpc-spec]
 
 ## Example
@@ -56,11 +56,11 @@ client.request('add', [1, 1], function(err, error, response) {
 
 ## Installation
 
-Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want the `jayson` client binary in your PATH.
+Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want the `jayson` client CLI in your PATH.
 
-### Binary client
+### CLI client
 
-There is a binary client in `bin/jayson.js` and it should be available as `jayson` if you installed the package with the `--global` switch. Run `jayson --help` to see how it works.
+There is a CLI client in `bin/jayson.js` and it should be available as `jayson` if you installed the package with the `--global` switch. Run `jayson --help` to see how it works.
 
 ## Requirements
 
@@ -334,6 +334,56 @@ In addition to events that are specific to a certain interface, all servers will
 
 * `request` Emitted when the server receives an interpretable request. First argument is the request object.
 * `response` Emitted when the server is returning a response. First argument is the request object, the second is the response object.
+
+#### Errors
+
+If you should like to return an error from an method request to indicate a failure, remember that the [JSON-RPC 2.0][jsonrpc-spec] specification requires the error to be an `Object` with a `code (Integer/Number)` to be regarded as valid. You can also provide a `message (String)` and a `data (Object)` with additional information. Example: 
+
+```javascript
+var jayson = require(__dirname + '/../..');
+
+var server = jayson.server({
+  i_cant_find_anything: function(id, callback) {
+    var error = {code: 404, message: 'Cannot find ' + id};
+    callback(error); // will return the error object as given
+  },
+  i_cant_return_a_valid_error: function(callback) {
+    callback({message: 'I forgot to enter a code'}); // will return an "Internal Error"
+  }
+});
+```
+
+##### Predefined Errors
+
+It is also possible to cause a method to return one of the predefined [JSON-RPC 2.0 error codes][jsonrpc-spec#error_object] using the server helper function `Server.prototype.error` inside of a server method. Example:
+
+[jsonrpc-spec#error_object]: http://jsonrpc.org/spec.html#error_object
+
+```javascript
+var jayson = require(__dirname + '/../..');
+
+var server = jayson.server({
+  invalid_params: function(id, callback) {
+    var error = this.error(-32602); // returns an error with the default properties set
+    callback(error);
+  }
+});
+```
+
+You can even override the default messages:
+
+```javascript
+var jayson = require(__dirname + '/../..');
+
+var server = jayson.server({
+  error_giver_of_doom: function(callback) {
+    callback(true) // invalid error format, which causes an Internal Error to be returned instead
+  }
+});
+
+// Override the default message
+server.errorMessages[Server.errors.INTERNAL_ERROR] = 'I has a sad. I cant do anything right';
+```
 
 ### Revivers and Replacers
 

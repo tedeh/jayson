@@ -332,8 +332,9 @@ Every request to `add` on the public server will now relay the request to the pr
 
 In addition to events that are specific to a certain interface, all servers will emit the following events:
 
-* `request` Emitted when the server receives an interpretable request. First argument is the request object.
+* `request` Emitted when the server receives an interpretable (non-batch) request. First argument is the request object.
 * `response` Emitted when the server is returning a response. First argument is the request object, the second is the response object.
+* `batch` Emitted when the server receives a batch request. First argument is an array of requests. Will emit `request` for each interpretable request in the batch.
 
 #### Errors
 

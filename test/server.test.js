@@ -1,4 +1,3 @@
-require('blanket')(/master\/lib/);
 var should = require('should');
 var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support/client-server');

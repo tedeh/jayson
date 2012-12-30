@@ -1,4 +1,3 @@
-require('blanket')(/master\/lib/);
 var assert = require('assert');
 var should = require('should');
 

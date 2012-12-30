@@ -20,7 +20,7 @@ describe('jayson relay', function() {
   describe('client', function() {
 
     var back = jayson.server(support.methods, support.options);
-    var client = jayson.client(back);
+    var client = jayson.client(back, support.options);
     var front = jayson.server(support.methods, support.options);
     // replace all methods in front server with the client
     for(var name in front._methods) front.method(name, client);

@@ -28,7 +28,7 @@ Counter.prototype.incrementBy = function(value) {
 exports.options = {
   reviver: function(key, value) {
     if(value && value.$class === 'counter') {
-      var obj = new Counter;
+      var obj = new Counter();
       for(var prop in value.$props) obj[prop] = value.$props[prop];
       return obj;
     }

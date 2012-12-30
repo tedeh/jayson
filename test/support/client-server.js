@@ -84,7 +84,7 @@ exports.clientReviveReplace = function(client) {
       should.not.exist(err);
       should.not.exist(error);
       should.exist(result);
-      result.should.be.instanceof(Counter);
+      result.should.be.instanceof(Counter).and.not.equal(instance, 'Not the same object');
       result.count.should.equal(a + b);
       done();
     });

@@ -1,20 +1,19 @@
 # Jayson
 
-Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in JavaScript for [node.js][node.js] that wants to be as simple as possible to use.
+Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in JavaScript for [node.js][node.js] that aims to be as simple as possible to use.
 
 [jsonrpc-spec]: http://jsonrpc.org/spec.html 
 [node.js]: http://nodejs.org/
 
 ## Features
 
-* Servers that listen to many interfaces at once
+* Servers that can listen to several interfaces at the same time
 * Supports HTTP client and server connections
-* jQuery AJAX client
-* Automatic request relaying to other servers 
-* Simple process forking for expensive computations
-* JSON Reviving and Replacing for advanced (de)serialization of objects
+* jQuery client
+* Relaying of requests to other servers
+* JSON reviving and replacing for serialization of complex objects
 * CLI client
-* Extensively tested to comply with the [official specification][jsonrpc-spec]
+* Fully tested to comply with the [official JSON-RPC 2.0 specification][jsonrpc-spec]
 
 ## Example
 
@@ -60,7 +59,7 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ### CLI client
 
-There is a CLI client in `bin/jayson.js` and it should be available as `jayson` if you installed the package with the `--global` switch. Run `jayson --help` to see how it works.
+There is a CLI client in `bin/jayson.js` and it should be available as `jayson` in your shell if you installed the package with the `--global` switch. Run `jayson --help` to see how it works.
 
 ## Requirements
 
@@ -68,10 +67,13 @@ Jayson does not have any special dependencies that cannot be resolved with a sim
 
 - node.js v0.6.x
 - node.js v0.8.x
+- node.js v0.10.x
 
 ## Class documentation
 
-In addition to this document, a comprehensive class documentation is available at [jayson.tedeh.net](http://jayson.tedeh.net).
+In addition to this document, a comprehensive class documentation made with [jsdoc][jsdoc-spec] is available at [jayson.tedeh.net](http://jayson.tedeh.net).
+
+[jsdoc-spec]: http://usejsdoc.org/
 
 ## Running tests
 
@@ -330,7 +332,7 @@ Every request to `add` on the public server will now relay the request to the pr
 
 #### Server events
 
-In addition to events that are specific to a certain interface, all servers will emit the following events:
+In addition to events that are specific to certain interfaces, all servers will emit the following events:
 
 * `request` Emitted when the server receives an interpretable (non-batch) request. First argument is the request object.
 * `response` Emitted when the server is returning a response. First argument is the request object, the second is the response object.
@@ -349,7 +351,7 @@ var server = jayson.server({
     callback(error); // will return the error object as given
   },
   i_cant_return_a_valid_error: function(callback) {
-    callback({message: 'I forgot to enter a code'}); // will return an "Internal Error"
+    callback({message: 'I forgot to enter a code'}); // will return a pre-defined "Internal Error"
   }
 });
 ```
@@ -535,11 +537,3 @@ client.request('fib', [15], function(err, response) {
 
 Highlighting [issues](https://github.com/tedeh/jayson/issues) or submitting pull
 requests on [Github](https://github.com/tedeh/jayson) is most welcome.
-
-### TODO
-
-* `jayson.Server.fork.deferred` - Deferred forking that only spawns on demand
-* Streaming
-* Middleware-like support for defining server methods
-* Integration with the Cluster API
-* Benchmarks

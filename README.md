@@ -224,7 +224,16 @@ Uses the same options as [http.request][nodejs_docs_http_request] (which also en
 
 * `encoding` -> String that determines the encoding to use and defaults to utf8
 
+It is possible to pass a string URL as the first argument. The URL will be run through [url.parse][nodejs_docs_url_parse]. Example:
+
+```javascript
+var jayson = require(__dirname + '/../..');
+var client = jayson.client.http('http://localhost:3000');
+// client.options is now the result of url.parse
+```
+
 [nodejs_docs_http_request]: http://nodejs.org/docs/latest/api/http.html#http_http_request_options_callback
+[nodejs_docs_url_parse]: http://nodejs.org/api/url.html#url_url_parse_urlstr_parsequerystring_slashesdenotehost
 
 ##### Client.fork
 

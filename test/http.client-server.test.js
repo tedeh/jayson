@@ -2,6 +2,7 @@ var should = require('should');
 var jayson = require(__dirname + '/..');
 var support = require('./support/client-server');
 var ClientResponse = require('http').IncomingMessage;
+var url = require('url');
 
 describe('jayson http', function() {
 
@@ -31,6 +32,10 @@ describe('jayson http', function() {
       port: 3000
     });
 
+    after(function() {
+      server.close();
+    });
+
     it('should be an instance of jayson.client', support.clientInstance(client));
 
     it('should be able to request a success-method on the server', support.clientRequest(client));
@@ -52,10 +57,15 @@ describe('jayson http', function() {
       client.request('add', [9, 4], function(err, response) {});
     });
 
-  });
+    it('should accept a URL string as the first argument', function() {
+      var urlStr = 'http://localhost:3000';
+      var client = jayson.client.http(urlStr);
+      var urlObj = url.parse(urlStr);
+      Object.keys(urlObj).forEach(function(key) {
+        client.options.should.have.property(key, urlObj[key]);
+      });
+    });
 
-  after(function() {
-    server.close();
   });
 
 });

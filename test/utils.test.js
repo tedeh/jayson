@@ -88,6 +88,22 @@ describe('utils', function() {
       result[2].should.equal('a');
     });
 
+    it('should return the correct parameters when passed a simple named function', function() {
+      var func = function named(b, c, a) {};
+      var result = utils.getParameterNames(func);
+      should.exist(result);
+      result.should.be.instanceof(Array).and.have.length(func.length);
+      result.should.include('b', 'c', 'a');
+    });
+
+    it('should return the correct parameters when passed a complex named function', function() {
+      var func = function named_complex$(b, c, a) {};
+      var result = utils.getParameterNames(func);
+      should.exist(result);
+      result.should.be.instanceof(Array).and.have.length(func.length);
+      result.should.include('b', 'c', 'a');
+    });
+
   });
 
 });

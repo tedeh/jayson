@@ -314,12 +314,27 @@ describe('jayson server instance', function() {
 
     it('should return the correct result', function(done) {
       var a = 9, b = 2;
-      var request = utils.request('add', {a: 9, b: 2});
+      var request = utils.request('add', {a: a, b: b});
       server.call(request, function(err, response) {
         should.not.exist(err);
         should.exist(response);
         should.exist(response.result);
         response.result.should.equal(a + b);
+        done();
+      });
+    });
+
+    it('should return the correct result when using named functions', function(done) {
+      var a = 11, b = 3;
+      var request = utils.request('add_named', {a: a, b: b});
+      function named(a, b, callback) { callback(null, a + b); }
+      server.method('add_named', named);
+      server.call(request, function(err, response) {
+        if(err) return callback(err);
+        should.exist(response);
+        should.exist(response.result);
+        response.result.should.equal(a + b);
+        server.removeMethod('add_named');
         done();
       });
     });

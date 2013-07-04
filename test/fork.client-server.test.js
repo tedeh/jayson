@@ -6,14 +6,9 @@ describe('jayson fork', function() {
 
   describe('server', function() {
 
-    describe('constructor', function() {
-
-      it('should return an instance without using "new"', function() {
-
-        var instance = jayson.server.fork(__dirname + '/support/fork');
-        instance.should.be.an.instanceof(jayson.server.fork);
-      });
-
+    it('constructor should return an instance without using "new"', function() {
+      var instance = jayson.server.fork(__dirname + '/support/fork');
+      instance.should.be.an.instanceof(jayson.server.fork);
     });
 
   });

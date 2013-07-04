@@ -1,9 +1,7 @@
 var should = require('should');
 var jayson = require(__dirname + '/..');
 var support = require('./support/client-server');
-
 var exec = require('child_process').exec;
-
 var bin = __dirname + '/../bin/jayson.js';
 
 describe('jayson binary', function() {

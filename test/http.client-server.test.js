@@ -6,9 +6,9 @@ var url = require('url');
 
 describe('jayson http', function() {
 
-  var server = null;
-
   describe('server', function() {
+
+    var server = null;
 
     it('should listen to a local port', function(done) {
       (function() {
@@ -21,10 +21,16 @@ describe('jayson http', function() {
       server.should.be.instanceof(require('http').Server);
     });
 
+    after(function() {
+      if(server) server.close();
+    });
+
   });
 
   describe('client', function() {
     
+    var server;
+
     var client = jayson.client.http({
       reviver: support.options.reviver,
       replacer: support.options.replacer,
@@ -32,8 +38,9 @@ describe('jayson http', function() {
       port: 3000
     });
 
-    after(function() {
-      server.close();
+    before(function(done) {
+      server = jayson.server(support.methods, support.options).http();
+      server.listen(3000, 'localhost', done);
     });
 
     it('should be an instance of jayson.client', support.clientInstance(client));
@@ -64,6 +71,10 @@ describe('jayson http', function() {
       Object.keys(urlObj).forEach(function(key) {
         client.options.should.have.property(key, urlObj[key]);
       });
+    });
+
+    after(function() {
+      if(server) server.close();
     });
 
   });

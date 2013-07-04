@@ -5,9 +5,9 @@ var url = require('url');
 
 describe('jayson tcp', function() {
 
-  var server = null;
-
   describe('server', function() {
+
+    var server = null;
 
     it('should listen to a local port', function(done) {
       (function() {
@@ -20,10 +20,16 @@ describe('jayson tcp', function() {
       server.should.be.instanceof(require('net').Server);
     });
 
+    after(function() {
+      if(server) server.close();
+    });
+
   });
 
   describe('client', function() {
-    
+
+    var server;
+
     var client = jayson.client.tcp({
       reviver: support.options.reviver,
       replacer: support.options.replacer,
@@ -31,8 +37,9 @@ describe('jayson tcp', function() {
       port: 3000
     });
 
-    after(function() {
-      server.close();
+    before(function(done) {
+      server = jayson.server(support.methods, support.options).tcp();
+      server.listen(3000, 'localhost', done);
     });
 
     it('should be an instance of jayson.client', support.clientInstance(client));
@@ -46,6 +53,10 @@ describe('jayson tcp', function() {
     it('should be able to handle a notification', support.clientNotification(client));
 
     it('should be able to handle a batch request', support.clientBatch(client));
+
+    after(function() {
+      if(server) server.close();
+    });
 
   });
 

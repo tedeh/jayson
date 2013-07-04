@@ -6,9 +6,6 @@ var connect = require('connect');
 describe('jayson middleware', function() {
 
   var server;
-  var stack = connect.createServer();
-  stack.use(connect.json({reviver: support.options.reviver}));
-  stack.use(jayson.server(support.methods, support.options).middleware());
 
   var client = jayson.client.http({
     reviver: support.options.reviver,
@@ -17,7 +14,12 @@ describe('jayson middleware', function() {
     port: 3000
   });
 
-  before(function(done) { server = stack.listen(3000, done); });
+  before(function(done) {
+    server = connect.createServer();
+    server.use(connect.json({reviver: support.options.reviver}));
+    server.use(jayson.server(support.methods, support.options).middleware());
+    server = server.listen(3000, done);
+  });
 
   it('should be able to receive a success-method from a client', support.clientRequest(client));
 
@@ -29,9 +31,8 @@ describe('jayson middleware', function() {
 
   it('should be able to handle a batch request', support.clientBatch(client));
 
-  after(function(done) {
-    server.once('close', done);
-    server.close();
-  })
+  after(function() {
+    if(server) server.close();
+  });
 
 });

@@ -19,11 +19,15 @@ describe('jayson relay', function() {
 
   describe('client', function() {
 
-    var back = jayson.server(support.methods, support.options);
-    var client = jayson.client(back, support.options);
-    var front = jayson.server(support.methods, support.options);
+    var backServer = jayson.server(support.methods, support.options);
+    var frontServer = jayson.server(support.methods, support.options);
+
+    var client = jayson.client(backServer, support.options);
+
     // replace all methods in front server with the client
-    for(var name in front._methods) front.method(name, client);
+    for(var name in frontServer._methods) {
+      frontServer.method(name, client);
+    }
 
     it('should be able to request a success-method on the relayed server', support.clientRequest(client));
 

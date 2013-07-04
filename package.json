@@ -16,7 +16,13 @@
   "engines": {
     "node": ">= 0.4.0"
   },
-  "scripts": { "test": "make test" },
+  "scripts": {
+    "test": "make test",
+    "blanket": {
+      "pattern": "lib",
+      "data-cover-never": "node_modules"
+    }
+  },
   "dependencies": {
     "commander": "*",
     "eyes": "*"

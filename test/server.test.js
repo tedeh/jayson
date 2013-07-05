@@ -39,6 +39,8 @@ describe('jayson server instance', function() {
     server.removeMethod.should.be.a('function');
     should.exist(server.errorMessages);
     server.errorMessages.should.be.a('object');
+    should.exist(server.options);
+    server.options.should.be.a('object');
   });
 
   it('should allow a method to be added and removed', function() {
@@ -385,6 +387,23 @@ describe('jayson server instance', function() {
   });
 
   describe('batch requests', function() {
+
+    it('should error when version is 1', function(done) {
+      server.options.version = 1;
+      var requests = [
+        utils.request('add', [1, 1]),
+        utils.request('add', [2, 2])
+      ];
+      server.call(requests, function(err, response) {
+        should.not.exist(response);
+        should.exist(err);
+        should.exist(err.error);
+        should.exist(err.error.code);
+        err.error.code.should.equal(-32603); // "Internal Error"
+        done();
+      });
+      server.options.version = 2;
+    });
 
     it('should handle an empty batch', function(done) {
       server.call([], function(err, response) {

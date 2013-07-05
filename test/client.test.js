@@ -25,6 +25,19 @@ describe('jayson client object', function() {
     }).should.not.throw();
   });
 
+  it('should return a raw request without a version 2 jsonrpc field if client is version 1', function() {
+    (function() {
+      client.options.version = 1;
+      var request = client.request('add', [11, 9]);
+      should.exist(request);
+      should.exist(request.method);
+      should.exist(request.id);
+      should.exist(request.params);
+      should.not.exist(request.jsonrpc);
+      client.options.version = 2;
+    }).should.not.throw();
+  });
+
 });
 
 describe('jayson client instance', function() {
@@ -39,6 +52,34 @@ describe('jayson client instance', function() {
   it('should be able to request an error-method on the server', support.clientError(client));
 
   it('should support reviving and replacing', support.clientReviveReplace(client));
+
+  it('should not talk to a version 2.0 server when client is 1.0', function(done) {
+    client.options.version = 1;
+    var a = 11, b = 9;
+    client.request('add', [a, b], function(err, response) {
+      should.not.exist(err);
+      should.not.exist(response.result);
+      should.exist(response.error);
+      should.exist(response.error.code);
+      response.error.code.should.equal(-32600); // "Request Error"
+      done();
+    });
+    client.options.version = 2;
+  });
+
+  it('should not talk to a version 1.0 server when client is 2.0', function(done) {
+    server.options.version = 1;
+    var a = 11, b = 9;
+    client.request('add', [a, b], function(err, response) {
+      should.not.exist(err);
+      should.not.exist(response.result);
+      should.exist(response.error);
+      should.exist(response.error.code);
+      response.error.code.should.equal(-32600); // "Request Error"
+      done();
+    });
+    server.options.version = 2;
+  });
 
   it('should return the response as received if given a callback with arity 2', function(done) {
     var a = 11, b = 9;

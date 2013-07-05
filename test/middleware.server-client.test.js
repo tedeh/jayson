@@ -21,6 +21,10 @@ describe('jayson middleware', function() {
     server = server.listen(3000, done);
   });
 
+  after(function() {
+    if(server) server.close();
+  });
+
   it('should be able to receive a success-method from a client', support.clientRequest(client));
 
   it('should be able to receive an error-method from a client', support.clientError(client));
@@ -30,9 +34,5 @@ describe('jayson middleware', function() {
   it('should be able to handle a notification', support.clientNotification(client));
 
   it('should be able to handle a batch request', support.clientBatch(client));
-
-  after(function() {
-    if(server) server.close();
-  });
 
 });

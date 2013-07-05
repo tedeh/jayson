@@ -1,6 +1,7 @@
 var should = require('should');
 var jayson = require(__dirname + '/..');
 var support = require('./support/client-server');
+var net = require('net');
 var url = require('url');
 
 describe('jayson tcp', function() {
@@ -42,6 +43,10 @@ describe('jayson tcp', function() {
       server.listen(3000, 'localhost', done);
     });
 
+    after(function() {
+      if(server) server.close();
+    });
+
     it('should be an instance of jayson.client', support.clientInstance(client));
 
     it('should be able to request a success-method on the server', support.clientRequest(client));
@@ -53,10 +58,6 @@ describe('jayson tcp', function() {
     it('should be able to handle a notification', support.clientNotification(client));
 
     it('should be able to handle a batch request', support.clientBatch(client));
-
-    after(function() {
-      if(server) server.close();
-    });
 
   });
 

@@ -43,6 +43,10 @@ describe('jayson http', function() {
       server.listen(3000, 'localhost', done);
     });
 
+    after(function() {
+      if(server) server.close();
+    });
+
     it('should be an instance of jayson.client', support.clientInstance(client));
 
     it('should be able to request a success-method on the server', support.clientRequest(client));
@@ -71,10 +75,6 @@ describe('jayson http', function() {
       Object.keys(urlObj).forEach(function(key) {
         client.options.should.have.property(key, urlObj[key]);
       });
-    });
-
-    after(function() {
-      if(server) server.close();
     });
 
   });

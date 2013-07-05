@@ -2,19 +2,19 @@ var should = require('should');
 var jayson = require(__dirname + '/..');
 var support = require('./support/client-server');
 var exec = require('child_process').exec;
+var url = require('url');
 var bin = __dirname + '/../bin/jayson.js';
 
 describe('jayson binary', function() {
 
   var server = jayson.server(support.methods, support.options);
 
-  var http = null;
+  describe('port-listening server', function() {
 
-  describe('port server', function() {
-
+    var http = null;
     var hostname = 'localhost';
     var port = 1337;
-    var url = require('url').format({
+    var surl = url.format({
       port: port,
       protocol: 'http',
       hostname: hostname
@@ -25,28 +25,35 @@ describe('jayson binary', function() {
       http.listen(port, hostname, done);
     });
 
-  it('should be callable', function(done) {
-    var a = 3, b = 4;
-    var args = formatArgs(bin, {
-      url: url, method: 'add', json: true,
-      params: JSON.stringify([a, b])
+    after(function(done) {
+      http.on('close', done);
+      http.close();
     });
-    exec(args, function(err, stdout, stderr) {
-      should.not.exist(err);
-      should.exist(stdout, stderr);
-      var json = JSON.parse(stdout);
-      json.should.have.property('id');
-      json.should.have.property('result');
-      json.result.should.equal(a + b);
-      stderr.should.equal('');
-      done();
+
+    it('should be callable', function(done) {
+      var a = 3, b = 4;
+      var args = getArgs(bin, {
+        url: surl, method: 'add', json: true,
+        params: JSON.stringify([a, b])
+      });
+
+      exec(args, function(err, stdout, stderr) {
+        should.not.exist(err);
+        should.exist(stdout, stderr);
+        var json = JSON.parse(stdout);
+        json.should.have.property('id');
+        json.should.have.property('result');
+        json.result.should.equal(a + b);
+        stderr.should.equal('');
+        done();
+      });
     });
+
   });
 
-  });
+  describe('socket-listening server', function() {
 
-  describe('socket server', function() {
-
+    var http = null;
     var socketPath = __dirname + '/support/bin.test.socket';
 
     before(function(done) {
@@ -54,9 +61,14 @@ describe('jayson binary', function() {
       http.listen(socketPath, done);
     });
 
+    after(function(done) {
+      http.on('close', done);
+      http.close();
+    });
+
     it('should be callable', function(done) {
       var a = 1, b = 2;
-      var args = formatArgs(bin, {
+      var args = getArgs(bin, {
         socket: socketPath, method: 'add', json: true,
         params: JSON.stringify([a, b])
       });
@@ -73,15 +85,9 @@ describe('jayson binary', function() {
 
   });
 
-  afterEach(function(done) {
-    if(!http) done();
-    http.on('close', done);
-    http.close();
-  });
-
 });
 
-function formatArgs(binary, args) {
+function getArgs(binary, args) {
   var buf = binary;
   for(var arg in args) {
     var value = args[arg];

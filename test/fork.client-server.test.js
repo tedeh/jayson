@@ -21,6 +21,10 @@ describe('jayson fork', function() {
       reviver: support.options.reviver,
       replacer: support.options.replacer
     });
+
+    after(function() {
+      server.kill();
+    });
     
     it('should be an instance of jayson.client', support.clientInstance(client));
 
@@ -33,10 +37,6 @@ describe('jayson fork', function() {
     it('should be able to handle a notification', support.clientNotification(client));
 
     it('should be able to handle a batch request', support.clientBatch(client));
-
-    after(function() {
-      server.kill();
-    });
 
   });
 

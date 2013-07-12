@@ -1,6 +1,7 @@
 var should = require('should');
 var jayson = require(__dirname + '/../');
-var support = require(__dirname + '/support/client-server');
+var support = require(__dirname + '/support');
+var ServerErrors = jayson.Server.errors;
 var utils = jayson.utils;
 
 describe('jayson server object', function() {
@@ -18,15 +19,14 @@ describe('jayson server object', function() {
 
 describe('jayson server instance', function() {
 
-  var server = jayson.server({
-    add: function(a, b, callback) { callback(null, a + b); },
-    add_slow: function(a, b, isSlow, callback) {
-      if(!isSlow) return callback(null, a + b);
-      setTimeout(callback.bind(callback, null, a + b), 15);
-    }
+  var server;
+
+  // reset the server after every test
+  beforeEach(function() {
+    server = jayson.server(support.server.methods, support.server.options);
   });
 
-  it('should have the correct properties', function() {
+  it('should have the correct properties and functions', function() {
     should.exist(server.method);
     server.method.should.be.a('function');
     should.exist(server.methods);
@@ -131,358 +131,216 @@ describe('jayson server instance', function() {
   describe('invalid request with wrong format', function() {
 
     var request = 'I am a completely invalid request';
-
-    it('should not be parsable without throwing an error', function() {
-      (function() {
-        JSON.parse(request);
-      }).should.throw();
-    });
-
-    it('should callback a "Parse Error"', function(done) {
-      server.call(request, function(err, response) {
-        should.exist(err);
-        should.exist(err.error);
-        should.exist(err.error.code);
-        should.not.exist(response);
-        err.error.code.should.equal(-32700); // "Parse Error"
-        done();
-      });
-    });
+    it('should callback a "Parse Error"', reqShouldBeErrorCode(request, ServerErrors.PARSE_ERROR));
 
   });
 
-  describe('invalid request with wrong "jsonrpc"', function() {
-    
-    it('should callback a "Request Error" by having wrong value', function(done) {
-      var request = utils.request('add', []);
-      request.jsonrpc = '1.0';
-      server.call(request, function(err, response) {
-        should.exist(err);
-        should.exist(err.error);
-        should.exist(err.error.code);
-        should.not.exist(response);
-        err.error.code.should.equal(-32600); // "Request Error"
-        done();
-      });
-    });
+  describe('invalid request with an erroneous "jsonrpc"-property', function() {
 
-    it('should callback a "Request Error" by non-existent', function(done) {
-      var request = utils.request('add', []);
-      delete request.jsonrpc;
-      server.call(request, function(err, response) {
-        should.exist(err);
-        should.exist(err.error);
-        should.exist(err.error.code);
-        should.not.exist(response);
-        err.error.code.should.equal(-32600); // "Request Error"
-        done();
-      });
-    });
+    var requestInvalidVersion = utils.request('add', []);
+    requestInvalidVersion.jsonrpc = '1.0';
+    it('should callback a "Request Error" by having a wrong value', reqShouldBeErrorCode(requestInvalidVersion, ServerErrors.INVALID_REQUEST));
+
+    var requestNoProperty = utils.request('add', []);
+    delete requestNoProperty.jsonrpc;
+    it('should callback a "Request Error" by being non-existent', reqShouldBeErrorCode(requestNoProperty, ServerErrors.INVALID_REQUEST));
 
   });
 
-  describe('invalid request with wrong "method"', function() {
-    
-    it('should callback a "Request Error" if wrong type', function(done) {
-      var request = utils.request('add', []);
-      request.method = true;
-      server.call(request, function(err, response) {
-        should.exist(err);
-        should.exist(err.error);
-        should.exist(err.error.code);
-        should.not.exist(response);
-        err.error.code.should.equal(-32600); // "Request Error"
-        done();
-      });
-    });
+  describe('invalid request with an erroneous "method"-property', function() {
 
-    it('should callback with a "Method Not Found" if non-existing method', function(done) {
-      var request = utils.request('add', []);
-      request.method = 'subtract';
-      server.call(request, function(err, response) {
-        should.exist(err);
-        should.exist(err.error);
-        should.exist(err.error.code);
-        should.not.exist(response);
-        err.error.code.should.equal(-32601); // "Method Not Found Error"
-        done();
-      });
-    });
+    var requestInvalidMethod = utils.request('add', []);
+    requestInvalidMethod.method = true;
+    it('should callback with a "Request Error" if it is of the wrong type', reqShouldBeErrorCode(requestInvalidMethod, ServerErrors.INVALID_REQUEST));
+
+    var requestNoMethod = utils.request('add', []);
+    requestNoMethod.method = 'subtract';
+    it('should callback with a "Method Not Found" if it refers to a non-existing method', reqShouldBeErrorCode(requestNoMethod, ServerErrors.METHOD_NOT_FOUND)); 
 
   });
 
-  describe('invalid request with wrong "id"', function() {
-    
-    it('should callback a "Request Error" if wrong type', function(done) {
-      var request = utils.request('add', []);
-      request.id = true;
-      server.call(request, function(err, response) {
-        should.exist(err);
-        should.exist(err.error);
-        should.exist(err.error.code);
-        should.not.exist(response);
-        err.error.code.should.equal(-32600); // "Request Error"
-        done();
-      });
-    });
+  describe('invalid request with an erroneous "id"-property', function() {
+
+    var requestInvalidId = utils.request('add', []);
+    requestInvalidId.id = true;
+    it('should callback with a "Request Error" if it is of the wrong type', reqShouldBeErrorCode(requestInvalidId, ServerErrors.INVALID_REQUEST));
+
+    var requestNoIdInvalid = utils.request('add', []);
+    delete requestNoIdInvalid.id;
+    requestNoIdInvalid = JSON.stringify(requestNoIdInvalid).slice(0, requestNoIdInvalid.length - 5);
+    it('should callback with the "id"-property set to null if it is non-interpretable', reqShouldBeError(requestNoIdInvalid, function(err) {
+      should.strictEqual(err.id, null);
+    }));
+
+    var requestNoId = utils.request('add', [1, 2]);
+    delete requestNoId.id;
+    it('should callback empty if the request is interpretable', reqShouldBeEmpty(requestNoId));
 
   });
 
   describe('invalid request with wrong "params"', function() {
     
-    it('should callback a "Request Error" if wrong type', function(done) {
-      var request = utils.request('add', []);
-      request.params = '1';
-      server.call(request, function(err, response) {
-        should.exist(err);
-        should.exist(err.error);
-        should.exist(err.error.code);
-        should.not.exist(response);
-        err.error.code.should.equal(-32600); // "Request Error"
-        done();
-      });
-    });
-
-  });
-
-  describe('invalid request without "id"', function() {
-
-    it('should error with id as null if not interpretable', function(done) {
-      var request = utils.request('add', [2, 2]);
-      // make invalid
-      delete request.id;
-      request = JSON.stringify(request);
-      request = request.slice(0, request.length - 5);
-      server.call(request, function(err, response) {
-        should.exist(err);
-        should.not.exist(response);
-        err.should.have.ownProperty('id');
-        should.strictEqual(err.id, null);
-        done();
-      });
-    });
-
-    it('should callback empty if request is interpretable', function(done) {
-      var request = utils.request('add', [2, 2]);
-      // make invalid
-      delete request.id;
-      server.call(request, function(err, response) {
-        should.not.exist(err);
-        should.not.exist(response);
-        done();
-      });
-    });
+    var requestInvalidParams = utils.request('add', []);
+    requestInvalidParams.params = '1';
+    it('should callback with a "Request Error" if it is of the wrong type', reqShouldBeErrorCode(requestInvalidParams, ServerErrors.INVALID_REQUEST));
 
   });
 
   describe('request', function() {
 
-    it('should return the expected result', function(done) {
-      var a = 3, b = 9;
-      var request = utils.request('add', [a, b]);
-      server.call(request, function(err, response) {
-        should.not.exist(err);
-        should.exist(response);
-        should.exist(response.result);
-        response.result.should.equal(a + b);
-        done();
-      });
-    });
+    var simpleAddRequest = utils.request('add', [3, 9]);
+    it('should return the expected result', reqShouldBeResult(simpleAddRequest, 3 + 9));
 
   });
 
-  // TODO Needed?
   describe('request to a method that does not callback anything', function() {
-    before(function() {
-      server.method('empty', function(arg, callback) { callback(); })
-    });
 
-    it('should return a result regardless', function(done) {
-      var request = utils.request('empty', [true]);
-      server.call(request, function(err, response) {
-        should.not.exist(err);
-        should.exist(response);
-        response.should.have.ownProperty('result');
-        done();
-      });
-    });
+    var emptyMethodRequest = utils.request('empty', [true]);
+    it('should return a result regardless', reqShouldBe(emptyMethodRequest, function(err, res) {
+      should.not.exist(err);
+      should.exist(res);
+      res.should.have.ownProperty('result');
+    }));
 
-    after(function() {
-      server.removeMethod('empty');
-    });
   });
 
   describe('named parameters', function() {
 
-    it('should return the correct result', function(done) {
-      var a = 9, b = 2;
-      var request = utils.request('add', {a: a, b: b});
-      server.call(request, function(err, response) {
-        should.not.exist(err);
-        should.exist(response);
-        should.exist(response.result);
-        response.result.should.equal(a + b);
-        done();
-      });
-    });
-
-    it('should return the correct result when using named functions', function(done) {
-      var a = 11, b = 3;
-      var request = utils.request('add_named', {a: a, b: b});
-      function named(a, b, callback) { callback(null, a + b); }
-      server.method('add_named', named);
-      server.call(request, function(err, response) {
-        if(err) return callback(err);
-        should.exist(response);
-        should.exist(response.result);
-        response.result.should.equal(a + b);
-        server.removeMethod('add_named');
-        done();
-      });
-    });
+    var namedParamsRequest = utils.request('add', {b: 2, a: 9});
+    it('should return the expected result', reqShouldBeResult(namedParamsRequest, 9 + 2));
 
   });
 
   describe('notification requests', function() {
 
-    it('should handle a valid notification request', function(done) {
-      var request = utils.request('add', [3, -3], null);
-      server.call(request, function(err, response) {
-        should.not.exist(err);
-        should.not.exist(response);
-        done();
-      });
-    });
+    var simpleNotificationRequest = utils.request('add', [3, -3], null);
+    it('should handle a valid notification request', reqShouldBeEmpty(simpleNotificationRequest));
 
-    it('should handle an invalid notification request', function(done) {
-      // non-existent method, should ignore
-      var request = utils.request('subtract', [5, 7], null);
-      server.call(request, function(err, result) {
-        should.not.exist(err);
-        should.not.exist(result);
-        done();
-      });
-    });
+    var invalidNotificationRequest  = utils.request('subtract', [5, 7], null);
+    it('should handle an erroneous notification request', reqShouldBeEmpty(invalidNotificationRequest));
 
   });
 
-  describe('reviver and replacer', function() {
+  describe('reviving and replacing', function() {
 
-    var server = jayson.server(support.methods, support.options);
-
-    it('should be able to an instantiated object', function(done) {
-      var a = 4, b = -3;
-      var counter = new support.Counter(a);
-      var request = JSON.stringify(utils.request('incrementCounterBy', [counter, b]), support.options.replacer);
-      server.call(request, function(err, response) {
-        should.not.exist(err);
-        should.exist(response);
-        should.exist(response.result);
-        response.result.should.be.an.instanceof(support.Counter);
-        response.result.count.should.equal(a + b);
-        done();
-      });
-    });
+    var simpleInstanceRequestCounter = new support.Counter(5);
+    var simpleInstanceRequest = utils.request('incrementCounterBy', [simpleInstanceRequestCounter, 5]);
+    it('should be able to return the expected result', reqShouldBeResult(simpleInstanceRequest, function(res) {
+      res.should.be.an.instanceof(support.Counter);
+      res.count.should.equal(5 + 5);
+    }));
 
   });
 
   describe('batch requests', function() {
 
-    it('should error when version is 1', function(done) {
-      server.options.version = 1;
-      var requests = [
+    describe('with a version 1.0 server', function() {
+
+      beforeEach(function() {
+        server.options.version = 1;
+      });
+
+      var batchVersionRequests = [
         utils.request('add', [1, 1]),
         utils.request('add', [2, 2])
       ];
-      server.call(requests, function(err, response) {
-        should.not.exist(response);
-        should.exist(err);
-        should.exist(err.error);
-        should.exist(err.error.code);
-        err.error.code.should.equal(-32603); // "Internal Error"
-        done();
-      });
-      server.options.version = 2;
+      it('should error when version is 1.0', reqShouldBeErrorCode(batchVersionRequests, ServerErrors.INVALID_REQUEST));
+    
     });
 
-    it('should handle an empty batch', function(done) {
-      server.call([], function(err, response) {
-        should.not.exist(response);
-        should.exist(err);
-        should.exist(err.error);
-        should.exist(err.error.code);
-        err.error.code.should.equal(-32600);
-        done();
-      });
-    });
+    it('should handle an empty batch', reqShouldBeErrorCode([], ServerErrors.INVALID_REQUEST));
 
-    it('should handle a batch with only invalid requests', function(done) {
-      server.call([1, 2, 3], function(err, response) {
-        should.not.exist(err);
-        should.exist(response);
-        response.should.be.instanceof(Array).and.have.length(3);
-        response.forEach(function(response) {
-          should.exist(response);
-          should.exist(response.error);
-          should.exist(response.error.code);
-          response.error.code.should.equal(-32600);
-        });
-        done();
+    it('should handle a batch with only invalid requests', reqShouldBe([1, 'a', true], function(err, response) {
+      should.not.exist(err);
+      response.should.be.instanceof(Array).and.have.length(3);
+      response.forEach(function(response) {
+        response.error.code.should.equal(ServerErrors.INVALID_REQUEST);
       });
-    });
+    }));
 
-    it('should handle a batch with only notifications', function(done) {
-       var requests = [
-        utils.request('add', [3, 4], null),
-        utils.request('add', [4, 5], null)
-      ];
-      server.call(requests, function(err, responses) {
-        should.not.exist(err);
-        should.not.exist(responses);
-        done();
-      });
-    });
+    var onlyNotificationRequests = [
+      utils.request('add', [3, 4], null),
+      utils.request('add', [4, 5], null)
+    ];
+    it('should handle a batch with only notifications', reqShouldBeEmpty(onlyNotificationRequests));
 
-    it('should handle mixed requests', function(done) {
-      var requests = [
+    var mixedRequests = [
         utils.request('add', [1, 1], null),
         'invalid request',
         utils.request('add', [2, 2])
-      ];
-      server.call(requests, function(err, responses) {
-        should.not.exist(err);
-        should.exist(responses);
-        responses.should.be.instanceof(Array).and.have.length(2);
-        should.exist(responses[0]);
-        should.exist(responses[0].error);
-        should.exist(responses[0].error.code);
-        should.exist(responses[1]);
-        should.exist(responses[1].result);
-        responses[0].error.code.should.equal(-32600);
-        responses[1].result.should.equal(2 + 2);
-        done();
-      });
-    });
+    ];
+    it('should handle mixed requests', reqShouldBe(mixedRequests, function(err, responses) {
+      should.not.exist(err);
+      responses.should.be.instanceof(Array).and.have.length(2);
+      should.exist(responses[0]);
+      should.exist(responses[0].error);
+      responses[0].error.should.have.property('code', ServerErrors.INVALID_REQUEST);
+      should.exist(responses[1]);
+      responses[1].should.have.property('result', 2 + 2);
+    }));
 
-    it('should be able return method invocations in correct order', function(done) {
-      var requests = [
-        utils.request('add_slow', [1, 1, true]),
-        utils.request('add_slow', [1, 2, false])
-      ];
-      server.call(requests, function(err, responses) {
-        should.not.exist(err);
-        should.exist(responses);
-        responses.should.be.instanceof(Array);
-        responses.should.have.length(2);
-        should.exist(responses[0]);
-        should.exist(responses[0].result);
-        should.exist(responses[1]);
-        should.exist(responses[1].result);
-        responses[0].result.should.equal(2);
-        responses[1].result.should.equal(3);
+    var mixedCallbackRequests = [ 
+      utils.request('add_slow', [1, 1, true]),
+      utils.request('add_slow', [1, 2, false])
+    ];
+    it('should be able return method invocations in correct order', reqShouldBe(mixedCallbackRequests, function(err, responses) {
+      should.not.exist(err);
+      should.exist(responses);
+      responses.should.be.instanceof(Array).and.have.length(2);
+      should.exist(responses[0]);
+      should.exist(responses[0].result);
+      responses[0].should.have.property('result', 2);
+      should.exist(responses[1]);
+      should.exist(responses[1].result);
+      responses[1].should.have.property('result', 3);
+    }));
+
+  });
+
+  // exec request, assert error, assert code
+  function reqShouldBeErrorCode(request, code) {
+    return reqShouldBeError(request, function(err) {
+      err.error.should.have.property('code', code);
+    });
+  }
+
+  // exec request, assert error, run validate
+  function reqShouldBeError(request, validate) {
+    return reqShouldBe(request, function(err, res) {
+      should.exist(err);
+      should.exist(err.error);
+      should.not.exist(res);
+      validate(err);
+    });
+  }
+
+  // exec request, assert result not error, run/compare validate
+  function reqShouldBeResult(request, validate) {
+    return reqShouldBe(request, function(err, res) {
+      should.not.exist(err);
+      should.exist(res);
+      should.exist(res.result);
+      if(typeof(validate) === 'function') validate(res.result);
+      else res.result.should.equal(validate);
+    });
+  }
+
+  // exec request, assert no result, assert no error
+  function reqShouldBeEmpty(request) {
+    return reqShouldBe(request, function(err, res) {
+      should.not.exist(err);
+      should.not.exist(res);
+    });
+  }
+
+  // exec request, run validate
+  function reqShouldBe(request, validate) {
+    return function(done) {
+      server.call(request, function(err, res) {
+        validate.apply(validate, arguments);
         done();
       });
-    });
-  });
+    };
+  }
 
 });

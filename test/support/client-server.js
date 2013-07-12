@@ -1,46 +1,11 @@
 var should = require('should');
+var support = require(__dirname);
 var jayson = require(__dirname + '/../../');
 
-exports.methods = {
-  add: function(a, b, callback) {
-    callback(null, a + b);
-  },
-  error: function(callback) {
-    callback(this.error(-1000, 'An error message'));
-  },
-  incrementCounterBy: function(counter, value, callback) {
-    if(!(counter instanceof Counter)) {
-      return callback(this.error(-1000, 'Argument not an instance of Counter'));
-    }
-    counter.incrementBy(value);
-    callback(null, counter);
-  }
-};
-
-var Counter = exports.Counter = function(value) {
-  this.count = typeof(value) === 'number' ? value : 0;
-};
-
-Counter.prototype.incrementBy = function(value) {
-  this.count += value;
-};
-
-exports.options = {
-  reviver: function(key, value) {
-    if(value && value.$class === 'counter') {
-      var obj = new Counter();
-      for(var prop in value.$props) obj[prop] = value.$props[prop];
-      return obj;
-    }
-    return value;
-  },
-  replacer: function(key, value) {
-    if(value instanceof Counter) {
-      return {$class: 'counter', $props: {count: value.count}};
-    }
-    return value;
-  }
-};
+// TODO Remove this and all references in tests
+exports.methods = support.server.methods;
+exports.options = support.server.options;
+var Counter = exports.Counter = support.Counter;
 
 exports.clientInstance = function(client) {
   return function() {

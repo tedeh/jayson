@@ -19,25 +19,34 @@ describe('jayson relay', function() {
 
   describe('client', function() {
 
-    var backServer = jayson.server(support.methods, support.options);
-    var frontServer = jayson.server(support.methods, support.options);
+    var client, backServer, frontServer, context = {};
 
-    var client = jayson.client(backServer, support.options);
+    beforeEach(function() {
+      backServer = jayson.server(support.methods, support.options);
+    });
 
-    // replace all methods in front server with the client
-    for(var name in frontServer._methods) {
-      frontServer.method(name, client);
-    }
+    beforeEach(function() {
+      client = context.client = jayson.client(backServer, support.options);
+    });
 
-    it('should be able to request a success-method on the relayed server', support.clientRequest(client));
+    beforeEach(function() {
+      frontServer = jayson.server(support.methods, support.options);
 
-    it('should be able to request an error-method on the relayed server', support.clientError(client));
+      // replace all methods in front server with the client
+      Object.keys(frontServer._methods).forEach(function(methodName) {
+        frontServer.method(methodName, client);
+      });
+    });
 
-    it('should support reviving and replacing via the relays', support.clientReviveReplace(client));
+    it('should be able to request a success-method on the relayed server', support.clientRequest(context));
 
-    it('should be able to relay a notification', support.clientNotification(client));
+    it('should be able to request an error-method on the relayed server', support.clientError(context));
 
-    it('should be able to relay a batch request', support.clientBatch(client));
+    it('should support reviving and replacing via the relays', support.clientReviveReplace(context));
+
+    it('should be able to relay a notification', support.clientNotification(context));
+
+    it('should be able to relay a batch request', support.clientBatch(context));
 
   });
 

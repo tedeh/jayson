@@ -15,28 +15,31 @@ describe('jayson fork', function() {
 
   describe('client', function() {
 
-    var server = jayson.server.fork(__dirname + '/support/fork', support.options);
+    var server, client, context = {};
 
-    var client = jayson.client.fork(server, {
-      reviver: support.options.reviver,
-      replacer: support.options.replacer
+    beforeEach(function() {
+      server = context.server = jayson.server.fork(__dirname + '/support/fork', support.options);
+      client = context.client = jayson.client.fork(server, {
+        reviver: support.options.reviver,
+        replacer: support.options.replacer
+      });
     });
 
-    after(function() {
+    afterEach(function() {
       server.kill();
     });
     
-    it('should be an instance of jayson.client', support.clientInstance(client));
+    it('should be an instance of jayson.client', support.clientInstance(context));
 
-    it('should be able to request a success-method on the server', support.clientRequest(client));
+    it('should be able to request a success-method on the server', support.clientRequest(context));
 
-    it('should be able to request an error-method on the server', support.clientError(client));
+    it('should be able to request an error-method on the server', support.clientError(context));
 
-    it('should support reviving and replacing', support.clientReviveReplace(client));
+    it('should support reviving and replacing', support.clientReviveReplace(context));
 
-    it('should be able to handle a notification', support.clientNotification(client));
+    it('should be able to handle a notification', support.clientNotification(context));
 
-    it('should be able to handle a batch request', support.clientBatch(client));
+    it('should be able to handle a batch request', support.clientBatch(context));
 
   });
 

@@ -29,35 +29,37 @@ describe('jayson http', function() {
 
   describe('client', function() {
     
-    var server;
+    var server, client, context = {};
 
-    var client = jayson.client.http({
-      reviver: support.options.reviver,
-      replacer: support.options.replacer,
-      host: 'localhost',
-      port: 3000
-    });
-
-    before(function(done) {
-      server = jayson.server(support.methods, support.options).http();
+    beforeEach(function(done) {
+      server = context.server = jayson.server(support.methods, support.options).http();
       server.listen(3000, 'localhost', done);
     });
 
-    after(function() {
+    beforeEach(function() {
+      client = context.client = jayson.client.http({
+        reviver: support.options.reviver,
+        replacer: support.options.replacer,
+        host: 'localhost',
+        port: 3000
+      });
+    });
+
+    afterEach(function() {
       if(server) server.close();
     });
 
-    it('should be an instance of jayson.client', support.clientInstance(client));
+    it('should be an instance of jayson.client', support.clientInstance(context));
 
-    it('should be able to request a success-method on the server', support.clientRequest(client));
+    it('should be able to request a success-method on the server', support.clientRequest(context));
 
-    it('should be able to request an error-method on the server', support.clientError(client));
+    it('should be able to request an error-method on the server', support.clientError(context));
 
-    it('should support reviving and replacing', support.clientReviveReplace(client));
+    it('should support reviving and replacing', support.clientReviveReplace(context));
 
-    it('should be able to handle a notification', support.clientNotification(client));
+    it('should be able to handle a notification', support.clientNotification(context));
 
-    it('should be able to handle a batch request', support.clientBatch(client));
+    it('should be able to handle a batch request', support.clientBatch(context));
 
     it('should emit an event with the http response', function(done) {
       client.on('http response', function(res) {

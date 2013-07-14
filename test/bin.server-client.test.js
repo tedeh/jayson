@@ -7,7 +7,11 @@ var bin = __dirname + '/../bin/jayson.js';
 
 describe('jayson binary', function() {
 
-  var server = jayson.server(support.methods, support.options);
+  var server;
+
+  beforeEach(function() {
+    server = jayson.server(support.methods, support.options);
+  });
 
   describe('port-listening server', function() {
 
@@ -20,12 +24,12 @@ describe('jayson binary', function() {
       hostname: hostname
     });
 
-    before(function(done) {
+    beforeEach(function(done) {
       http = server.http();
       http.listen(port, hostname, done);
     });
 
-    after(function(done) {
+    afterEach(function(done) {
       http.on('close', done);
       http.close();
     });

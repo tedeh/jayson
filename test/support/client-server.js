@@ -7,14 +7,16 @@ exports.methods = support.server.methods;
 exports.options = support.server.options;
 var Counter = exports.Counter = support.Counter;
 
-exports.clientInstance = function(client) {
+exports.clientInstance = function(context) {
   return function() {
+    var client = context.client;
     client.should.be.instanceof(jayson.client);
   };
 };
 
-exports.clientRequest = function(client) {
+exports.clientRequest = function(context) {
   return function(done) {
+    var client = context.client;
     var a = 11, b = 12;
     client.request('add', [a, b], function(err, error, result) {
       should.not.exist(err);
@@ -26,8 +28,9 @@ exports.clientRequest = function(client) {
   };
 };
 
-exports.clientError = function(client) {
+exports.clientError = function(context) {
   return function(done) {
+    var client = context.client;
     client.request('error', [], function(err, error, result) {
       should.not.exist(err);
       should.not.exist(result);
@@ -41,8 +44,9 @@ exports.clientError = function(client) {
   };
 };
 
-exports.clientReviveReplace = function(client) {
+exports.clientReviveReplace = function(context) {
   return function(done) {
+    var client = context.client;
     var a = 2, b = 1;
     var instance = new Counter(a);
     client.request('incrementCounterBy', [instance, b], function(err, error, result) {
@@ -56,8 +60,9 @@ exports.clientReviveReplace = function(client) {
   };
 };
 
-exports.clientNotification = function(client) {
+exports.clientNotification = function(context) {
   return function(done) {
+    var client = context.client;
     client.request('add', [3, 4], null, function(err) {
       arguments.length.should.equal(0);
       done();
@@ -65,8 +70,9 @@ exports.clientNotification = function(client) {
   };
 };
 
-exports.clientBatch = function(client) {
+exports.clientBatch = function(context) {
   return function(done) {
+    var client = context.client;
     var batch = [
       client.request('add', [4, 9]),
       client.request('add', [10, 22])

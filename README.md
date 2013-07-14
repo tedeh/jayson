@@ -225,7 +225,7 @@ Every client supports these options:
 * `reviver` -> Function to use as a JSON reviver
 * `replacer` -> Function to use as a JSON replacer
 * `generator` -> Function to generate request ids with. If omitted, Jayson will just generate a "random" number that is [RFC4122] compliant and looks like this: `3d4be346-b5bb-4e28-bc4a-0b721d4f9ef9`
-* `version` -> Can be either integer 1 or integer 2 depending on which specification should be followed in communicating with the server. Defaults to 2 for [JSON-RPC 2.0][jsonrpc-spec]
+* `version` -> Can be either `1` or `2` depending on which specification should be followed in communicating with the server. Defaults to `2` for [JSON-RPC 2.0][jsonrpc-spec]
 
 [rfc_4122_spec]: http://www.ietf.org/rfc/rfc4122.txt
 
@@ -285,7 +285,7 @@ Every server supports these options:
 
 * `reviver` -> Function to use as a JSON reviver
 * `replacer` -> Function to use as a JSON replacer
-* `version` -> Can be either integer 1 or integer 2 depending on which specification clients are expected to follow. Defaults to 2 for [JSON-RPC 2.0][jsonrpc-spec]
+* `version` -> Can be either `1` or `2` depending on which specification clients are expected to follow. Defaults to `2` for [JSON-RPC 2.0][jsonrpc-spec]
 
 #### Using many server interfaces at the same time
 

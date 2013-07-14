@@ -16,6 +16,11 @@
   "engines": {
     "node": ">= 0.4.0"
   },
+  "contributors": [
+    "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",
+    "Daniel Vicory <dvicory@gmail.com> (http://bzfx.net)",
+    "Jonathan Liu"
+  ],
   "scripts": {
     "test": "make test",
     "blanket": {

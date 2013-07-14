@@ -71,20 +71,6 @@ describe('jayson client instance', function() {
     client.options.version = 2;
   });
 
-  //it('should not talk to a version 1.0 server when client is 2.0', function(done) {
-  //  server.options.version = 1;
-  //  var a = 11, b = 9;
-  //  client.request('add', [a, b], function(err, response) {
-  //    should.not.exist(err);
-  //    should.not.exist(response.result);
-  //    should.exist(response.error);
-  //    should.exist(response.error.code);
-  //    response.error.code.should.equal(-32600); // "Request Error"
-  //    done();
-  //  });
-  //  server.options.version = 2;
-  //});
-
   it('should return the response as received if given a callback with arity 2', function(done) {
     var a = 11, b = 9;
     client.request('add', [a, b], function(err, response) {

@@ -19,23 +19,27 @@ describe('jayson relay', function() {
 
   describe('client', function() {
 
-    var client, backServer, frontServer, context = {};
+    var frontClient, relayClient, backServer, frontServer, context = {};
 
     beforeEach(function() {
       backServer = jayson.server(support.methods, support.options);
     });
 
     beforeEach(function() {
-      client = context.client = jayson.client(backServer, support.options);
+      relayClient = jayson.client(backServer, support.options);
     });
 
     beforeEach(function() {
-      frontServer = jayson.server(support.methods, support.options);
+      frontServer = jayson.server({}, support.options);
 
       // replace all methods in front server with the client
-      Object.keys(frontServer._methods).forEach(function(methodName) {
-        frontServer.method(methodName, client);
+      Object.keys(backServer._methods).forEach(function(methodName) {
+        frontServer.method(methodName, relayClient);
       });
+    });
+
+    beforeEach(function() {
+      frontClient = context.client = jayson.client(frontServer, support.options);
     });
 
     it('should be able to request a success-method on the relayed server', support.clientRequest(context));

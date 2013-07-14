@@ -3,17 +3,19 @@
 Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in JavaScript for [node.js][node.js] that aims to be as simple as possible to use.
 
 [jsonrpc-spec]: http://jsonrpc.org/spec.html 
+[jsonrpc1-spec]: http://json-rpc.org/wiki/specification
 [node.js]: http://nodejs.org/
 
 ## Features
 
 * Servers that can listen to several interfaces at the same time
-* Supports HTTP client and server connections
+* Supports both HTTP and TCP client and server connections
 * jQuery client
 * Relaying of requests to other servers
-* JSON reviving and replacing for serialization of complex objects
+* JSON reviving and replacing for transparent serialization of complex objects
 * CLI client
 * Fully tested to comply with the [official JSON-RPC 2.0 specification][jsonrpc-spec]
+* Also supports [JSON-RPC 1.0][jsonrpc1-spec]
 
 ## Example
 
@@ -93,6 +95,7 @@ The client is available as the `Client` or `client` property of `require('jayson
 #### Interfaces
 
 * `Client` Base class for interfacing with a server.
+* `Client.tcp` TCP interface
 * `Client.http` HTTP interface.
 * `Client.fork` Node.js child_process/fork interface.
 * `Client.jquery` Wrapper around `jQuery.ajax`.
@@ -194,7 +197,7 @@ server.http().listen(3000);
 * See the [Official JSON-RPC 2.0 Specification][jsonrpc-spec] for additional information on how Jayson handles different types of batches, mainly with regards to notifications, request errors and so forth.
 * There is no guarantee that the results will be in the same order as request Array `request`. To find the right result, compare the ID from the request with the ID in the result yourself.
 
-#### Callback syntactic sugar
+#### Client callback syntactic sugar
 
 When the length (number of arguments) of a client callback function is either 2 or 3 it receives slightly different values when invoked.
 
@@ -203,20 +206,23 @@ When the length (number of arguments) of a client callback function is either 2 
 
 When doing a batch request with a 3-length callback, the second argument will be an array of requests with a `error` property and the third argument will be an array of requests with a `result` property.
 
-#### Client interfaces and options
-
-Every client supports these options:
-
-* `reviver` -> Function to use as a JSON reviver
-* `replacer` -> Function to use as a JSON replacer
-* `generator` -> Function to generate request ids with. If omitted, Jayson will just generate a "random" number like this: `Math.round(Math.random() * Math.pow(2, 24))`
-
 #### Client events
 
 A client will emit the following events (in addition to any special ones emitted by a specific interface):
 
 * `request` Emitted when a client is just about to dispatch a request. First argument is the request object.
 * `response` Emitted when a client has just received a reponse. First argument is the request object, second argument is the response as received.
+
+#### Client interfaces and options
+
+Every client supports these options:
+
+* `reviver` -> Function to use as a JSON reviver
+* `replacer` -> Function to use as a JSON replacer
+* `generator` -> Function to generate request ids with. If omitted, Jayson will just generate a "random" number that is [RFC4122] compliant and looks like this: `3d4be346-b5bb-4e28-bc4a-0b721d4f9ef9`
+* `version` -> Can be either integer 1 or integer 2 depending on which specification should be followed in communicating with the server. Defaults to 2 for [JSON-RPC 2.0][jsonrpc-spec]
+
+[rfc_4122_spec]: http://www.ietf.org/rfc/rfc4122.txt
 
 ##### Client.http
 
@@ -234,6 +240,10 @@ var client = jayson.client.http('http://localhost:3000');
 
 [nodejs_docs_http_request]: http://nodejs.org/docs/latest/api/http.html#http_http_request_options_callback
 [nodejs_docs_url_parse]: http://nodejs.org/api/url.html#url_url_parse_urlstr_parsequerystring_slashesdenotehost
+
+##### Client.tcp
+
+Uses the same options as the base class.
 
 ##### Client.fork
 
@@ -254,15 +264,23 @@ The server also sports several interfaces that can be accessed as properties of 
 #### Server interfaces and options
 
 * `Server` - Base interface for a server that supports receiving JSON-RPC 2.0 requests.
+* `Server.tcp` - TCP server that inherits from [net.Server][nodejs_doc_net_server].
 * `Server.http` - HTTP server that inherits from [http.Server][nodejs_doc_http_server].
 * `Server.https` - HTTPS server that inherits from [https.Server][nodejs_doc_http_server].
 * `Server.middleware` - Method that returns a [Connect][connect]/[Express][express] compatible middleware function.
 * `Server.fork` Creates a child process that can take requests via `client.fork`
 
+[nodejs_doc_net_server]: http://nodejs.org/docs/latest/api/net.html#net_class_net_server
 [nodejs_doc_http_server]: http://nodejs.org/docs/latest/api/http.html#http_class_http_server
 [nodejs_doc_https_server]: http://nodejs.org/docs/latest/api/https.html#https_class_https_server
 [connect]: http://www.senchalabs.org/connect/
 [express]: http://expressjs.com/
+
+Every server supports these options:
+
+* `reviver` -> Function to use as a JSON reviver
+* `replacer` -> Function to use as a JSON replacer
+* `version` -> Can be either integer 1 or integer 2 depending on which specification clients are expected to follow. Defaults to 2 for [JSON-RPC 2.0][jsonrpc-spec]
 
 #### Using many server interfaces at the same time
 
@@ -399,7 +417,7 @@ server.errorMessages[Server.errors.INTERNAL_ERROR] = 'I has a sad. I cant do any
 
 ### Revivers and Replacers
 
-JSON is a great data format, but it lacks support for representing types other than the simple ones defined in the [JSON specification][jsonrpc-spec]. Fortunately the JSON methods in JavaScript (`JSON.parse` and `JSON.stringify`) provides options for custom serialization/deserialization routines. Jayson allows you to pass your own routines as options to both clients and servers.
+JSON lacks support for representing types other than the simple ones defined in the [JSON specification][jsonrpc-spec]. Fortunately the JSON methods in JavaScript (`JSON.parse` and `JSON.stringify`) provide options for custom serialization/deserialization routines. Jayson allows you to pass your own routines as options to both clients and servers.
 
 Simple example transferring the state of an object between a client and a server:
 

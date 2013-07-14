@@ -59,6 +59,11 @@ client.request('add', [1, 1], function(err, error, response) {
 
 Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want the `jayson` client CLI in your PATH.
 
+## Changelog
+
+- *1.0.9*
+  Add support for TCP servers and clients
+
 ### CLI client
 
 There is a CLI client in `bin/jayson.js` and it should be available as `jayson` in your shell if you installed the package with the `--global` switch. Run `jayson --help` to see how it works.

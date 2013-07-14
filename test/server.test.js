@@ -21,36 +21,16 @@ describe('jayson server instance', function() {
 
   var server;
 
-  // reset the server after every test
   beforeEach(function() {
     server = jayson.server(support.server.methods, support.server.options);
-  });
-
-  it('should have the correct properties and functions', function() {
-    should.exist(server.method);
-    server.method.should.be.a('function');
-    should.exist(server.methods);
-    server.methods.should.be.a('function');
-    should.exist(server.call);
-    server.call.should.be.a('function');
-    should.exist(server.hasMethod);
-    server.hasMethod.should.be.a('function');
-    should.exist(server.removeMethod);
-    server.removeMethod.should.be.a('function');
-    should.exist(server.errorMessages);
-    server.errorMessages.should.be.a('object');
-    should.exist(server.options);
-    server.options.should.be.a('object');
   });
 
   it('should allow a method to be added and removed', function() {
     var methodName = 'subtract';
     server.hasMethod(methodName).should.be.false;
-    (function() {
-      server.method(methodName, function(a, b, callback) {
-        callback(null, a - b);
-      });
-    }).should.not.throw();
+    server.method(methodName, function(a, b, callback) {
+      callback(null, a - b);
+    });
     server.hasMethod(methodName).should.be.true;
     server.removeMethod(methodName);
     server.hasMethod(methodName).should.be.false;
@@ -93,38 +73,26 @@ describe('jayson server instance', function() {
 
   describe('event handlers', function() {
 
-    it('should emit "request" upon a request', function(done) {
-      var id = 'a_testy_id';
-      var params = [9, 2];
-      var method = 'add';
-      var request = utils.request(method, params, id);
-      server.once('request', function(request) {
-        should.exist(request);
-        request.id.should.equal(id);
-        request.params.should.equal(params);
-        request.method.should.equal(method);
-        done();
-      });
-      server.call(request);
-    });
+    var requestEventRequest = utils.request('add', [9, 2], 'test_request_event_id');
+    it('should emit "request" upon a request', reqShouldEmit(requestEventRequest, 'request', function(req) {
+      should.exist(req);
+      req.id.should.equal(requestEventRequest.id);
+    }));
 
-    it('should emit "response" upon a response', function(done) {
-      var a = 5, b = 2;
-      var id = 'another_testy_id';
-      var params = [a, b];
-      var method = 'add';
-      var request = utils.request(method, params, id);
-      server.once('response', function(request, response) {
-        should.exist(request);
-        request.id.should.equal(id);
-        request.params.should.equal(params);
-        request.method.should.equal(method);
-        should.exist(response);
-        response.result.should.equal(a + b);
-        done();
-      });
-      server.call(request);
-    });
+    var responseEventRequest = utils.request('add', [5, 2], 'test_response_event_id');
+    it('should emit "response" upon a response', reqShouldEmit(responseEventRequest, 'response', function(req, res) {
+      should.exist(req);
+      should.exist(res);
+      req.id.should.equal(responseEventRequest.id);
+      res.result.should.equal(5 + 2);
+    }));
+
+    var batchEventRequests = [utils.request('add', [5, 2], 'test_batch_event_id')];
+    it('should emit "batch" upon a batch request', reqShouldEmit(batchEventRequests, 'batch', function(batch) {
+      should.exist(batch);
+      batch.should.be.instanceof(Array).and.have.length(1);
+      batch[0].id.should.equal(batchEventRequests[0].id);
+    }));
 
   });
 
@@ -340,6 +308,17 @@ describe('jayson server instance', function() {
         validate.apply(validate, arguments);
         done();
       });
+    };
+  }
+
+  // add event handler, exec request, assert event handler ran
+  function reqShouldEmit(request, name, handler) {
+    return function(done) {
+      server.once(name, function() {
+        handler.apply(null, arguments);
+        done();
+      });
+      server.call(request);
     };
   }
 

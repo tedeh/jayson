@@ -19,7 +19,7 @@
   "contributors": [
     "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",
     "Daniel Vicory <dvicory@gmail.com> (http://bzfx.net)",
-    "Jonathan Liu"
+    "Jonathan Liu <net147@gmail.com>"
   ],
   "scripts": {
     "test": "make test",

@@ -1,6 +1,6 @@
 {
   "name": "jayson",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "JSON-RPC 2.0 compliant server and client",
   "keywords": ["jsonrpc", "rpc", "json", "jsonrpc-2.0", "middleware", "connect", "express", "jquery", "fork", "cluster", "distributed", "relay"],
   "author": "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",

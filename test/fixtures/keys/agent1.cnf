@@ -1,0 +1,18 @@
+[ req ]
+default_bits           = 1024
+days                   = 999
+distinguished_name     = req_distinguished_name
+attributes             = req_attributes
+prompt                 = no
+
+[ req_distinguished_name ]
+C                      = AA
+ST                     = State
+L                      = Locality
+O                      = Jayson
+OU                     = Jayson
+CN                     = localhost
+emailAddress           = mail@tedeh.net
+
+[ req_attributes ]
+challengePassword              = A challenge password

@@ -102,6 +102,7 @@ The client is available as the `Client` or `client` property of `require('jayson
 * `Client` Base class for interfacing with a server.
 * `Client.tcp` TCP interface
 * `Client.http` HTTP interface.
+* `Client.https` HTTPS interface.
 * `Client.fork` Node.js child_process/fork interface.
 * `Client.jquery` Wrapper around `jQuery.ajax`.
 
@@ -231,7 +232,7 @@ Every client supports these options:
 
 ##### Client.http
 
-Uses the same options as [http.request][nodejs_docs_http_request] (which also enables the use of https) in addition to these options:
+Uses the same options as [http.request][nodejs_docs_http_request] in addition to these options:
 
 * `encoding` -> String that determines the encoding to use and defaults to utf8
 
@@ -245,6 +246,13 @@ var client = jayson.client.http('http://localhost:3000');
 
 [nodejs_docs_http_request]: http://nodejs.org/docs/latest/api/http.html#http_http_request_options_callback
 [nodejs_docs_url_parse]: http://nodejs.org/api/url.html#url_url_parse_urlstr_parsequerystring_slashesdenotehost
+
+##### Client.https
+
+Uses the same options as [https.request][nodejs_docs_https_request] in addition _to the same options as `Client.http`_. This means it is also possible
+to pass a string URL as the first argument and have it interpreted by [url.parse][nodejs_docs_url_parse].
+
+[nodejs_docs_https_request]: http://nodejs.org/api/all.html#all_https_request_options_callback
 
 ##### Client.tcp
 
@@ -271,7 +279,7 @@ The server also sports several interfaces that can be accessed as properties of 
 * `Server` - Base interface for a server that supports receiving JSON-RPC 2.0 requests.
 * `Server.tcp` - TCP server that inherits from [net.Server][nodejs_doc_net_server].
 * `Server.http` - HTTP server that inherits from [http.Server][nodejs_doc_http_server].
-* `Server.https` - HTTPS server that inherits from [https.Server][nodejs_doc_http_server].
+* `Server.https` - HTTPS server that inherits from [https.Server][nodejs_doc_https_server].
 * `Server.middleware` - Method that returns a [Connect][connect]/[Express][express] compatible middleware function.
 * `Server.fork` Creates a child process that can take requests via `client.fork`
 

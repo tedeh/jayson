@@ -6,6 +6,32 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 [jsonrpc1-spec]: http://json-rpc.org/wiki/specification
 [node.js]: http://nodejs.org/
 
+## Table of contents
+
+- [Features](#features)
+- [Example](#example)
+- [Installation](#installation)
+- [Changelog](#changelog)
+- [Requirements](#requirements)
+- [Class Documentation](#class-documentation)
+- [Running tests](#running-tests)
+- [Usage](#usage)
+  - [Client](#client)
+     - [Interface description](#client-interface-description)
+     - [Notifications](#notifications)
+     - [Batches](#batches)
+     - [Callback syntactic sugar](#client-callback-syntactic-sugar)
+     - [Events](#client-events)
+  - [Server](#server)
+     - [Interface description](#server-interface-description)
+     - [Using many interfaces at the same time](#using-many-server-interfaces-at-the-same-time)
+     - [Using the server as a relay](#using-the-server-as-a-relay)
+     - [Events](#server-events)
+     - [Errors](#server-errors)
+- [Revivers and replacers](#revivers-and-replacers)
+- [Forking](#forking)
+- [Contributing](#contributing)
+
 ## Features
 
 * Servers that can listen to several interfaces at the same time
@@ -61,6 +87,10 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ## Changelog
 
+- *1.0.11*
+  Add support for a HTTPS client
+- *1.0.10*
+  Bugfixes
 - *1.0.9*
   Add support for TCP servers and clients
 
@@ -97,14 +127,61 @@ In addition to this document, a comprehensive class documentation made with [jsd
 
 The client is available as the `Client` or `client` property of `require('jayson')`.
 
-#### Interfaces
+#### Client interface description
 
 * `Client` Base class for interfacing with a server.
-* `Client.tcp` TCP interface
+* `Client.tcp` TCP interface.
 * `Client.http` HTTP interface.
 * `Client.https` HTTPS interface.
 * `Client.fork` Node.js child_process/fork interface.
 * `Client.jquery` Wrapper around `jQuery.ajax`.
+
+Every client supports these options:
+
+* `reviver` -> Function to use as a JSON reviver
+* `replacer` -> Function to use as a JSON replacer
+* `generator` -> Function to generate request ids with. If omitted, Jayson will just generate a "random" number that is [RFC4122][rfc_4122_spec] compliant and looks similar to this: `3d4be346-b5bb-4e28-bc4a-0b721d4f9ef9`
+* `version` -> Can be either `1` or `2` depending on which specification should be followed in communicating with the server. Defaults to `2` for [JSON-RPC 2.0][jsonrpc-spec]
+
+[rfc_4122_spec]: http://www.ietf.org/rfc/rfc4122.txt
+
+##### Client.http
+
+Uses the same options as [http.request][nodejs_docs_http_request] in addition to these options:
+
+* `encoding` -> String that determines the encoding to use and defaults to utf8
+
+It is possible to pass a string URL as the first argument. The URL will be run through [url.parse][nodejs_docs_url_parse]. Example:
+
+```javascript
+var jayson = require(__dirname + '/../..');
+var client = jayson.client.http('http://localhost:3000');
+// client.options is now the result of url.parse
+```
+
+[nodejs_docs_http_request]: http://nodejs.org/docs/latest/api/http.html#http_http_request_options_callback
+[nodejs_docs_url_parse]: http://nodejs.org/api/url.html#url_url_parse_urlstr_parsequerystring_slashesdenotehost
+
+##### Client.https
+
+Uses the same options as [https.request][nodejs_docs_https_request] in addition _to the same options as `Client.http`_. This means it is also possible
+to pass a string URL as the first argument and have it interpreted by [url.parse][nodejs_docs_url_parse].
+
+[nodejs_docs_https_request]: http://nodejs.org/api/all.html#all_https_request_options_callback
+
+##### Client.tcp
+
+Uses the same options as the base class.
+
+##### Client.fork
+
+Uses the same options as the base class.
+
+##### Client.jquery
+
+The jQuery Client is stand-alone from the other classes and should preferably be compiled with `make compile` which outputs different flavors into the `build` directory. Supports inclusion via AMD. Uses the same options as [jQuery.ajax][jquery_docs_ajax] and exposes itself as $.jayson with the same arguments as `Client.prototype.request`.
+
+[jquery_docs_ajax]: http://api.jquery.com/jQuery.ajax/
 
 #### Notifications
 
@@ -219,62 +296,13 @@ A client will emit the following events (in addition to any special ones emitted
 * `request` Emitted when a client is just about to dispatch a request. First argument is the request object.
 * `response` Emitted when a client has just received a reponse. First argument is the request object, second argument is the response as received.
 
-#### Client interfaces and options
-
-Every client supports these options:
-
-* `reviver` -> Function to use as a JSON reviver
-* `replacer` -> Function to use as a JSON replacer
-* `generator` -> Function to generate request ids with. If omitted, Jayson will just generate a "random" number that is [RFC4122][rfc_4122_spec] compliant and looks similar to this: `3d4be346-b5bb-4e28-bc4a-0b721d4f9ef9`
-* `version` -> Can be either `1` or `2` depending on which specification should be followed in communicating with the server. Defaults to `2` for [JSON-RPC 2.0][jsonrpc-spec]
-
-[rfc_4122_spec]: http://www.ietf.org/rfc/rfc4122.txt
-
-##### Client.http
-
-Uses the same options as [http.request][nodejs_docs_http_request] in addition to these options:
-
-* `encoding` -> String that determines the encoding to use and defaults to utf8
-
-It is possible to pass a string URL as the first argument. The URL will be run through [url.parse][nodejs_docs_url_parse]. Example:
-
-```javascript
-var jayson = require(__dirname + '/../..');
-var client = jayson.client.http('http://localhost:3000');
-// client.options is now the result of url.parse
-```
-
-[nodejs_docs_http_request]: http://nodejs.org/docs/latest/api/http.html#http_http_request_options_callback
-[nodejs_docs_url_parse]: http://nodejs.org/api/url.html#url_url_parse_urlstr_parsequerystring_slashesdenotehost
-
-##### Client.https
-
-Uses the same options as [https.request][nodejs_docs_https_request] in addition _to the same options as `Client.http`_. This means it is also possible
-to pass a string URL as the first argument and have it interpreted by [url.parse][nodejs_docs_url_parse].
-
-[nodejs_docs_https_request]: http://nodejs.org/api/all.html#all_https_request_options_callback
-
-##### Client.tcp
-
-Uses the same options as the base class.
-
-##### Client.fork
-
-Uses the same options as the base class.
-
-##### Client.jquery
-
-The jQuery Client is stand-alone from the other classes and should preferably be compiled with `make compile` which outputs different flavors into the `build` directory. Supports inclusion via AMD. Uses the same options as [jQuery.ajax][jquery_docs_ajax] and exposes itself as $.jayson with the same arguments as `Client.prototype.request`.
-
-[jquery_docs_ajax]: http://api.jquery.com/jQuery.ajax/
-
 ### Server
 
 The server classes are available as the `Server` or `server` property of `require('jayson')`.
 
 The server also sports several interfaces that can be accessed as properties of an instance of `Server`.
 
-#### Server interfaces and options
+#### Server interface description
 
 * `Server` - Base interface for a server that supports receiving JSON-RPC 2.0 requests.
 * `Server.tcp` - TCP server that inherits from [net.Server][nodejs_doc_net_server].
@@ -420,7 +448,7 @@ In addition to events that are specific to certain interfaces, all servers will 
 * `response` Emitted when the server is returning a response. First argument is the request object, the second is the response object.
 * `batch` Emitted when the server receives a batch request. First argument is an array of requests. Will emit `request` for each interpretable request in the batch.
 
-#### Errors
+#### Server Errors
 
 If you should like to return an error from an method request to indicate a failure, remember that the [JSON-RPC 2.0][jsonrpc-spec] specification requires the error to be an `Object` with a `code (Integer/Number)` to be regarded as valid. You can also provide a `message (String)` and a `data (Object)` with additional information. Example: 
 

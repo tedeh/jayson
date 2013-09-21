@@ -295,6 +295,48 @@ Every server supports these options:
 * `replacer` -> Function to use as a JSON replacer
 * `version` -> Can be either `1` or `2` depending on which specification clients are expected to follow. Defaults to `2` for [JSON-RPC 2.0][jsonrpc-spec]
 
+##### Server.tcp
+
+Uses the same options as the base class.
+
+##### Server.http
+
+Uses the same options as the base class. Inherits from [http.Server][nodejs_doc_http_server].
+
+##### Server.https
+
+Uses the same options as the base class. Inherits from [https.Server][nodejs_doc_https_server]. For information on how to configure certificates, [see the documentation on https.Server][nodejs_doc_https_server].
+
+##### Server.middleware
+
+Uses the same options as the base class. Returns a function that is compatible with [Connect][connect] or [Express][express]. Will expect the request to be `req.body`, meaning that the request body must be parsed (typically using `connect.bodyParser`) before the middleware is invoked.
+
+Middleware example in `examples/middleware/server.js`:
+
+```javascript
+var jayson = require(__dirname + '/../..');
+var connect = require('connect');
+var app = connect();
+
+var server = jayson.server({
+  add: function(a, b, callback) {
+    callback(null, a + b);
+  }
+});
+
+// parse request body before the jayson middleware
+app.use(connect.bodyParser());
+app.use(server.middleware());
+
+app.listen(3000);
+````
+
+##### Server.fork
+
+Uses the same options as the base class. First argument is the path to the a file that exports some methods (as a plain map) or an instance of `Server`. Second argument are the options.
+
+Please see the documentation below for a working example.
+
 #### Using many server interfaces at the same time
 
 A Jayson server can use many interfaces at the same time.
@@ -518,7 +560,7 @@ client.request('increment', [instance], function(err, error, result) {
 
 ### Forking
 
-It is possible (and _simple_) to create automatic forks with jayson using the node.js `child_process` core library. This might be used for expensive or blocking calculations and to provide some separation from the main server thread.
+It is possible to create automatic forks with jayson using the node.js `child_process` core library. This might be used for expensive or blocking calculations and to provide some separation from the main server thread.
 
 The forking server class is available as `jayson.Server.Fork` and takes a file as the first option. This file will be require'd by jayson and should export any methods that are to be made available to clients.
 

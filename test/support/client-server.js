@@ -19,8 +19,7 @@ exports.clientRequest = function(context) {
     var client = context.client;
     var a = 11, b = 12;
     client.request('add', [a, b], function(err, error, result) {
-      should.not.exist(err);
-      should.not.exist(error);
+      if(err || error) return done(err || error);
       should.exist(result);
       result.should.equal(a + b);
       done();
@@ -35,10 +34,8 @@ exports.clientError = function(context) {
       should.not.exist(err);
       should.not.exist(result);
       should.exist(error);
-      should.exist(error.code);
-      should.exist(error.message);
-      error.message.should.equal('An error message');
-      error.code.should.equal(-1000);
+      error.should.have.property('message', 'An error message');
+      error.should.have.property('code', -1000);
       done();
     });
   };
@@ -54,7 +51,7 @@ exports.clientReviveReplace = function(context) {
       should.not.exist(error);
       should.exist(result);
       result.should.be.instanceof(Counter).and.not.equal(instance, 'Not the same object');
-      result.count.should.equal(a + b);
+      result.should.have.property('count', a + b);
       done();
     });
   };

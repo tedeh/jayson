@@ -58,17 +58,42 @@ describe('jayson server instance', function() {
     server.hasMethod(methodName).should.be.false;
   });
 
+  // change server instance error message, request erroring method, assert error message changed
   it('should allow standard error messages to be changed', function(done) {
-    var newMsg = 'Parse Error!';
-    server.errorMessages[jayson.server.errors.PARSE_ERROR] = newMsg;
+    var newMsg = server.errorMessages[jayson.server.errors.PARSE_ERROR] = 'Parse Error!';
     server.call('invalid request', function(err, response) {
       should.exist(err);
       should.exist(err.error);
       should.not.exist(response);
-      err.error.code.should.equal(jayson.server.errors.PARSE_ERROR);
-      err.error.message.should.be.a('string').and.equal(newMsg);
+      err.error.should.have.property('code', jayson.server.errors.PARSE_ERROR);
+      err.error.should.have.property('message', newMsg);
       done();
     });
+  });
+
+  describe('error()', function() {
+
+    it('should not make an error out of an invalid code', function() {
+      var error = server.error('invalid_code');
+      should.exist(error);
+      error.should.have.property('code', jayson.Server.errors.INTERNAL_ERROR);
+    });
+
+    it('should fill in the error message if not passed one', function() {
+      var code = jayson.Server.errors.INVALID_PARAMS;
+      var error = server.error(code);
+      should.exist(error);
+      error.should.have.property('code', code);
+      error.should.have.property('message', jayson.Server.errorMessages[code]);
+    });
+
+    it('should add a data member if specified', function() {
+      var data = {member: 1};
+      var code = jayson.Server.errors.INVALID_PARAMS;
+      var error = server.error(code, null, data);
+      error.should.have.property('data', data);
+    });
+  
   });
 
   describe('event handlers', function() {

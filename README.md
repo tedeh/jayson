@@ -6,6 +6,8 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 [jsonrpc1-spec]: http://json-rpc.org/wiki/specification
 [node.js]: http://nodejs.org/
 
+*Build status:* [![Build Status][travis-img]][travis] 
+
 ## Table of contents
 
 - [Features](#features)
@@ -103,7 +105,6 @@ There is a CLI client in `bin/jayson.js` and it should be available as `jayson` 
 
 Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It has been tested with the following node.js versions:
 
-- node.js v0.6.x
 - node.js v0.8.x
 - node.js v0.10.x
 

@@ -29,6 +29,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
      - [Events](#server-events)
      - [Errors](#server-errors)
 - [Revivers and replacers](#revivers-and-replacers)
+- [Named parameters](#named-parameters)]
 - [Forking](#forking)
 - [Contributing](#contributing)
 
@@ -582,9 +583,50 @@ client.request('increment', [instance], function(err, error, result) {
 });
 ```
 
-##### Notes
+#### Notes
 
 * Instead of using a replacer, it is possible to define a `toJSON` method for any JavaScript object. Unfortunately there is no corresponding method for reviving objects (that would not work, obviously), so the _reviver_ always has to be set up manually.
+
+### Named parameters
+
+It is possible to specify named parameters when doing a client request by passing an Object instead of an Array.
+
+Client example in `examples/named_parameters/client.js`:
+
+```javascript
+var jayson = require(__dirname + '/../../');
+
+var client = jayson.client.http({
+  host: 'localhost',
+  port: 3000
+});
+
+client.request('add', {b: 1, a: 2}, function(err, error, response) {
+  if(err) throw err;
+  console.log(response); // 3!
+});
+
+```
+
+Server example in `examples/named_parameters/server.js`:
+
+```javascript
+var jayson = require(__dirname + '/../..');
+
+var server = jayson.server({
+  add: function(a, b, callback) {
+    callback(null, a + b);
+  }
+});
+
+server.http().listen(3000);
+```
+
+#### Notes
+
+* If requesting methods on a Jayson server, arguments left out will be `undefined`
+* Too many arguments or arguments with invalid names will be ignored
+* It is assumed that the last argument to a server method is the callback and it will not be filled with something else
 
 ### Forking
 

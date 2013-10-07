@@ -1,0 +1,14 @@
+# Language/versions
+language: node_js
+node_js:
+  - "0.10"
+  - "0.8"
+  - "0.6"
+
+# Build script
+script: 'make test'
+
+# Notifications
+notifications:
+ email:
+   - notify+mail@tedeh.net

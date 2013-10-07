@@ -175,7 +175,12 @@ describe('jayson server instance', function() {
   describe('named parameters', function() {
 
     var namedParamsRequest = utils.request('add', {b: 2, a: 9});
-    it('should return the expected result', reqShouldBeResult(namedParamsRequest, 9 + 2));
+    it('should return as expected', reqShouldBeResult(namedParamsRequest, 9 + 2));
+
+    var wrongParamsRequest = utils.request('add', {});
+    it('should not fail when not given sufficient arguments', reqShouldBeResult(wrongParamsRequest, function(result) {
+      isNaN(result).should.be.true;
+    }));
 
   });
 
@@ -288,8 +293,8 @@ describe('jayson server instance', function() {
       should.not.exist(err);
       should.exist(res);
       should.exist(res.result);
-      if(typeof(validate) === 'function') validate(res.result);
-      else res.result.should.equal(validate);
+      if(typeof(validate) === 'function') return validate(res.result);
+      res.should.have.property('result', validate);
     });
   }
 

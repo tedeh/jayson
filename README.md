@@ -29,7 +29,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
      - [Events](#server-events)
      - [Errors](#server-errors)
 - [Revivers and replacers](#revivers-and-replacers)
-- [Named parameters](#named-parameters)]
+- [Named parameters](#named-parameters)
 - [Forking](#forking)
 - [Contributing](#contributing)
 

@@ -61,6 +61,8 @@ describe('jayson binary', function() {
     var socketPath = __dirname + '/support/bin.test.socket';
 
     before(function(done) {
+      try { require('fs').unlinkSync(socketPath); }
+      catch(ignore) {}
       http = server.http();
       http.listen(socketPath, done);
     });

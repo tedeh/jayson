@@ -66,7 +66,7 @@ describe('jayson server instance', function() {
       should.exist(err.error);
       should.not.exist(response);
       err.error.code.should.equal(jayson.server.errors.PARSE_ERROR);
-      err.error.message.should.be.a('string').and.equal(newMsg);
+      err.error.message.should.equal(newMsg);
       done();
     });
   });

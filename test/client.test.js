@@ -143,7 +143,7 @@ describe('jayson client instance', function() {
       should.not.exist(err);
       should.not.exist(error);
       should.exist(response);
-      response.should.be.a('number').and.equal(params.a + params.b);
+      response.should.be.a.Number.and.equal(params.a + params.b);
       done();
     });
   });

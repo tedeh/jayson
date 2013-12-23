@@ -10,7 +10,7 @@ describe('utils', function() {
 
     it('exists', function() {
       utils.should.have.property('request');
-      utils.request.should.be.a('function');
+      utils.request.should.be.a.Function;
     });
 
     it('should throw a TypeError on an invalid method argument', function() {

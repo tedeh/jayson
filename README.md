@@ -5,8 +5,10 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 [jsonrpc-spec]: http://jsonrpc.org/spec.html 
 [jsonrpc1-spec]: http://json-rpc.org/wiki/specification
 [node.js]: http://nodejs.org/
+[travis]: https://travis-ci.org/tedeh/jayson
+[travis-img]: https://travis-ci.org/tedeh/jayson.png?branch=master
 
-*Build status:* [![Build Status][travis-img]][travis] 
+**Build status:** [![Build Status][travis-img]][travis] 
 
 ## Table of contents
 

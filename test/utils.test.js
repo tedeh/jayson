@@ -21,8 +21,14 @@ describe('utils', function() {
 
     it('should throw a TypeError on an invalid params argument', function() {
       (function() {
-        utils.request('a_method', null);
+        utils.request('a_method', true);
       }).should.throw(TypeError);
+    });
+
+    it('should omit the params argument when not given', function() {
+      var request = utils.request('a_method', null);
+      request.should.have.property('method', 'a_method');
+      request.should.not.have.property('params');
     });
 
   });

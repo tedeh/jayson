@@ -27,6 +27,9 @@ exports.server.methods = {
   },
   empty: function(arg, callback) {
     callback();
+  },
+  no_args: function(callback) {
+    callback(null, true);
   }
 };
 

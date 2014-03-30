@@ -30,6 +30,18 @@ exports.server.methods = {
   },
   no_args: function(callback) {
     callback(null, true);
+  },
+  Math: {
+    subtract: function(a, b, callback) {
+      callback(null, a - b);
+    }
+  },
+  Doubly: {
+    Nested: {
+      multiply: function(a, b, callback) {
+        callback(null, a * b);
+      }
+    }
   }
 };
 

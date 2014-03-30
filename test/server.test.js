@@ -238,6 +238,18 @@ describe('jayson server instance', function() {
 
   });
 
+  describe('nested requests', function() {
+    (function() {
+      var request = utils.request('Math.subtract', [3, 9]);
+      it('should return the expected result', reqShouldBeResult(request, 3 - 9));
+    })();
+
+    (function() {
+      var request = utils.request('Doubly.Nested.multiply', [3, 9]);
+      it('should work for multiple levels of nesting', reqShouldBeResult(request, 3 * 9));
+    })();
+  })
+
   describe('request to a method that does not callback anything', function() {
 
     var emptyMethodRequest = utils.request('empty', [true]);

@@ -2,6 +2,22 @@ var should = require('should');
 var support = require(__dirname);
 var jayson = require(__dirname + '/../../');
 
+var support = module.exports = exports = function(context) {
+
+  it('should be an instance of jayson.client', support.clientInstance(context));
+
+  it('should be able to request a success-method on the server', support.clientRequest(context));
+
+  it('should be able to request an error-method on the server', support.clientError(context));
+
+  it('should support reviving and replacing', support.clientReviveReplace(context));
+
+  it('should be able to handle a notification', support.clientNotification(context));
+
+  it('should be able to handle a batch request', support.clientBatch(context));
+
+};
+
 // TODO Remove this and all references in tests
 exports.methods = support.server.methods;
 exports.options = support.server.options;

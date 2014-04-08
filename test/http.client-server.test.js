@@ -27,9 +27,11 @@ describe('jayson http', function() {
 
   });
 
-  describe('client', function() {
-    
-    var server, client, context = {};
+  describe.only('client', function() {
+
+    var context = {};
+
+    support(context);
 
     beforeEach(function(done) {
       server = context.server = jayson.server(support.methods, support.options).http();
@@ -49,20 +51,8 @@ describe('jayson http', function() {
       if(server) server.close();
     });
 
-    it('should be an instance of jayson.client', support.clientInstance(context));
-
-    it('should be able to request a success-method on the server', support.clientRequest(context));
-
-    it('should be able to request an error-method on the server', support.clientError(context));
-
-    it('should support reviving and replacing', support.clientReviveReplace(context));
-
-    it('should be able to handle a notification', support.clientNotification(context));
-
-    it('should be able to handle a batch request', support.clientBatch(context));
-
     it('should emit an event with the http response', function(done) {
-      client.on('http response', function(res) {
+      context.client.on('http response', function(res) {
         should.exist(res);
         res.should.be.instanceof(ClientResponse);
         done();
@@ -75,7 +65,7 @@ describe('jayson http', function() {
       var client = jayson.client.http(urlStr);
       var urlObj = url.parse(urlStr);
       Object.keys(urlObj).forEach(function(key) {
-        client.options.should.have.property(key, urlObj[key]);
+        context.client.options.should.have.property(key, urlObj[key]);
       });
     });
 

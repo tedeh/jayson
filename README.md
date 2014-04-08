@@ -30,6 +30,8 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
      - [Interface description](#server-interface-description)
      - [Using many interfaces at the same time](#using-many-server-interfaces-at-the-same-time)
      - [Using the server as a relay](#using-the-server-as-a-relay)
+     - [Method wrapping](#method-wrapping)
+     - [Method routing](#method-routing)
      - [Events](#server-events)
      - [Errors](#server-errors)
 - [Revivers and replacers](#revivers-and-replacers)
@@ -40,6 +42,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 
 * Servers that can listen to several interfaces at the same time
 * Supports both HTTP and TCP client and server connections
+* Server-side method - [Method routing]
 * jQuery client
 * Relaying of requests to other servers
 * JSON reviving and replacing for transparent serialization of complex objects
@@ -93,6 +96,7 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 - *1.1.0*
   Remove fork server and client
+  Method routing
 - *1.0.11*
   Add support for a HTTPS client
 - *1.0.10*
@@ -320,6 +324,7 @@ Every server supports these options:
 
 * `reviver` -> Function to use as a JSON reviver
 * `replacer` -> Function to use as a JSON replacer
+* `router` -> Function to find which method to use for a request. See the chapter on [method routing](#method-routing).
 * `version` -> Can be either `1` or `2` depending on which specification clients are expected to follow. Defaults to `2` for [JSON-RPC 2.0][jsonrpc-spec]
 
 ##### Server.tcp
@@ -432,6 +437,89 @@ server.http().listen(3001, '127.0.0.1', function() {
 ```
 
 Every request to `add` on the public server will now relay the request to the private server. See the client example in `examples/relay/client.js`.
+
+#### Method routing
+
+Passing a property named `router` in the server options will enable you to write your own logic for routing requests to specific functions. 
+
+Server with custom routing logic in `examples/method_routing/server.js`:
+
+```javascript
+var jayson = require(__dirname + '/../..');
+var format = require('util').format;
+
+var methods = {
+  // a method that prints every request
+  add: function(a, b, callback) {
+    callback(null, a + b);
+  }
+};
+
+var server = jayson.server(methods, {
+  router: function(method) {
+    // regular by-name routing first
+    if(typeof(this._methods[method]) === 'function') return this._methods[method];
+    if(method === 'add_2') return this._methods.add.bind(this, 2);
+  }
+});
+```
+
+Client in `examples/method_routing/client.js` invoking `add_2` on the above server:
+
+```javascript
+var jayson = require(__dirname + '/../..');
+
+// create a client
+var client = jayson.client.http({
+  port: 3000,
+  hostname: 'localhost'
+});
+
+// invoke "add_2"
+client.request('add_2', [3], function(err, error, response) {
+  if(err) throw err;
+  console.log(response); // 5!
+});
+```
+
+An example of nested routes where each property is separated by a dot (you do not need to use the router option for this):
+
+```javascript
+var _ = require('underscore');
+var jayson = require(__dirname + '/../..');
+
+var methods = {
+  foo: {
+    bar: function(callback) {
+      callback(null, 'ping pong');
+    }
+  },
+  math: {
+    add: function(a, b, callback) {
+      callback(null, a + b);
+    }
+  }
+};
+
+// this reduction produces an object like this: {'foo.bar': [Function], 'math.add': [Function]}
+var map = _.reduce(methods, collapse('', '.'), {});
+var server = jayson.server(map);
+
+function collapse(stem, sep) {
+  return function(map, value, key) {
+    var prop = stem ? stem + sep + key : key;
+    if(_.isFunction(value)) map[prop] = value;
+    else if(_.isObject(value)) map = _.reduce(value, collapse(prop, sep), map);
+    return map;
+  }
+}
+
+```
+
+##### Notes
+
+* If `router` does not return anything, the reserver will respond with a `Method Not Found` error.
+* The Server.prototype methods `method`, `methods`, `removeMethod` and `hasMethod` will not use the `router` method, but will still operate on the internal `Server.prototype._methods` map. Particularly `removeMethod` and `hasMethod` will not work as expected.
 
 #### Server events
 

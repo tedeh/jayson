@@ -30,7 +30,6 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
      - [Interface description](#server-interface-description)
      - [Using many interfaces at the same time](#using-many-server-interfaces-at-the-same-time)
      - [Using the server as a relay](#using-the-server-as-a-relay)
-     - [Method wrapping](#method-wrapping)
      - [Method routing](#method-routing)
      - [Events](#server-events)
      - [Errors](#server-errors)

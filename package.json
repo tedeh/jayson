@@ -48,7 +48,8 @@
   },
   "dependencies": {
     "commander": "*",
-    "eyes": "*"
+    "eyes": "*",
+    "underscore": "^1.6.0"
   },
   "devDependencies": {
     "should": "*",

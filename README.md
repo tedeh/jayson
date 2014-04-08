@@ -34,7 +34,6 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
      - [Errors](#server-errors)
 - [Revivers and replacers](#revivers-and-replacers)
 - [Named parameters](#named-parameters)
-- [Forking](#forking)
 - [Contributing](#contributing)
 
 ## Features
@@ -92,6 +91,8 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ## Changelog
 
+- *1.1.0*
+  Remove fork server and client
 - *1.0.11*
   Add support for a HTTPS client
 - *1.0.10*
@@ -137,7 +138,6 @@ The client is available as the `Client` or `client` property of `require('jayson
 * `Client.tcp` TCP interface.
 * `Client.http` HTTP interface.
 * `Client.https` HTTPS interface.
-* `Client.fork` Node.js child_process/fork interface.
 * `Client.jquery` Wrapper around `jQuery.ajax`.
 
 Every client supports these options:
@@ -174,10 +174,6 @@ to pass a string URL as the first argument and have it interpreted by [url.parse
 [nodejs_docs_https_request]: http://nodejs.org/api/all.html#all_https_request_options_callback
 
 ##### Client.tcp
-
-Uses the same options as the base class.
-
-##### Client.fork
 
 Uses the same options as the base class.
 
@@ -313,7 +309,6 @@ The server also sports several interfaces that can be accessed as properties of 
 * `Server.http` - HTTP server that inherits from [http.Server][nodejs_doc_http_server].
 * `Server.https` - HTTPS server that inherits from [https.Server][nodejs_doc_https_server].
 * `Server.middleware` - Method that returns a [Connect][connect]/[Express][express] compatible middleware function.
-* `Server.fork` Creates a child process that can take requests via `client.fork`
 
 [nodejs_doc_net_server]: http://nodejs.org/docs/latest/api/net.html#net_class_net_server
 [nodejs_doc_http_server]: http://nodejs.org/docs/latest/api/http.html#http_class_http_server
@@ -363,12 +358,6 @@ app.use(server.middleware());
 app.listen(3000);
 ````
 
-##### Server.fork
-
-Uses the same options as the base class. First argument is the path to the a file that exports some methods (as a plain map) or an instance of `Server`. Second argument are the options.
-
-Please see the documentation below for a working example.
-
 #### Using many server interfaces at the same time
 
 A Jayson server can use many interfaces at the same time.
@@ -404,7 +393,7 @@ https.listen(443, function() {
 
 #### Using the server as a relay
 
-Passing an instance of a client as a method to the server makes the server relay incoming requests to wherever the client is pointing to. This might be used to delegate computationally expensive functions into a separate fork/server or to abstract a cluster of servers behind a common interface.
+Passing an instance of a client as a method to the server makes the server relay incoming requests to wherever the client is pointing to. This might be used to delegate computationally expensive functions into a separate server or to abstract a cluster of servers behind a common interface.
 
 Public server in `examples/relay/server_public.js` listening on `*:3000`:
 
@@ -630,63 +619,6 @@ server.http().listen(3000);
 * If requesting methods on a Jayson server, arguments left out will be `undefined`
 * Too many arguments or arguments with invalid names will be ignored
 * It is assumed that the last argument to a server method is the callback and it will not be filled with something else
-
-### Forking
-
-It is possible to create automatic forks with jayson using the node.js `child_process` core library. This might be used for expensive or blocking calculations and to provide some separation from the main server thread.
-
-The forking server class is available as `jayson.Server.Fork` and takes a file as the first option. This file will be require'd by jayson and should export any methods that are to be made available to clients.
-
-The main server in `examples/forking/server.js`
-
-```javascript
-var jayson = require(__dirname + '/../..');
-
-// creates a fork
-var fork = jayson.server.fork(__dirname + '/fork');
-
-var front = jayson.server({
-  fib: jayson.client.fork(fork) // connects "fib" to the fork
-});
-
-// let the front server listen to localhost:3000
-front.http().listen(3000);
-```
-
-The forked server in `examples/forking/fork.js`
-
-```javascript
-// export "fib" for forking
-exports.fib = function(n, callback) {
-  function fib(n) {
-    if(n < 2) return n;
-    return fib(n - 1) + fib(n - 2);
-  };
-  var result = fib(n);
-  callback(null, fib(n));
-};
-```
-
-A client doing a fibonacci request in `examples/forking/client.js`
-
-```javascript
-var jayson = require(__dirname + '/../..');
-
-var client = jayson.client.http({
-  port: 3000,
-  hostname: 'localhost'
-});
-
-// request "fib" on the server
-client.request('fib', [15], function(err, response) {
-  console.log(response);
-});
-```
-
-#### Notes
-
-* A child_process is spawned immediately 
-* To specify options (such as a reviver and a replacer) for the forked server, `module.exports` an instance of `jayson.Server` instead of exporting plain methods.
 
 ### Contributing
 

@@ -1,4 +1,3 @@
-var assert = require('assert');
 var should = require('should');
 
 var jayson = require(__dirname + '/..');

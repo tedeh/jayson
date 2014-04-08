@@ -1,38 +1,40 @@
 var should = require('should');
 var support = require(__dirname);
 var jayson = require(__dirname + '/../../');
+var Counter = support.Counter;
 
-var support = module.exports = exports = function(context) {
+/**
+ * Get a mocha suite for common test cases
+ * @param {Client} Client instance to use
+ * @return {Function}
+ */
+var common = module.exports = function(client) {
 
-  it('should be an instance of jayson.client', support.clientInstance(context));
+  return function() {
 
-  it('should be able to request a success-method on the server', support.clientRequest(context));
+    it('should be an instance of jayson.client', common.clientInstance(client));
 
-  it('should be able to request an error-method on the server', support.clientError(context));
+    it('should be able to request a success-method on the server', common.clientRequest(client));
 
-  it('should support reviving and replacing', support.clientReviveReplace(context));
+    it('should be able to request an error-method on the server', common.clientError(client));
 
-  it('should be able to handle a notification', support.clientNotification(context));
+    it('should support reviving and replacing', common.clientReviveReplace(client));
 
-  it('should be able to handle a batch request', support.clientBatch(context));
+    it('should be able to handle a notification', common.clientNotification(client));
 
+    it('should be able to handle a batch request', common.clientBatch(client));
+
+  };
 };
 
-// TODO Remove this and all references in tests
-exports.methods = support.server.methods;
-exports.options = support.server.options;
-var Counter = exports.Counter = support.Counter;
-
-exports.clientInstance = function(context) {
+common.clientInstance = function(client) {
   return function() {
-    var client = context.client;
     client.should.be.instanceof(jayson.client);
   };
 };
 
-exports.clientRequest = function(context) {
+common.clientRequest = function(client) {
   return function(done) {
-    var client = context.client;
     var a = 11, b = 12;
     client.request('add', [a, b], function(err, error, result) {
       if(err || error) return done(err || error);
@@ -43,9 +45,8 @@ exports.clientRequest = function(context) {
   };
 };
 
-exports.clientError = function(context) {
+common.clientError = function(client) {
   return function(done) {
-    var client = context.client;
     client.request('error', [], function(err, error, result) {
       should.not.exist(err);
       should.not.exist(result);
@@ -57,9 +58,8 @@ exports.clientError = function(context) {
   };
 };
 
-exports.clientReviveReplace = function(context) {
+common.clientReviveReplace = function(client) {
   return function(done) {
-    var client = context.client;
     var a = 2, b = 1;
     var instance = new Counter(a);
     client.request('incrementCounterBy', [instance, b], function(err, error, result) {
@@ -73,9 +73,8 @@ exports.clientReviveReplace = function(context) {
   };
 };
 
-exports.clientNotification = function(context) {
+common.clientNotification = function(client) {
   return function(done) {
-    var client = context.client;
     client.request('add', [3, 4], null, function(err) {
       arguments.length.should.equal(0);
       done();
@@ -83,9 +82,8 @@ exports.clientNotification = function(context) {
   };
 };
 
-exports.clientBatch = function(context) {
+common.clientBatch = function(client) {
   return function(done) {
-    var client = context.client;
     var batch = [
       client.request('add', [4, 9]),
       client.request('add', [10, 22])

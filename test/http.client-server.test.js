@@ -1,7 +1,8 @@
 var should = require('should');
 var jayson = require(__dirname + '/..');
-var support = require('./support/client-server');
-var ClientResponse = require('http').IncomingMessage;
+var support = require(__dirname + '/support');
+var common = support.common;
+var http = require('http');
 var url = require('url');
 
 describe('jayson http', function() {
@@ -10,54 +11,57 @@ describe('jayson http', function() {
 
     var server = null;
 
+    after(function() {
+      server.close();
+    });
+
     it('should listen to a local port', function(done) {
-      (function() {
-        server = jayson.server(support.methods, support.options).http();
-        server.listen(3000, 'localhost', done);
-      }).should.not.throw();
+      server = jayson.server(support.server.methods, support.server.options).http();
+      server.listen(3000, 'localhost', done);
     });
 
     it('should be an instance of http.Server', function() {
-      server.should.be.instanceof(require('http').Server);
-    });
-
-    after(function() {
-      if(server) server.close();
+      server.should.be.instanceof(http.Server);
     });
 
   });
 
-  describe.only('client', function() {
+  describe('client', function() {
 
-    var context = {};
-
-    support(context);
-
-    beforeEach(function(done) {
-      server = context.server = jayson.server(support.methods, support.options).http();
-      server.listen(3000, 'localhost', done);
+    var client = jayson.client.http({
+      reviver: support.server.options.reviver,
+      replacer: support.server.options.replacer,
+      host: 'localhost',
+      port: 3000
     });
 
-    beforeEach(function() {
-      client = context.client = jayson.client.http({
-        reviver: support.options.reviver,
-        replacer: support.options.replacer,
-        host: 'localhost',
-        port: 3000
-      });
+    var server = jayson.server(support.server.methods, support.server.options);
+    var server_http = server.http();
+
+    before(function(done) {
+      server_http.listen(3000, 'localhost', done);
     });
 
-    afterEach(function() {
-      if(server) server.close();
+    after(function() {
+      server_http.close();
     });
+
+    describe('common tests', common(client));
 
     it('should emit an event with the http response', function(done) {
-      context.client.on('http response', function(res) {
-        should.exist(res);
-        res.should.be.instanceof(ClientResponse);
+      var hasFired = false;
+
+      client.on('http response', function(res) {
+        res.should.be.instanceof(http.IncomingMessage);
+        hasFired = true;
+      });
+
+      client.request('add', [9, 4], function(err, response) {
+        if(err) throw err;
+        hasFired.should.be.ok;
         done();
       });
-      client.request('add', [9, 4], function(err, response) {});
+
     });
 
     it('should accept a URL string as the first argument', function() {
@@ -65,7 +69,7 @@ describe('jayson http', function() {
       var client = jayson.client.http(urlStr);
       var urlObj = url.parse(urlStr);
       Object.keys(urlObj).forEach(function(key) {
-        context.client.options.should.have.property(key, urlObj[key]);
+        client.options.should.have.property(key, urlObj[key]);
       });
     });
 

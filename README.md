@@ -448,7 +448,6 @@ var jayson = require(__dirname + '/../..');
 var format = require('util').format;
 
 var methods = {
-  // a method that prints every request
   add: function(a, b, callback) {
     callback(null, a + b);
   }

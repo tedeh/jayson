@@ -159,6 +159,15 @@ Uses the same options as [http.request][nodejs_docs_http_request] in addition to
 
 * `encoding` -> String that determines the encoding to use and defaults to utf8
 
+###### Client.http Events
+
+The HTTP server will emit the following events:
+
+* `http request` Emitted when the client has just created a HTTP request. First argument is an instance of `http.ClientRequest`
+* `http response` Emitted when the client has received an HTTP response. First argument is an instance of `http.IncomingMessage` and second argument an instance of `http.ClientRequest`.
+* `http error` Emitted when the underlying stream emits `error`. First argument is the error.
+
+
 It is possible to pass a string URL as the first argument. The URL will be run through [url.parse][nodejs_docs_url_parse]. Example:
 
 ```javascript
@@ -334,14 +343,6 @@ Uses the same options as the base class. Inherits from [net.Server][nodejs_doc_n
 ##### Server.http
 
 Uses the same options as the base class. Inherits from [http.Server][nodejs_doc_http_server].
-
-###### Server.http Events
-
-The HTTP server will emit the following events:
-
-* `http request` Emitted when the server has just created a HTTP request. First argument is an instance of `http.ClientRequest`
-* `http response` Emitted when the server has received an HTTP response. First argument is an instance of `http.IncomingMessage` and second argument an instance of `http.ClientRequest`.
-* `http error` Emitted when the underlying stream emits `error`. First argument is the error.
 
 ##### Server.https
 

@@ -66,7 +66,7 @@ common.clientReviveReplace = function(client) {
       should.not.exist(err);
       should.not.exist(error);
       should.exist(result);
-      result.should.be.instanceof(Counter).and.not.equal(instance, 'Not the same object');
+      result.should.be.instanceof(Counter).and.not.equal(instance, 'not the same object');
       result.should.have.property('count', a + b);
       done();
     });
@@ -76,6 +76,7 @@ common.clientReviveReplace = function(client) {
 common.clientNotification = function(client) {
   return function(done) {
     client.request('add', [3, 4], null, function(err) {
+      if(err) throw err;
       arguments.length.should.equal(0);
       done();
     });

@@ -1,5 +1,5 @@
 var should = require('should');
-
+var Stream = require('stream');
 var jayson = require(__dirname + '/..');
 var utils = jayson.utils;
 
@@ -109,6 +109,49 @@ describe('utils', function() {
       result.should.include('b', 'c', 'a');
     });
 
+  });
+
+  describe('parseBody', function() {
+
+    var parseBody = utils.parseBody;
+
+    it('should parse a valid json object', function(done) {
+      var stream = new Stream.PassThrough();
+      var obj = {asdf: true, complex: {value: 2, a: 3}};
+
+      parseBody(stream, {}, function(err, result) {
+        if(err) throw err;
+        obj.should.eql(result);
+        done();
+      });
+
+      stream.end(JSON.stringify(obj));
+    });
+
+    it('should parse a valid json array', function(done) {
+      var stream = new Stream.PassThrough();
+      var arr = [{first: true}, {asdf: true, complex: {value: 2, a: 3}}];
+
+      parseBody(stream, {}, function(err, result) {
+        if(err) throw err;
+        arr.should.eql(result);
+        done();
+      });
+
+      stream.end(JSON.stringify(arr));
+    });
+
+    it('should return an error on bad input', function(done) {
+      var stream = new Stream.PassThrough();
+
+      parseBody(stream, {}, function(err, result) {
+        should(err).be.instanceof(Error);
+        done();
+      });
+
+      stream.end("\"");
+    });
+  
   });
 
 });

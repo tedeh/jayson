@@ -1,5 +1,5 @@
 var should = require('should');
-var jayson = require(__dirname + '/..');
+var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support');
 var common = support.common;
 var http = require('http');

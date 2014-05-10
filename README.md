@@ -94,8 +94,8 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 ## Changelog
 
 - *1.1.0*
-  Remove fork server and client
-  Method routing
+  - Remove fork server and client
+  - Add server routing
 - *1.0.11*
   Add support for a HTTPS client
 - *1.0.10*
@@ -517,7 +517,7 @@ function collapse(stem, sep) {
 ##### Notes
 
 * If `router` does not return anything, the reserver will respond with a `Method Not Found` error.
-* The Server.prototype methods `method`, `methods`, `removeMethod` and `hasMethod` will not use the `router` method, but will still operate on the internal `Server.prototype._methods` map. Particularly `removeMethod` and `hasMethod` will not work as expected.
+* The `Server.prototype` methods `method`, `methods`, `removeMethod` and `hasMethod` will not use the `router` method, but will operate on the internal `Server.prototype._methods` map.
 
 #### Server events
 

@@ -1,6 +1,6 @@
 var should = require('should');
-var jayson = require(__dirname + '/..');
-var support = require('./support');
+var jayson = require(__dirname + '/../');
+var support = require(__dirname + '/support');
 var common = support.common;
 var net = require('net');
 var url = require('url');

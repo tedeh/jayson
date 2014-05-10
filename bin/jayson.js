@@ -31,19 +31,19 @@ if(program.json) program.quiet = true;
 
 // wrapper for printing different kinds of output
 var std = {
-  out: getPrinter(false),
-  err: getPrinter(true)
+  out: getPrinter({ fn: console.log }),
+  err: getPrinter({ fn: console.error })
 };
 
 // do we have all arguments required to do something?
 if(!(program.method && program.params && (program.url || program.socket))) {
-  std.err(program.helpInformation(), true);
+  std.err.result(program.helpInformation());
   return process.exit(-1);
 }
 
 var client = jayson.client.http(program.url || program.socket);
 
-std.out(
+std.out.noise(
   colorize('magenta', '-> %s(%s)'),
   program.method,
   Array.isArray(program.params) ? program.params.join(', ') : JSON.stringify(program.params)
@@ -51,16 +51,16 @@ std.out(
 
 client.request(program.method, program.params, function(err, response) {
   if(err) {
-    std.err(colorize('red', '<- %s'), err.stack);
+    std.err.noise(colorize('red', '<- %s'), err.stack);
     return process.exit(-1);
   }
 
   if(!response || program.json) {
-    std.out('%s', JSON.stringify(response).replace("\n", ""), true);
+    std.out.result('%s', JSON.stringify(response).replace("\n", ""));
     return process.exit(0);
   }
 
-  std.out('<- %s', inspect(response), true);
+  std.out.noise('<- %s', inspect(response), true);
   process.exit(response.error ? response.error.code : 0);
 });
 
@@ -74,14 +74,22 @@ function colorize(color, format) {
        : format;
 }
 
-function getPrinter(isError) {
-  var out = isError ? console.error : console.log;
-  return function(format) {
-    var args = Array.prototype.slice.call(arguments, 1);
-    // last argument (boolean) may indicate if this particular output should disregard --quiet
-    var isNoisy = typeof(args[args.length - 1]) === 'boolean' ? args.pop() : false;
-    if(!isNoisy && program.quiet) return;
-    args.unshift(format);
-    return out.apply(console, args);
-  }
+function getPrinter(options) {
+
+  var fn = options.fn || console.log;
+
+  return {
+
+    // print noise (printed if program is not quiet)
+    noise: function() {
+      if(program.quiet) return;
+      return fn.apply(console, arguments);
+    },
+
+    // print results (always printed)
+    result: function() {
+      return fn.apply(console, arguments);
+    }
+  
+  };
 }

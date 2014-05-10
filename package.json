@@ -48,8 +48,8 @@
   },
   "dependencies": {
     "JSONStream": "0.8.0",
-    "commander": "*",
-    "eyes": "*",
+    "commander": "1.3.2",
+    "eyes": "0.1.8",
     "underscore": "^1.6.0"
   },
   "devDependencies": {

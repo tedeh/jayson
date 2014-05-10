@@ -36,6 +36,7 @@ describe('jayson binary', function() {
       var args = get_args(bin, {
         url: surl,
         method: 'add',
+        quiet: true,
         json: true,
         params: JSON.stringify([4, 9])
       });
@@ -81,6 +82,7 @@ describe('jayson binary', function() {
       var args = get_args(bin, {
         socket: socketPath,
         method: 'add',
+        quiet: true,
         json: true,
         params: JSON.stringify([1, 2])
       });

@@ -93,7 +93,7 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ## Changelog
 
-- *1.1.0*
+- *1.1.1*
   - More http server events
   - Remove fork server and client
   - Add server routing
@@ -335,7 +335,7 @@ Uses the same options as the base class. Inherits from [net.Server][nodejs_doc_n
 
 Uses the same options as the base class. Inherits from [http.Server][nodejs_doc_http_server].
 
-###### Events
+###### Server.http Events
 
 The HTTP server will emit the following events:
 

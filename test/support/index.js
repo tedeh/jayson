@@ -1,7 +1,7 @@
 var should = require('should');
 var jayson = require(__dirname + '/../../');
 
-exports.Counter = require(__dirname + '/Counter');
+exports.Counter = require(__dirname + '/counter');
 
 exports.common = require(__dirname + '/common');
 

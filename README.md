@@ -94,6 +94,7 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 ## Changelog
 
 - *1.1.0*
+  - More http server events
   - Remove fork server and client
   - Add server routing
 - *1.0.11*

@@ -48,11 +48,27 @@ describe('jayson http', function() {
 
     describe('common tests', common(client));
 
+    it('should emit an event with the http request', function(done) {
+      var hasFired = false;
+      client.on('http request', function(req) {
+        req.should.be.instanceof(http.ClientRequest);
+        hasFired = true;
+      });
+
+      client.request('add', [10, 2], function(err, response) {
+        if(err) throw err;
+        hasFired.should.be.ok;
+        done();
+      });
+
+    });
+
     it('should emit an event with the http response', function(done) {
       var hasFired = false;
 
-      client.on('http response', function(res) {
+      client.on('http response', function(res, req) {
         res.should.be.instanceof(http.IncomingMessage);
+        req.should.be.instanceof(http.ClientRequest);
         hasFired = true;
       });
 

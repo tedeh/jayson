@@ -334,9 +334,17 @@ Uses the same options as the base class. Inherits from [net.Server][nodejs_doc_n
 
 Uses the same options as the base class. Inherits from [http.Server][nodejs_doc_http_server].
 
+###### Events
+
+The HTTP server will emit the following events:
+
+* `http request` Emitted when the server has just created a HTTP request. First argument is an instance of `http.ClientRequest`
+* `http response` Emitted when the server has received an HTTP response. First argument is an instance of `http.IncomingMessage` and second argument an instance of `http.ClientRequest`.
+* `http error` Emitted when the underlying stream emits `error`. First argument is the error.
+
 ##### Server.https
 
-Uses the same options as the base class. Inherits from [https.Server][nodejs_doc_https_server]. For information on how to configure certificates, [see the documentation on https.Server][nodejs_doc_https_server].
+Uses the same options as the base class. Inherits from [https.Server][nodejs_doc_https_server] and `jayson.Server.http`. For information on how to configure certificates, [see the documentation on https.Server][nodejs_doc_https_server].
 
 ##### Server.middleware
 

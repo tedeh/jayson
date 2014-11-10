@@ -1,5 +1,5 @@
 var should = require('should');
-var Stream = require('stream');
+var PassStream = require('pass-stream');
 var jayson = require(__dirname + '/..');
 var utils = jayson.utils;
 
@@ -116,7 +116,7 @@ describe('utils', function() {
     var parseBody = utils.parseBody;
 
     it('should parse a valid json object', function(done) {
-      var stream = new Stream.PassThrough();
+      var stream = new PassStream();
       var obj = {asdf: true, complex: {value: 2, a: 3}};
 
       parseBody(stream, {}, function(err, result) {
@@ -129,7 +129,7 @@ describe('utils', function() {
     });
 
     it('should parse a valid json array', function(done) {
-      var stream = new Stream.PassThrough();
+      var stream = new PassStream();
       var arr = [{first: true}, {asdf: true, complex: {value: 2, a: 3}}];
 
       parseBody(stream, {}, function(err, result) {
@@ -142,7 +142,7 @@ describe('utils', function() {
     });
 
     it('should return an error on bad input', function(done) {
-      var stream = new Stream.PassThrough();
+      var stream = new PassStream();
 
       parseBody(stream, {}, function(err, result) {
         should(err).be.instanceof(Error);

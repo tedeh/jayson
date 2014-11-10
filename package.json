@@ -57,6 +57,7 @@
     "mocha": "1.18.2",
     "connect": "2.15.0",
     "uglify-js": "2.4.13",
-    "blanket": "1.1.6"
+    "blanket": "1.1.6",
+    "pass-stream": "0.1.3"
   }
 }

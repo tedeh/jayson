@@ -54,13 +54,63 @@ describe('jayson client instance', function() {
     });
   });
 
-  it('should return the response as received if given a callback with arity 2', function(done) {
+  it('should return the response as received if given a callback with length 2', function(done) {
     client.request('add', [11, 12], function(err, response) {
       if(err) throw err;
       arguments.length.should.equal(2);
       response.should.containDeep({result: 11 + 12});
       done();
     });
+  });
+
+  it('should split out a response when given a length 3 callback', function(done) {
+    client.request('add', [4, 3], function(err, error, result) {
+      if(err) throw err;
+      should(error).not.exist;
+      should(result).exist;
+      result.should.equal(4 + 3);
+      done();
+    });
+  });
+
+  it('should out an error when given a length 3 callback', function(done) {
+    client.request('error', [], function(err, error, result) {
+      if(err) throw err;
+      should(error).exist;
+      error.should.have.property('code', -1000);
+      should(result).not.exist;
+      done();
+    });
+  });
+
+  describe('_parseResponse', function() {
+
+    it('should correctly split an ambiguous error response', function(done) {
+      var response = {
+        error: null, // should not be here
+        result: 5
+      };
+      client._parseResponse(null, response, function(err, error, response) {
+        if(err) throw err;
+        should(error).equal(null);
+        should(response).equal(5);
+        done();
+      });
+    });
+
+    it('should send both error and response as is if ambiguous', function(done) {
+      var response = {
+        error: {code: 10000}, // missing message
+        result: 2 // should not be here
+      };
+      client._parseResponse(null, response, function(err, error, response) {
+        if(err) throw err;
+        should(error).have.property('code', 10000);
+        should(response).equal(2);
+        done();
+      });
+    });
+  
   });
 
   it('should support specifying a request id generator', function(done) {
@@ -180,7 +230,7 @@ describe('jayson client instance', function() {
       });
     });
 
-    it('should split errors and successes when given a three-paramed callback', function(done) {
+    it('should split errors and responses when given a length 3 callback', function(done) {
 
       var batch = [
         client.request('add', [12, 13]),

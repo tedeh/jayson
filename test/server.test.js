@@ -117,6 +117,30 @@ describe('jayson server instance', function() {
   
   });
 
+  describe('jayson.Client router', function() {
+    var client = null;
+
+    beforeEach(function() {
+      client = jayson.client(server, support.server.options);
+      server.options.router = function(method) {
+        return client;
+      };
+    });
+
+    it('should forward id', function(done) {
+      var request = utils.request('method', [], 'test_event_id');
+
+      client._request = function(request, cb) {
+        request.id.should.eql('test_event_id');
+        cb(null);
+      };
+
+      server.call(request, function() {
+        done();
+      });
+    });
+  });
+
   describe('event handlers', function() {
 
     (function() {

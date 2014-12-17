@@ -2,6 +2,7 @@ var should = require('should');
 var jayson = require(__dirname + '/..');
 var support = require(__dirname + '/support');
 var common = support.common;
+var utils = jayson.utils;
 
 describe('jayson client object', function() {
 
@@ -177,6 +178,40 @@ describe('jayson client instance', function() {
       should.not.exist(error);
       response.should.equal(5 - 2);
       done();
+    });
+  });
+
+  describe('server sent notifications', function() {
+    describe('with JSON-RPC version 1', function() {
+      beforeEach(function() {
+        client.options.version = 1;
+      });
+
+      it('should support recieving notifications', function(done) {
+        var request = utils.request('notification_method', [], null, {
+          version: 1
+        });
+        client.notification('notification_method', function() {
+          true.should.be.ok;
+          done();
+        });
+        client.notify(request);
+      });
+    });
+
+    describe('with JSON-RPC version 2', function() {
+      beforeEach(function() {
+        client.options.version = 2;
+      });
+      it('should not accept notifications', function() {
+        var request = utils.request('notification_method', [], null, {
+          version: 2
+        });
+
+        (function() {
+          client.notify(request);
+        }).should.throw();
+      });
     });
   });
 

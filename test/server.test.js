@@ -110,7 +110,10 @@ describe('jayson server instance', function() {
     beforeEach(function() {
       server.options.router = function(method) {
         if(typeof(this._methods[method]) === 'function') return this._methods[method];
-        if(method === 'add_2') return this._methods.add.bind(this, 2);
+        if(method === 'add_2') {
+          var fn = server.getMethod('add').getHandler();
+          return jayson.Method(fn.bind(null, 2));
+        }
       };
     });
 
@@ -499,6 +502,72 @@ describe('jayson server instance', function() {
     
     });
 
+  });
+
+  describe('method', function() {
+
+    var server = null;
+
+    beforeEach(function() {
+      server = jayson.server();
+    });
+
+    describe.skip('params array', function() {
+
+      var add = function(args, done) {
+        var result = args.reduce(function(sum, value) {
+          return sum + value;
+        }, 0);
+        done(null, result);
+      };
+
+      it('should work', function(done) {
+        server.method('add', jayson.method({
+          params: Array,
+          handler: add
+        }));
+        var request = utils.request('add', [1,2,3,4]);
+        server.call(request, function(err, response) {
+          if(err) throw err;
+          response.should.have.property('result', 1 + 2 + 3 + 4);
+          done();
+        });
+      });
+
+    });
+
+    describe('default parameters', function() {
+
+      beforeEach(function() {
+        server.method('add', jayson.method({
+          defaults: {a: 1, b: 2},
+          params: {a: Number, b: Number},
+          handler: function(params, done) {
+            done(null, params.a + params.b);
+          }
+        }));
+      });
+
+      it('should support only default parameters', function(done) {
+        var request = utils.request('add');
+        server.call(request, function(err, response) { 
+          if(err) throw err;
+          response.should.have.property('result', 1 + 2);
+          done();
+        });
+      });
+
+      it('should fill up params given as an array', function(done) {
+        var request = utils.request('add', [1, 2, 3]);
+        server.call(request, function(err, response) {
+          if(err) throw err;
+          response.should.have.property('result', 1 + 2);
+          done();
+        });
+      });
+
+    });
+  
   });
   
   // throws an error passed to callback for server.call

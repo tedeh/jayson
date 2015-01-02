@@ -475,6 +475,8 @@ var server = jayson.server(methods, {
     if(method === 'add_2') return this._methods.add.bind(this, 2);
   }
 });
+
+server.http().listen(3000);
 ```
 
 Client in `examples/method_routing/client.js` invoking `add_2` on the above server:

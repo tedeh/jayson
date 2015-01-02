@@ -31,6 +31,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
      - [Using many interfaces at the same time](#using-many-server-interfaces-at-the-same-time)
      - [Using the server as a relay](#using-the-server-as-a-relay)
      - [Method routing](#method-routing)
+     - [Method definition](#method-definition)
      - [Events](#server-events)
      - [Errors](#server-errors)
 - [Revivers and replacers](#revivers-and-replacers)
@@ -92,6 +93,10 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ## Changelog (notable milestones)
 
+- *1.2*
+  - Improved method definition
+- *1.1.4*
+  - New way to define methods
 - *1.1.1*
   - More http server events
   - Remove fork server and client
@@ -527,6 +532,11 @@ function collapse(stem, sep) {
 
 * If `router` does not return anything, the reserver will respond with a `Method Not Found` error.
 * The `Server.prototype` methods `method`, `methods`, `removeMethod` and `hasMethod` will not use the `router` method, but will operate on the internal `Server.prototype._methods` map.
+* The `router` method is expected to return instances of jayson.Method (new in 1.2)
+
+#### Method definition
+
+You can define methods with a wrapping function 
 
 #### Server events
 

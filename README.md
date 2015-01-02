@@ -166,6 +166,7 @@ The HTTP server will emit the following events:
 * `http request` Emitted when the client has just created a HTTP request. First argument is an instance of `http.ClientRequest`
 * `http response` Emitted when the client has received an HTTP response. First argument is an instance of `http.IncomingMessage` and second argument an instance of `http.ClientRequest`.
 * `http error` Emitted when the underlying stream emits `error`. First argument is the error.
+* `http timeout` Emitter when the underlying stream emits `timeout`. When emitted, it will automatically cause the request to abort.
 
 
 It is possible to pass a string URL as the first argument. The URL will be run through [url.parse][nodejs_docs_url_parse]. Example:

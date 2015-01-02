@@ -50,7 +50,7 @@ describe('jayson http', function() {
 
     it('should emit an event with the http request', function(done) {
       var hasFired = false;
-      client.on('http request', function(req) {
+      client.once('http request', function(req) {
         req.should.be.instanceof(http.ClientRequest);
         hasFired = true;
       });
@@ -66,7 +66,7 @@ describe('jayson http', function() {
     it('should emit an event with the http response', function(done) {
       var hasFired = false;
 
-      client.on('http response', function(res, req) {
+      client.once('http response', function(res, req) {
         res.should.be.instanceof(http.IncomingMessage);
         req.should.be.instanceof(http.ClientRequest);
         hasFired = true;
@@ -87,6 +87,20 @@ describe('jayson http', function() {
       Object.keys(urlObj).forEach(function(key) {
         client.options.should.have.property(key, urlObj[key]);
       });
+    });
+
+    it('should callback with an error on timeout', function(done) {
+
+      client.once('http request', function(req) {
+        req.setTimeout(5); // timeout 5 ms
+      });
+
+      client.request('add_slow', [4, 3, true], function(err, response) {
+        should(err).be.instanceof(Error);
+        should(response).not.exist;
+        done();
+      });
+
     });
 
   });

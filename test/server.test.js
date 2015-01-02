@@ -86,7 +86,23 @@ describe('jayson server instance', function() {
       var error = server.error(code, null, data);
       error.should.have.property('data', data);
     });
-  
+
+    describe('with a version 1.0 server', function() {
+
+      beforeEach(function() {
+        server.options.version = 1;
+      });
+
+      it('should consider a string a valid error', function() {
+        server.method('errorMethod', function(callback) {
+          callback('an error');
+        });
+        var request = utils.request('errorMethod', []);
+        server.call(request, function(err, response) {
+          err.error.should.eql('an error');
+        });
+      });
+    });
   });
 
   describe('router', function() {

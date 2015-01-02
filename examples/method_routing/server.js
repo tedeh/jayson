@@ -16,3 +16,4 @@ var server = jayson.server(methods, {
   }
 });
 
+server.http().listen(3000);

@@ -352,6 +352,10 @@ Uses the same options as the base class. Inherits from [https.Server][nodejs_doc
 
 Uses the same options as the base class. Returns a function that is compatible with [Connect][connect] or [Express][express]. Will expect the request to be `req.body`, meaning that the request body must be parsed (typically using `connect.bodyParser`) before the middleware is invoked.
 
+The middleware supports the following options:
+
+* `end` Defaults to `true`. If set to `false` will cause the middleware to `next()` instead of `res.end()` at the end of a request. `res.body` and the response header may or may not be set when the next middleware is called.
+
 Middleware example in `examples/middleware/server.js`:
 
 ```javascript

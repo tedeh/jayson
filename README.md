@@ -368,7 +368,10 @@ var server = jayson.server({
 // parse request body before the jayson middleware
 app.use(connect.bodyParser());
 app.use(server.middleware());
-
+    /*
+    if you need Connect or Express to continue with next middleware:
+      app.use(server.middleware({shouldContinue: true}));
+    */
 app.listen(3000);
 ````
 

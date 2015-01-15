@@ -4,6 +4,7 @@
   "description": "JSON-RPC 1.0/2.0 compliant server and client",
   "keywords": [
     "jsonrpc",
+    "json-rpc",
     "rpc",
     "json",
     "jsonrpc-2.0",

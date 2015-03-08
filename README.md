@@ -42,7 +42,6 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 * Servers that can listen to several interfaces at the same time
 * Supports both HTTP and TCP client and server connections
 * Server-side method - [Method routing]
-* jQuery client
 * Relaying of requests to other servers
 * JSON reviving and replacing for transparent serialization of complex objects
 * CLI client
@@ -142,7 +141,6 @@ The client is available as the `Client` or `client` property of `require('jayson
 * `Client.tcp` TCP interface.
 * `Client.http` HTTP interface.
 * `Client.https` HTTPS interface.
-* `Client.jquery` Wrapper around `jQuery.ajax`.
 
 Every client supports these options:
 
@@ -190,12 +188,6 @@ to pass a string URL as the first argument and have it interpreted by [url.parse
 ##### Client.tcp
 
 Uses the same options as the base class.
-
-##### Client.jquery
-
-The jQuery Client is stand-alone from the other classes and should preferably be compiled with `make compile` which outputs different flavors into the `build` directory. Supports inclusion via AMD. Uses the same options as [jQuery.ajax][jquery_docs_ajax] and exposes itself as $.jayson with the same arguments as `Client.prototype.request`.
-
-[jquery_docs_ajax]: http://api.jquery.com/jQuery.ajax/
 
 #### Notifications
 

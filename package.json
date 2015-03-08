@@ -11,7 +11,6 @@
     "middleware",
     "connect",
     "express",
-    "jquery",
     "fork",
     "distributed",
     "relay",

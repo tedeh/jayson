@@ -4,6 +4,8 @@ var support = require(__dirname + '/support');
 var common = support.common;
 var net = require('net');
 var url = require('url');
+var JSONStream = require('JSONStream');
+var jsonparse = require('jsonparse');
 
 describe('jayson tcp', function() {
 
@@ -46,6 +48,26 @@ describe('jayson tcp', function() {
     });
 
     describe('common tests', common(client));
+
+    it('should send a parse error for invalid JSON data', function(done) {
+      var socket = net.connect(3000, 'localhost', function() {
+        var response = JSONStream.parse();
+
+        response.on('data', function(data) {
+          data.should.containDeep({
+            id: null,
+            error: {code: -32700} // Parse Error
+          });
+          socket.end();
+          done();
+        });
+
+        socket.pipe(response);
+
+        // obviously invalid
+        socket.end('abc');
+      });
+    });
 
   });
 

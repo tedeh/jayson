@@ -48,7 +48,7 @@ describe('utils', function() {
       should.exist(result);
       result.should.be.instanceof(Array);
       result.should.have.length(func.length);
-      result.should.include('a');
+      result.should.containDeep(['a']);
     });
 
     it('should return the correct names when passed a simple function', function() {
@@ -57,7 +57,7 @@ describe('utils', function() {
       should.exist(result);
       result.should.be.instanceof(Array);
       result.should.have.length(func.length);
-      result.should.include('a', 'b');
+      result.should.containDeep(['a', 'b']);
     });
 
     it('should return the correct names when passed a odd-formatted function', function() {
@@ -69,7 +69,7 @@ describe('utils', function() {
       should.exist(result);
       result.should.be.instanceof(Array);
       result.should.have.length(func.length);
-      result.should.include('a', 'b', '__b');
+      result.should.containDeep(['a', 'b', '__b']);
     });
 
     it('should return the correct names when passed a function with complex parameters', function() {
@@ -78,7 +78,7 @@ describe('utils', function() {
       should.exist(result);
       result.should.be.instanceof(Array);
       result.should.have.length(func.length);
-      result.should.include('_$foo', '$$', 'FOO', '$F00', '_');
+      result.should.containDeep(['_$foo', '$$', 'FOO', '$F00', '_']);
     });
 
     it('should return the correct names in the right order', function() {
@@ -87,7 +87,7 @@ describe('utils', function() {
       should.exist(result);
       result.should.be.instanceof(Array);
       result.should.have.length(func.length);
-      result.should.include('b', 'c', 'a');
+      result.should.containDeep(['b', 'c', 'a']);
       result[0].should.equal('b');
       result[1].should.equal('c');
       result[2].should.equal('a');
@@ -98,7 +98,7 @@ describe('utils', function() {
       var result = utils.getParameterNames(func);
       should.exist(result);
       result.should.be.instanceof(Array).and.have.length(func.length);
-      result.should.include('b', 'c', 'a');
+      result.should.containDeep(['b', 'c', 'a']);
     });
 
     it('should return the correct parameters when passed a complex named function', function() {
@@ -106,7 +106,7 @@ describe('utils', function() {
       var result = utils.getParameterNames(func);
       should.exist(result);
       result.should.be.instanceof(Array).and.have.length(func.length);
-      result.should.include('b', 'c', 'a');
+      result.should.containDeep(['b', 'c', 'a']);
     });
 
   });

@@ -497,7 +497,7 @@ client.request('add_2', [3], function(err, error, response) {
 An example of nested routes where each property is separated by a dot (you do not need to use the router option for this):
 
 ```javascript
-var _ = require('underscore');
+var _ = require('lodash');
 var jayson = require(__dirname + '/../..');
 
 var methods = {

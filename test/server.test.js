@@ -25,36 +25,30 @@ describe('Server', function() {
     });
 
     it('should allow a method to be added and removed', function() {
-      var methodName = 'subtract';
-      server.hasMethod(methodName).should.be.false;
-      server.method(methodName, function(a, b, callback) {
+      server.method('subtract', function(a, b, callback) {
         callback(null, a - b);
       });
-      server.hasMethod(methodName).should.be.true;
-      server.removeMethod(methodName);
-      server.hasMethod(methodName).should.be.false;
+      server.hasMethod('subtract').should.be.true;
+      server.removeMethod('subtract');
+      server.hasMethod('subtract').should.be.false;
     });
 
     it('should not allow a method with a reserved name to be added', function() {
-      var methodName = 'rpc.test';
-      server.hasMethod(methodName).should.be.false;
       (function() {
-        server.method(methodName, function(a, b, callback) {
+        server.method('rpc.test', function(a, b, callback) {
           callback(null, a - b);
         });
       }).should.throw();
-      server.hasMethod(methodName).should.be.false;
+      server.hasMethod('rpc.test').should.be.false;
     });
 
     it('should not allow a method with an invalid name to be added', function() {
-      var methodName = '';
-      server.hasMethod(methodName).should.be.false;
       (function() {
-        server.method(methodName, function(a, b, callback) {
+        server.method('', function(a, b, callback) {
           callback(null, a - b);
         });
       }).should.throw();
-      server.hasMethod(methodName).should.be.false;
+      server.hasMethod('').should.be.false;
     });
 
     // change server instance error message, request erroring method, assert error message changed
@@ -66,7 +60,7 @@ describe('Server', function() {
       });
     });
 
-    describe('error()', function() {
+    describe('error', function() {
 
       it('should not make an error out of an invalid code', function() {
         var error = server.error('invalid_code');
@@ -76,8 +70,10 @@ describe('Server', function() {
       it('should fill in the error message if not passed one', function() {
         var code = Server.errors.INVALID_PARAMS;
         var error = server.error(code);
-        error.should.have.property('code', code);
-        error.should.have.property('message', Server.errorMessages[code]);
+        server.error(code).should.containDeep({
+          code: code,
+          message: Server.errorMessages[code]
+        });
       });
 
       it('should add a data member if specified', function() {
@@ -124,7 +120,7 @@ describe('Server', function() {
       it('should call a method by router completion', function(done) {
         var request = utils.request('add_2', [2]);
         server.call(request, function(err, response) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           response.should.have.property('result', 4);
           done();
         });
@@ -210,7 +206,7 @@ describe('Server', function() {
           });
 
           server.call(request, function(err) {
-            if(err) throw throwError(err);
+            if(err) throw err;
             fired.should.be.ok;
             done();
           });
@@ -301,7 +297,7 @@ describe('Server', function() {
         var request = utils.request('add', [1, 2]);
         delete request.id;
         server.call(request, function(err, response) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           should(response).not.exist;
           done();
         });
@@ -327,8 +323,17 @@ describe('Server', function() {
       it('should return the expected result', function(done) {
         var request = utils.request('add', [3, 9]);
         server.call(request, function(err, response) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           response.should.have.property('result', 3 + 9);
+          done();
+        });
+      });
+
+      it('should "Internal Error" when the method returns an invalid error', function(done) {
+        var request = utils.request('invalidError', ['hello']);
+        server.call(request, function(err, response) {
+          should(response).not.exist;
+          err.should.containDeep({error: {code: ServerErrors.INTERNAL_ERROR}});
           done();
         });
       });
@@ -340,7 +345,7 @@ describe('Server', function() {
       it('should return a result regardless', function(done) {
         var request = utils.request('empty', [true]);
         server.call(request, function(err, response) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           response.should.have.property('result');
           done();
         });
@@ -353,7 +358,7 @@ describe('Server', function() {
       it('should return as expected', function(done) {
         var request = utils.request('add', {b: 2, a: 9});
         server.call(request, function(err, response) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           response.should.containDeep({result: 2 + 9});
           done();
         });
@@ -362,7 +367,7 @@ describe('Server', function() {
       it('should not fail when not given sufficient arguments', function(done) {
         var request = utils.request('add', {});
         server.call(request, function(err, response) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           isNaN(response.result).should.be.ok;
           done();
         });
@@ -375,7 +380,7 @@ describe('Server', function() {
       it('should handle a valid notification request', function(done) {
         var request = utils.request('add', [3, -3], null);
         server.call(request, function(err, response) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           should.not.exist(response);
           done();
         });
@@ -384,7 +389,7 @@ describe('Server', function() {
       it('should handle an erroneous notification request', function(done) {
         var request = utils.request('subtract', [3, -3], null);
         server.call(request, function(err, response) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           should.not.exist(response);
           done();
         });
@@ -398,7 +403,7 @@ describe('Server', function() {
         var counter = new support.Counter(5);
         var request = utils.request('incrementCounterBy', [counter, 5]);
         server.call(request, function(err, response) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           var result = response.result;
           result.should.be.an.instanceof(support.Counter);
           result.count.should.equal(5 + 5);
@@ -444,7 +449,7 @@ describe('Server', function() {
       it('should handle a batch with only invalid requests', function(done) {
         var requests = [1, 'a', true];
         server.call(requests, function(err, response) {
-          if(err) throw throwError(err);
+          if(err) throw err;
 
           response.should.be.instanceof(Array).and.have.length(3);
           response.forEach(function(response) {
@@ -462,7 +467,7 @@ describe('Server', function() {
         ];
 
         server.call(request, function(err, responses) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           should(responses).not.exist;
           done();
         });
@@ -478,7 +483,7 @@ describe('Server', function() {
         ];
 
         server.call(request, function(err, responses) {
-          if(err) throw throwError(err);
+          if(err) throw err;
 
           responses.should.be.instanceof(Array).and.have.length(2);
           responses[0].should.containDeep({error: {code: ServerErrors.INVALID_REQUEST}});
@@ -497,7 +502,7 @@ describe('Server', function() {
         ];
 
         server.call(request, function(err, responses) {
-          if(err) throw throwError(err);
+          if(err) throw err;
           responses.should.be.instanceof(Array).and.have.length(2);
           responses[0].should.have.property('result', 1 + 1);
           responses[1].should.have.property('result', 1 + 2);
@@ -507,17 +512,6 @@ describe('Server', function() {
       });
 
     });
-    
-    // throws an error passed to callback for server.call
-    function throwError(err) {
-      if(err && err.error) {
-        throw new Error(err.error.message, err.error.code);
-      } else if(err instanceof Error) {
-        throw err;
-      } else {
-        throw new Error(err);
-      }
-    }
   
   });
 

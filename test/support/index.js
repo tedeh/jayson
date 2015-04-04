@@ -43,6 +43,10 @@ exports.server.methods = {
 
   no_args: function(callback) {
     callback(null, true);
+  },
+
+  invalidError: function(arg, callback) {
+    callback({invalid: true});
   }
 
 };

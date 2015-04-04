@@ -40,10 +40,18 @@
     "Jonathan Liu <net147@gmail.com>"
   ],
   "scripts": {
-    "test": "make test",
+    "test": "make test"
+  },
+  "config": {
     "blanket": {
       "pattern": "lib",
-      "data-cover-never": "node_modules"
+      "data-cover-never": [
+        "node_modules",
+        "public"
+      ],
+      "data-cover-reporter-options": {
+        "shortnames": false
+      }
     }
   },
   "dependencies": {
@@ -53,11 +61,11 @@
     "underscore": "1.6.0"
   },
   "devDependencies": {
-    "should": "5.2.0",
-    "mocha": "2.2.1",
-    "connect": "2.15.0",
-    "uglify-js": "2.4.13",
     "blanket": "1.1.6",
-    "pass-stream": "0.1.3"
+    "connect": "2.15.0",
+    "mocha": "^2.1.0",
+    "pass-stream": "0.1.3",
+    "should": "5.2.0",
+    "uglify-js": "2.4.13"
   }
 }

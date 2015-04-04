@@ -1,5 +1,5 @@
 var should = require('should');
-var jayson = require(__dirname + '/..');
+var jayson = require(__dirname + '/../lib');
 var support = require('./support');
 var exec = require('child_process').exec;
 var fs = require('fs');

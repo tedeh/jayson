@@ -1,21 +1,46 @@
 var jayson = require(__dirname + '/../..');
-var format = require('util').format;
+var _ = require('lodash');
 
 var methods = {
-  add: function(a, b, callback) {
-    callback(null, a + b);
-  }
+
+  // this method gets the raw params as first arg to handler
+  addCollect: new jayson.Method({
+    handler: function(args, done) {
+      var total = sum(args);
+      done(null, total);
+    },
+    collect: true // means "collect all JSON-RPC parameters in one arg"
+  }),
+
+  // specifies some default values
+  addDefault: new jayson.Method({
+    handler: function(args, done) {
+      var total = sum(args);
+      done(null, total);
+    },
+    collect: true,
+    params: {a: 2, b: 5} // map of defaults
+  }),
+
+  // this method returns true when it gets an array (which it always does)
+  acceptArray: new jayson.Method({
+    handler: function(args, done) {
+      var result = _.isArray(args);
+      done(null, result);
+    },
+    collect: true,
+    params: Array // could also be "Object"
+  })
+
 };
 
-var server = jayson.server(methods, {
-  router: function(method) {
-    // regular by-name routing first
-    if(typeof(this._methods[method]) === 'function') return this._methods[method];
-    if(method === 'add_2') {
-      var fn = server.getMethod('add').getHandler();
-      return fn.bind(null, 2);
-    }
-  }
-});
+var server = jayson.server(methods);
 
 server.http().listen(3000);
+
+// sums all enumerable properties in a list
+function sum(list) {
+  return _.reduce(list, function(sum, val) {
+    return sum + val;
+  }, 0);
+}

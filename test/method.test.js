@@ -22,6 +22,11 @@ describe('Method', function() {
 
       var fn = function() {};
 
+      it('should accept the "handler" argument in the options object in the constructor', function() {
+        method = new Method({handler: fn});
+        method.getHandler().should.equal(fn);
+      });
+
       it('should return the handler with get if set', function() {
         method.setHandler(fn);
         method.getHandler().should.equal(fn);

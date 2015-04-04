@@ -6,7 +6,7 @@ var fs = require('fs');
 var url = require('url');
 var bin = __dirname + '/../bin/jayson.js';
 
-describe('jayson binary', function() {
+describe('Bin', function() {
 
   var server = jayson.server(support.server.methods, support.server.options);;
 

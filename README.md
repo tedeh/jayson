@@ -53,7 +53,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 
 A basic JSON-RPC 2.0 server via HTTP:
 
-Server in `examples/simple_example/server.js`:
+Server in [examples/simple_example/server.js](examples/simple_example/server.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -69,7 +69,7 @@ var server = jayson.server({
 server.http().listen(3000);
 ```
 
-Client in `examples/simple_example/client.js` invoking `add` on the above server:
+Client in [examples/simple_example/client.js](examples/simple_example/client.js) invoking `add` on the above server:
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -196,7 +196,7 @@ Uses the same options as the base class.
 
 Notification requests are for cases where the reply from the server is not important and should be ignored. This is accomplished by setting the `id` property of a request object to `null`.
 
-Client in `examples/notifications/client.js` doing a notification request:
+Client in [examples/notifications/client.js](examples/notifications/client.js) doing a notification request:
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -212,7 +212,7 @@ client.request('ping', [], null, function(err) {
   // request was received successfully
 });
 ```
-A server in `examples/notifications/server.js`:
+A server in [examples/notifications/server.js](examples/notifications/server.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -238,7 +238,7 @@ server.http().listen(3000);
 
 A batch request is an array of individual requests that are sent to the server as one. Doing a batch request is very simple in Jayson and consists of constructing an `Array` of individual requests (created by not passing a callback to `Client.prototype.request`) that is then itself passed to `Client.prototype.request`. 
 
-Client example in `examples/batch_request/client.js`:
+Client example in [examples/batch_request/client.js](examples/batch_request/client.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -270,7 +270,7 @@ client.request(batch, function(err, errors, successes) {
 });
 ```
 
-Server example in `examples/batch_request/server.js`:
+Server example in [examples/batch_request/server.js](examples/batch_request/server.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -352,7 +352,7 @@ The middleware supports the following options:
 
 * `end` Defaults to `true`. If set to `false` will cause the middleware to `next()` instead of `res.end()` at the end of a request. `res.body` and the response header may or may not be set when the next middleware is called.
 
-Middleware example in `examples/middleware/server.js`:
+Middleware example in [examples/middleware/server.js](examples/middleware/server.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -376,7 +376,7 @@ app.listen(3000);
 
 A Jayson server can use many interfaces at the same time.
 
-Server in `examples/many_interfaces/server.js` that listens to both `http` and a `https` requests:
+Server in [examples/many_interfaces/server.js](examples/many_interfaces/server.js) that listens to both `http` and a `https` requests:
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -409,7 +409,7 @@ https.listen(443, function() {
 
 Passing an instance of a client as a method to the server makes the server relay incoming requests to wherever the client is pointing to. This might be used to delegate computationally expensive functions into a separate server or to abstract a cluster of servers behind a common interface.
 
-Public server in `examples/relay/server_public.js` listening on `*:3000`:
+Public server in [examples/relay/server_public.js](examples/relay/server_public.js) listening on `*:3000`:
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -428,7 +428,7 @@ server.http().listen(3000, function() {
 });
 ```
 
-Private server in `examples/relay/server_private.js` listening on localhost:3001:
+Private server in [examples/relay/server_private.js](examples/relay/server_private.js) listening on localhost:3001:
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -445,13 +445,13 @@ server.http().listen(3001, '127.0.0.1', function() {
 });
 ```
 
-Every request to `add` on the public server will now relay the request to the private server. See the client example in `examples/relay/client.js`.
+Every request to `add` on the public server will now relay the request to the private server. See the client example in [examples/relay/client.js](examples/relay/client.js).
 
 #### Method routing
 
 Passing a property named `router` in the server options will enable you to write your own logic for routing requests to specific functions. 
 
-Server with custom routing logic in `examples/method_routing/server.js`:
+Server with custom routing logic in [examples/method_routing/server.js](examples/method_routing/server.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -474,7 +474,7 @@ var server = jayson.server(methods, {
 server.http().listen(3000);
 ```
 
-Client in `examples/method_routing/client.js` invoking `add_2` on the above server:
+Client in [examples/method_routing/client.js](examples/method_routing/client.js) invoking `add_2` on the above server:
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -690,7 +690,7 @@ JSON lacks support for representing types other than the simple ones defined in 
 
 Simple example transferring the state of an object between a client and a server:
 
-Shared code between the server and the client in `examples/reviving_and_replacing/shared.js`:
+Shared code between the server and the client in [examples/reviving_and_replacing/shared.js](examples/reviving_and_replacing/shared.js):
 
 ```javascript
 var Counter = exports.Counter = function(value) {
@@ -718,7 +718,7 @@ exports.reviver = function(key, value) {
 };
 ```
 
-Server in `examples/reviving_and_replacing/server.js`:
+Server in [examples/reviving_and_replacing/server.js](examples/reviving_and_replacing/server.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -742,7 +742,7 @@ var server = jayson.server({
 server.http().listen(3000);
 ```
 
-A client in `examples/reviving_and_replacing/client.js` invoking "increment" on the server:
+A client in [examples/reviving_and_replacing/client.js](examples/reviving_and_replacing/client.js) invoking "increment" on the server:
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -776,7 +776,7 @@ client.request('increment', [instance], function(err, error, result) {
 
 It is possible to specify named parameters when doing a client request by passing an Object instead of an Array.
 
-Client example in `examples/named_parameters/client.js`:
+Client example in [examples/named_parameters/client.js](examples/named_parameters/client.js):
 
 ```javascript
 var jayson = require(__dirname + '/../../');
@@ -793,7 +793,7 @@ client.request('add', {b: 1, a: 2}, function(err, error, response) {
 
 ```
 
-Server example in `examples/named_parameters/server.js`:
+Server example in [examples/named_parameters/server.js](examples/named_parameters/server.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');

@@ -534,9 +534,9 @@ function collapse(stem, sep) {
 
 #### Method definition
 
-You can also define server methods as a wrapping object named `jayson.Method`. This allows additional options about the method to be specified. It is possible to define what kind of params it expects, default values for these params, and wheter or not all JSON-RPC should be collected in a single argument to the function. Using this wrapper, it is trivial to have your method accept a variable amount of arguments.
+You can also define server methods inside a wrapping object named `jayson.Method`. This allows additional options about the method to be specified. It is possible to define what kind of params it expects, default values for these params, and wheter or not all JSON-RPC params should be collected in a single argument to the function. Using this wrapper, it is for instance trivial to have your method accept a variable amount of arguments.
 
-Server example showcasing most features in `examples/method_definitions/server.js`:
+Server example showcasing most features in [examples/method_definitions/server.js](examples/method_definitions/server.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -586,7 +586,7 @@ function sum(list) {
 }
 ```
 
-Client example in `[/examples/method_definitions/server.js]`:
+Client example in [examples/method_definitions/client.js](examples/method_definitions/client.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');
@@ -624,7 +624,7 @@ client.request('acceptArray', {a: 5, b: 2, c: 9}, function(err, response) {
 
 ##### Notes
 
-* `Adding methods `
+* Adding methods as a plain JavaScript creates an instance of `jayson.Method` internally
 
 #### Server events
 

@@ -5,7 +5,7 @@ var common = support.common;
 var http = require('http');
 var url = require('url');
 
-describe('jayson http', function() {
+describe('Jayson.Http', function() {
 
   describe('server', function() {
 

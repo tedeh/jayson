@@ -4,7 +4,7 @@ var common = support.common;
 var jayson = require(__dirname + '/..');
 var connect = require('connect');
 
-describe('jayson middleware', function() {
+describe('Jayson.Middleware', function() {
 
   var app = connect.createServer();
   var server = null; // set in before()
@@ -27,7 +27,7 @@ describe('jayson middleware', function() {
 
   describe('common tests', common(client));
 
-  describe('end false', function() {
+  describe('options.end false', function() {
 
     before(function() {
       // change last connect stack handle to one with new options

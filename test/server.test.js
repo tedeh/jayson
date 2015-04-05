@@ -3,7 +3,7 @@ var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support');
 var utils = jayson.utils;
 
-describe('Server', function() {
+describe('Jayson.Server', function() {
 
   var Server = jayson.Server;
   var ServerErrors = Server.errors;

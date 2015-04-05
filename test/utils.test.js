@@ -3,9 +3,9 @@ var PassStream = require('pass-stream');
 var jayson = require(__dirname + '/..');
 var utils = jayson.utils;
 
-describe('utils', function() {
+describe('Jayson.Utils', function() {
 
-  describe('request()', function() {
+  describe('request', function() {
 
     it('exists', function() {
       utils.should.have.property('request');
@@ -32,7 +32,7 @@ describe('utils', function() {
 
   });
 
-  describe('getParameterNames()', function() {
+  describe('getParameterNames', function() {
 
     it('should return an empty array when passed a parameter-less function', function() {
       var func = function() { return true; };

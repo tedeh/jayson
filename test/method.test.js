@@ -2,7 +2,7 @@ var should = require('should');
 var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support');
 
-describe('Method', function() {
+describe('Jayson.Method', function() {
 
   var Method = jayson.Method;
 
@@ -47,9 +47,9 @@ describe('Method', function() {
         server = new jayson.Server();
       });
 
-      describe('options.collect = true', function() {
+      describe('options.collect true', function() {
 
-        describe('options.params = Array', function() {
+        describe('options.params Array', function() {
 
           var add = function(args, callback) {
             args.should.be.instanceof(Array);
@@ -83,7 +83,7 @@ describe('Method', function() {
         
         });
 
-        describe('options.params = Object', function() {
+        describe('options.params Object', function() {
 
           var add = function(args, callback) {
             args.should.be.instanceof(Object);
@@ -250,7 +250,7 @@ describe('Method', function() {
       
       });
 
-      describe('options.collect = false', function() {
+      describe('options.collect false', function() {
 
         var add = function(a, b, callback) {
           return callback(null, a + b);

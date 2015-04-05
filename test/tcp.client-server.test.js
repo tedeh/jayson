@@ -7,7 +7,7 @@ var url = require('url');
 var JSONStream = require('JSONStream');
 var jsonparse = require('jsonparse');
 
-describe('jayson tcp', function() {
+describe('Jayson.Tcp', function() {
 
   describe('server', function() {
 

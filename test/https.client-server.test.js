@@ -13,7 +13,7 @@ var serverOptions = {
   cert: fs.readFileSync('./test/fixtures/keys/agent1-cert.pem')
 };
 
-describe('jayson https', function() {
+describe('Jayson.Https', function() {
 
   describe('server', function() {
 

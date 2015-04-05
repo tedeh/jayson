@@ -3,7 +3,7 @@ var jayson = require(__dirname + '/..');
 var support = require('./support');
 var common = support.common;
 
-describe('jayson relay', function() {
+describe('Jayson.Relay', function() {
 
   describe('server', function() {
 

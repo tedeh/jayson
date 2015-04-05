@@ -12,12 +12,11 @@ var methods = {
     collect: true // means "collect all JSON-RPC parameters in one arg"
   }),
 
-  // specifies some default values
-  addDefault: new jayson.Method({
-    handler: function(args, done) {
-      var total = sum(args);
-      done(null, total);
-    },
+  // specifies some default values (alternate definition too)
+  addDefault: jayson.Method(function(args, done) {
+    var total = sum(args);
+    done(null, total);
+  }, {
     collect: true,
     params: {a: 2, b: 5} // map of defaults
   }),

@@ -94,9 +94,7 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 ## Changelog (notable milestones)
 
 - *1.2*
-  - Improved method definition
-- *1.1.4*
-  - New way to define methods
+  - Greatly improved [server method definition](#method-definition)
 - *1.1.1*
   - More http server events
   - Remove fork server and client
@@ -536,7 +534,97 @@ function collapse(stem, sep) {
 
 #### Method definition
 
-You can define methods with a wrapping function 
+You can also define server methods as a wrapping object named `jayson.Method`. This allows additional options about the method to be specified. It is possible to define what kind of params it expects, default values for these params, and wheter or not all JSON-RPC should be collected in a single argument to the function. Using this wrapper, it is trivial to have your method accept a variable amount of arguments.
+
+Server example showcasing most features in `examples/method_definitions/server.js`:
+
+```javascript
+var jayson = require(__dirname + '/../..');
+var _ = require('lodash');
+
+var methods = {
+
+  // this method gets the raw params as first arg to handler
+  addCollect: new jayson.Method({
+    handler: function(args, done) {
+      var total = sum(args);
+      done(null, total);
+    },
+    collect: true // means "collect all JSON-RPC parameters in one arg"
+  }),
+
+  // specifies some default values (alternate definition too)
+  addDefault: jayson.Method(function(args, done) {
+    var total = sum(args);
+    done(null, total);
+  }, {
+    collect: true,
+    params: {a: 2, b: 5} // map of defaults
+  }),
+
+  // this method returns true when it gets an array (which it always does)
+  acceptArray: new jayson.Method({
+    handler: function(args, done) {
+      var result = _.isArray(args);
+      done(null, result);
+    },
+    collect: true,
+    params: Array // could also be "Object"
+  })
+
+};
+
+var server = jayson.server(methods);
+
+server.http().listen(3000);
+
+// sums all enumerable properties in a list
+function sum(list) {
+  return _.reduce(list, function(sum, val) {
+    return sum + val;
+  }, 0);
+}
+```
+
+Client example in `[/examples/method_definitions/server.js]`:
+
+```javascript
+var jayson = require(__dirname + '/../..');
+
+// create a client
+var client = jayson.client.http({
+  port: 3000,
+  hostname: 'localhost'
+});
+
+// invoke "addCollect" with array
+client.request('addCollect', [3, 5, 9, 11], function(err, response) {
+  if(err) throw err;
+  console.log(response.result); // 28
+});
+
+// invoke "addCollect" with object
+client.request('addCollect', {a: 2, b: 3, c: 4}, function(err, response) {
+  if(err) throw err;
+  console.log(response.result); // 9
+});
+
+// invoke "addDefault" with object missing some defined members
+client.request('addDefault', {b: 10}, function(err, response) {
+  if(err) throw err;
+  console.log(response.result); // 12
+});
+
+// invoke "acceptArray" with an Object
+client.request('acceptArray', {a: 5, b: 2, c: 9}, function(err, response) {
+  if(err) throw err;
+  console.log(response.result); // true
+});
+```
+
+##### Notes
+
+* `Adding methods `
 
 #### Server events
 

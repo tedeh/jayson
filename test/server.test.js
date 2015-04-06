@@ -33,6 +33,17 @@ describe('Jayson.Server', function() {
       server.hasMethod('subtract').should.be.false;
     });
 
+    it('should pass options collect and params as defaults to jayson.Method', function() {
+      server.options.collect = true;
+      server.options.params = Object;
+      server.method('add', function(args, done) {
+        done();
+      });
+      server.getMethod('add').should.containDeep({
+        options: {collect: true, params: Object}
+      });
+    });
+
     it('should not allow a method with a reserved name to be added', function() {
       (function() {
         server.method('rpc.test', function(a, b, callback) {

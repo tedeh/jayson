@@ -624,7 +624,7 @@ client.request('acceptArray', {a: 5, b: 2, c: 9}, function(err, response) {
 
 ##### Notes
 
-* Adding methods as a plain JavaScript creates an instance of `jayson.Method` internally
+* Adding methods as a plain JavaScript function creates an instance of `jayson.Method` internally. For backwards compatibility it will be created with the option "collect" set to `false`. It is possible to affect this by passing the `collect` option to the server. This works similarly for the `params` option.
 
 #### Server events
 

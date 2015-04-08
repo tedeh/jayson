@@ -10,7 +10,7 @@ describe('Jayson.Bin', function() {
 
   var server = jayson.server(support.server.methods, support.server.options);;
 
-  describe('port-listening server', function() {
+  describe('port-listening http server', function() {
 
     var http = null;
     var hostname = 'localhost';
@@ -58,7 +58,49 @@ describe('Jayson.Bin', function() {
 
   });
 
-  describe('socket-listening server', function() {
+  describe('port-listening tcp server', function() {
+
+    var tcp = null;
+    var hostname = 'localhost';
+    var port = "35000";
+    var socket = hostname + ":" + port;
+
+    before(function(done) {
+      tcp = server.tcp();
+      tcp.listen(port, hostname, done);
+    });
+
+    after(function(done) {
+      tcp.on('close', done);
+      tcp.close();
+    });
+
+    it('should be callable', function(done) {
+
+      var args = get_args(bin, {
+        socket: socket,
+        method: 'add',
+        quiet: true,
+        json: true,
+        params: JSON.stringify([1, 2])
+      });
+
+      exec(args, function(err, stdout, stderr) {
+        if(err) throw err;
+        var json = JSON.parse(stdout);
+        stderr.should.equal('');
+
+        json.should.containDeep({
+          result: 1 + 2
+        });
+
+        done();
+      });
+    });
+
+  });
+
+  describe('unix domain socket-listening server', function() {
 
     var http = null;
     var socketPath = __dirname + '/support/bin.test.socket';

@@ -37,7 +37,7 @@ var std = {
 };
 
 // do we have all arguments required to do something?
-if(!(program.method && program.params && (program.url || program.socket))) {
+if(!(program.method && (program.url || program.socket))) {
   std.err.result(program.helpInformation());
   return process.exit(-1);
 }

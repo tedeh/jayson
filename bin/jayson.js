@@ -9,6 +9,7 @@ var pkg = require('../package.json');
 var jayson = require('../');
 var program = require('commander');
 var eyes = require('eyes');
+var net = require('net')
 
 // initialize program and define arguments
 program.version(pkg.version)
@@ -16,7 +17,7 @@ program.version(pkg.version)
        .option('-p, --params [json]', 'Array or Object to use as parameters', JSON.parse)
        .option('-u, --url [url]', 'URL to server', url.parse)
        .option('-q, --quiet', 'Only output the response value and any errors', Boolean)
-       .option('-s, --socket [path]', 'Path to UNIX socket', parseSocket)
+       .option('-s, --socket [path] or [ip:port]', 'Path to UNIX socket, or TCP socket address', parseSocket)
        .option('-j, --json', 'Only output the response value as JSON (implies --quiet)', Boolean)
        .option('-c, --color', 'Color output', Boolean)
        .parse(process.argv);
@@ -36,12 +37,14 @@ var std = {
 };
 
 // do we have all arguments required to do something?
-if(!(program.method && program.params && (program.url || program.socket))) {
+if(!(program.method && (program.url || program.socket))) {
   std.err.result(program.helpInformation());
   return process.exit(-1);
 }
 
-var client = jayson.client.http(program.url || program.socket);
+var client = (program.socket && program.socket.host)
+  ? jayson.client.tcp(program.socket)
+  : jayson.client.http(program.url || program.socket);
 
 std.out.noise(
   colorize('magenta', '-> %s(%s)'),
@@ -65,6 +68,12 @@ client.request(program.method, program.params, function(err, response) {
 });
 
 function parseSocket(value) {
+  var addr = value.split(":");
+
+  if (addr.length == 2 && (net.isIP(addr[0]) || addr[0].toLowerCase() == "localhost")) {
+    return {port: addr[1], host: addr[0]};
+  }
+
   return {socketPath: path.normalize(value)};
 }
 

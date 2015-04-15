@@ -277,6 +277,14 @@ describe('Jayson.Method', function() {
             done();
           });
         });
+
+        it('should give an INVALID_PARAMS error for wrong number of args passed', function(done) {
+          method.execute(server, [1], function(err, sum) {
+            err.should.containDeep({code: jayson.Server.errors.INVALID_PARAMS});
+            should(sum).not.be.ok;
+            done();
+          });
+        });
       
       });
     

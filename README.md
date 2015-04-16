@@ -112,10 +112,12 @@ There is a CLI client in `bin/jayson.js` and it should be available as `jayson` 
 
 ## Requirements
 
-Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It has been tested with the following node.js versions:
+Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It is being continuously tested using [travis-ci](https://travis-ci.org/) on the following versions:
 
 - node.js v0.8.x
 - node.js v0.10.x
+- node.js v0.12.x
+- iojs
 
 ## Class documentation
 
@@ -141,9 +143,10 @@ The client is available as the `Client` or `client` property of `require('jayson
 #### Client interface description
 
 * `Client` Base class for interfacing with a server.
-* `Client.tcp` TCP interface.
-* `Client.http` HTTP interface.
-* `Client.https` HTTPS interface.
+* `Client.tcp` TCP interface
+* `Client.tls` TLS interface
+* `Client.http` HTTP interface
+* `Client.https` HTTPS interface
 
 Every client supports these options:
 
@@ -191,6 +194,12 @@ to pass a string URL as the first argument and have it interpreted by [url.parse
 ##### Client.tcp
 
 Uses the same options as the base class.
+
+##### Client.tls
+
+Uses the same options as [tls.connect][nodejs_docs_tls_connect].
+
+[nodejs_docs_tls_connect]: https://nodejs.org/api/tls.html#tls_tls_connect_options_callback
 
 #### Notifications
 
@@ -315,6 +324,7 @@ The server also sports several interfaces that can be accessed as properties of 
 
 * `Server` - Base interface for a server that supports receiving JSON-RPC 2.0 requests.
 * `Server.tcp` - TCP server that inherits from [net.Server][nodejs_doc_net_server].
+* `Server.tls` - TLS server that inherits from [tls.Server][nodejs_doc_tls_server].
 * `Server.http` - HTTP server that inherits from [http.Server][nodejs_doc_http_server].
 * `Server.https` - HTTPS server that inherits from [https.Server][nodejs_doc_https_server].
 * `Server.middleware` - Method that returns a [Connect][connect]/[Express][express] compatible middleware function.
@@ -322,6 +332,7 @@ The server also sports several interfaces that can be accessed as properties of 
 [nodejs_doc_net_server]: http://nodejs.org/docs/latest/api/net.html#net_class_net_server
 [nodejs_doc_http_server]: http://nodejs.org/docs/latest/api/http.html#http_class_http_server
 [nodejs_doc_https_server]: http://nodejs.org/docs/latest/api/https.html#https_class_https_server
+[nodejs_doc_tls_server]: https://nodejs.org/api/tls.html#tls_class_tls_server
 [connect]: http://www.senchalabs.org/connect/
 [express]: http://expressjs.com/
 
@@ -335,6 +346,10 @@ Every server supports these options:
 ##### Server.tcp
 
 Uses the same options as the base class. Inherits from [net.Server][nodejs_doc_net_server].
+
+##### Server.tls
+
+Uses the same options as the base class. Inherits from [tls.Server][nodejs_doc_tls_server].
 
 ##### Server.http
 

@@ -37,7 +37,8 @@
   "contributors": [
     "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",
     "Daniel Vicory <dvicory@gmail.com> (http://bzfx.net)",
-    "Jonathan Liu <net147@gmail.com>"
+    "Jonathan Liu <net147@gmail.com>",
+    "Brian Dunlay <brian@surround.io>"
   ],
   "scripts": {
     "test": "make test"

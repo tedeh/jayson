@@ -6,19 +6,42 @@ var net = require('net');
 var url = require('url');
 var JSONStream = require('jsonstream');
 
-describe('Jayson.Tcp', function() {
+describe.only('Jayson.Tcp', function() {
 
   describe('server', function() {
 
     var server = null;
 
     it('should listen to a local port', function(done) {
-      server = jayson.server(support.methods, support.options).tcp();
+      server = jayson.server(support.server.methods, support.server.options).tcp();
       server.listen(3000, 'localhost', done);
     });
 
     it('should be an instance of net.Server', function() {
       server.should.be.instanceof(net.Server);
+    });
+
+    it('should responde more that one in unique connection', function(done) {
+      var count = 1;
+      var socket = net.connect(3000, 'localhost', function() {
+        socket.setEncoding('utf8');
+        var response = JSONStream.parse();
+
+        response.on('data', function(data) {
+          data.result.should.equal(37);
+          if(count > 9) {
+            socket.end();
+            done();
+          }
+          count++;
+        });
+
+        socket.pipe(response);
+
+        for (var i = 0; i < 10; i++) {
+          socket.write(JSON.stringify({"jsonrpc": "2.0", "method": "add", "params": {a:7,b:30}, "id": i}));
+        }
+      });
     });
 
     after(function() {

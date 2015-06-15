@@ -47,6 +47,12 @@ exports.server.methods = {
 
   invalidError: function(arg, callback) {
     callback({invalid: true});
+  },
+
+  delay: function(delay, callback) {
+    setTimeout(function() {
+      callback(null, delay);
+    }, delay);
   }
 
 };

@@ -341,6 +341,8 @@ Every server supports these options:
 * `reviver` -> Function to use as a JSON reviver
 * `replacer` -> Function to use as a JSON replacer
 * `router` -> Function to find which method to use for a request. See the chapter on [method routing](#method-routing).
+* `collect` -> Collect JSON-RPC parameters inside a single function argument. Default `false`. See [method definition](#method-definition)
+* `params` -> Force collected JSON-RPC parameters to be `Object` or `Array`. Default `false`. See [method definition](#method-definition)
 * `version` -> Can be either `1` or `2` depending on which specification clients are expected to follow. Defaults to `2` for [JSON-RPC 2.0][jsonrpc-spec]
 
 ##### Server.tcp

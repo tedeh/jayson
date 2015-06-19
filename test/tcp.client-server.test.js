@@ -5,7 +5,7 @@ var support = require(__dirname + '/support');
 var common = support.common;
 var net = require('net');
 var url = require('url');
-var JSONStream = require('jsonstream');
+var JSONStream = require('JSONStream');
 
 describe('Jayson.Tcp', function() {
 

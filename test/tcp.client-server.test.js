@@ -1,4 +1,5 @@
 var should = require('should');
+var _ = require('lodash');
 var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support');
 var common = support.common;
@@ -6,14 +7,21 @@ var net = require('net');
 var url = require('url');
 var JSONStream = require('jsonstream');
 
-describe.only('Jayson.Tcp', function() {
+describe('Jayson.Tcp', function() {
 
   describe('server', function() {
 
     var server = null;
 
-    it('should listen to a local port', function(done) {
+    before(function() {
       server = jayson.server(support.server.methods, support.server.options).tcp();
+    });
+
+    after(function() {
+      server.close();
+    });
+
+    it('should listen to a local port', function(done) {
       server.listen(3000, 'localhost', done);
     });
 
@@ -21,31 +29,57 @@ describe.only('Jayson.Tcp', function() {
       server.should.be.instanceof(net.Server);
     });
 
-    it('should responde more that one in unique connection', function(done) {
-      var count = 1;
-      var socket = net.connect(3000, 'localhost', function() {
-        socket.setEncoding('utf8');
-        var response = JSONStream.parse();
+    context('connected socket', function() {
 
-        response.on('data', function(data) {
-          data.result.should.equal(37);
-          if(count > 9) {
-            socket.end();
-            done();
-          }
-          count++;
+      var socket = null;
+      var responses = null;
+
+      beforeEach(function(done) {
+        server.listen(3000, 'localhost', done);
+      });
+
+      beforeEach(function(done) {
+        socket = net.connect(3000, 'localhost', done);
+        responses = JSONStream.parse();
+        socket.pipe(responses);
+      });
+
+      afterEach(function(done) {
+        socket.end();
+        done();
+      });
+
+      it('should send a parse error for invalid JSON data', function(done) {
+        responses.on('data', function(data) {
+          data.should.containDeep({
+            id: null,
+            error: {code: -32700} // Parse Error
+          });
+          done();
         });
 
-        socket.pipe(response);
-
-        for (var i = 0; i < 10; i++) {
-          socket.write(JSON.stringify({"jsonrpc": "2.0", "method": "add", "params": {a:7,b:30}, "id": i}));
-        }
+        // obviously invalid
+        socket.end('abc');
       });
-    });
 
-    after(function() {
-      server.close();
+      it('should send more than one reply on the same socket', function(done) {
+        var replies = [];
+        responses.on('data', function(data) {
+          replies.push(data);
+        });
+
+        // write raw requests to the socket
+        socket.write(JSON.stringify(jayson.Utils.request('delay', [20])));
+        socket.write(JSON.stringify(jayson.Utils.request('delay', [5])));
+
+        setTimeout(function() {
+          replies.should.have.lengthOf(2);
+          replies[0].should.have.property('result', 5);
+          replies[1].should.have.property('result', 20);
+          done();
+        }, 40);
+      });
+
     });
 
   });
@@ -70,26 +104,6 @@ describe.only('Jayson.Tcp', function() {
     });
 
     describe('common tests', common(client));
-
-    it('should send a parse error for invalid JSON data', function(done) {
-      var socket = net.connect(3000, 'localhost', function() {
-        var response = JSONStream.parse();
-
-        response.on('data', function(data) {
-          data.should.containDeep({
-            id: null,
-            error: {code: -32700} // Parse Error
-          });
-          socket.end();
-          done();
-        });
-
-        socket.pipe(response);
-
-        // obviously invalid
-        socket.end('abc');
-      });
-    });
 
   });
 

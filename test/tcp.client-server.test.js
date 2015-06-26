@@ -79,7 +79,7 @@ describe('Jayson.Tcp', function() {
           done();
         }, 40);
       });
-    
+
     });
 
   });

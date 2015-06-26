@@ -24,17 +24,23 @@ describe('Jayson.Method', function() {
 
       it('should accept the "handler" argument in the options object in the constructor', function() {
         method = new Method({handler: fn});
-        method.getHandler().should.equal(fn);
+        method.getHandler().should.be.instanceof(Array).and.containDeepOrdered([fn]);
       });
 
       it('should return the handler with get if set', function() {
         method.setHandler(fn);
-        method.getHandler().should.equal(fn);
+        method.getHandler().should.be.instanceof(Array).and.containDeepOrdered([fn]);
       });
 
       it('should return the handler function when given in constructor', function() {
         var method = new Method(fn);
-        method.getHandler().should.equal(fn);
+        method.getHandler().should.be.instanceof(Array).and.containDeepOrdered([fn]);
+      });
+
+      it('should return the handler function when given in constructor with format array', function() {
+        var fn2 = function() {};
+        var method = new Method([fn, fn2]);
+        method.getHandler().should.be.instanceof(Array).and.containDeepOrdered([fn, fn2]);
       });
     
     });

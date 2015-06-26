@@ -13,7 +13,7 @@ var server = jayson.server(methods, {
     if(typeof(this._methods[method]) === 'function') return this._methods[method];
     if(method === 'add_2') {
       var fn = server.getMethod('add').getHandler();
-      return jayson.Method(fn.bind(null, 2));
+      return fn[0].bind(null, 2);
     }
   }
 });

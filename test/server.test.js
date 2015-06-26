@@ -33,6 +33,20 @@ describe('Jayson.Server', function() {
       server.hasMethod('subtract').should.be.false;
     });
 
+    it('should allow a method to be an array of functions', function() {
+      var firstMiddleware = function(a, b, callback) {
+        a+= b;
+        callback();
+      };
+      var secondMiddleware = function(a, b, callback) {
+        console.log(arguments);
+        callback(null, a - b);
+      };
+      server.method('subtract', [firstMiddleware, secondMiddleware]);
+      server.hasMethod('subtract').should.be.true;
+      server.getMethod('subtract').getHandler().should.containDeepOrdered([firstMiddleware, secondMiddleware]);
+    });
+
     it('should pass options collect and params as defaults to jayson.Method', function() {
       server.options.collect = true;
       server.options.params = Object;
@@ -60,6 +74,18 @@ describe('Jayson.Server', function() {
         });
       }).should.throw();
       server.hasMethod('').should.be.false;
+    });
+
+    it('should not allow a method with an invalid value inside an array', function() {
+      var firstMiddleware = 'Invalid value in array';
+      var secondMiddleware = function(a, b, callback) {
+        console.log(arguments);
+        callback(null, a - b);
+      };
+      (function() {
+        server.method('subtract', [firstMiddleware, secondMiddleware]);
+      }).should.throw(TypeError);
+      server.hasMethod('subtract').should.be.false;
     });
 
     // change server instance error message, request erroring method, assert error message changed
@@ -123,7 +149,7 @@ describe('Jayson.Server', function() {
 
           if(method === 'add_2') {
             var fn = server.getMethod('add').getHandler();
-            return fn.bind(null, 2);
+            return fn[0].bind(null, 2);
           }
         };
       });

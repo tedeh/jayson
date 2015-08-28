@@ -2,6 +2,7 @@
   "name": "jayson",
   "version": "1.2.1",
   "description": "JSON-RPC 1.0/2.0 compliant server and client",
+  "license": "MIT",
   "keywords": [
     "jsonrpc",
     "json-rpc",

@@ -3,7 +3,7 @@ var fs = require('fs');
 var jayson = require(__dirname + '/..');
 var support = require('./support');
 var common = support.common;
-var JSONStream = require('jsonstream');
+var JSONStream = require('JSONStream');
 var tls = require('tls');
 
 var serverOptions = {

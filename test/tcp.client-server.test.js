@@ -105,6 +105,33 @@ describe('Jayson.Tcp', function() {
 
     describe('common tests', common(client));
 
+    it('should support delimiter option', function(done) {
+
+      var delimiter = '\r\n';
+
+      var client = jayson.client.tcp({
+        delimiter : delimiter,
+        host: 'localhost',
+        port: 3001
+      });
+
+      var server = net.createServer(function(connection){
+        connection.setEncoding('utf8');
+
+        connection.on('data', function(data){
+          data.should.endWith(delimiter);
+          server.close();
+          done();
+        });
+
+      });
+
+      server.listen(3001, 'localhost', function(){
+        client.request('foo', ['bar', 'baz'], function(){});
+      });
+
+    });
+
   });
 
 });

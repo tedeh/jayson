@@ -287,6 +287,32 @@ describe('Jayson.Method', function() {
         });
       
       });
+
+      describe('options.scope provided', function() {
+
+        var scope = {
+          message: 'Hello, '
+        };
+
+        var fn = function(name, callback) {
+          callback(null, this.message + name);
+        };
+
+        beforeEach(function() {
+          method = new Method(fn, {
+            scope: scope
+          });
+        });
+
+        it('should call with scope', function(done) {
+          method.execute(server, {name: 'Jayson'}, function(err, result) {
+            if(err) throw err;
+            result.should.eql('Hello, Jayson');
+            done();
+          });
+        });
+
+      });
     
     });
   

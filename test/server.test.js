@@ -36,11 +36,12 @@ describe('Jayson.Server', function() {
     it('should pass options collect and params as defaults to jayson.Method', function() {
       server.options.collect = true;
       server.options.params = Object;
+      server.options.scope = Object;
       server.method('add', function(args, done) {
         done();
       });
       server.getMethod('add').should.containDeep({
-        options: {collect: true, params: Object}
+        options: {collect: true, params: Object, scope: Object}
       });
     });
 

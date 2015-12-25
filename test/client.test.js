@@ -278,20 +278,23 @@ describe('Jayson.Client', function() {
       var self = this;
 
       options = options || {};
-      var reply = options.reply !== false;
+
+      var timeout = options.timeout;
+      var expired;
 
       // serializes the request as a JSON string so that we get a copy and can run the replacer as intended
       jayson.Utils.JSON.stringify(request, this.options, function(err, message) {
         if(err) throw err;
 
         self.server.call(message, function(error, success) {
-          if (reply) {
-            callback(null, error || success);
-          }
+          if (!expired) callback(null, error || success);
         });
 
-        if (!reply) {
-          callback();
+        if (timeout) {
+          setTimeout(function () {
+            callback(new Error('expired'));
+            expired = true;
+          }, timeout);
         }
       });
     };
@@ -301,10 +304,13 @@ describe('Jayson.Client', function() {
 
     it('should support request options', function (done) {
       var time = Date.now();
-      client.request('delay', [1000], {reply: false}, function (err, result) {
-        if (err) throw err;
+      client.request('delay', [1000], {timeout: 500}, function (err, result) {
+        should.exist(err);
+        should.exist(err.message);
+        err.message.should.eql('expired');
+
         time = Date.now() - time;
-        time.should.lessThan(1000);
+        time.should.within(500, 510);
         should.not.exists(result);
         done();
       });

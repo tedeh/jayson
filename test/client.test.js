@@ -266,4 +266,49 @@ describe('Jayson.Client', function() {
 
   });
 
+  describe('request with options', function () {
+
+    function OptionalClient() {
+      jayson.Client.apply(this, arguments);
+    }
+
+    require('util').inherits(OptionalClient, jayson.Client);
+
+    OptionalClient.prototype._request = function (request, options, callback) {
+      var self = this;
+
+      options = options || {};
+      var reply = options.reply !== false;
+
+      // serializes the request as a JSON string so that we get a copy and can run the replacer as intended
+      jayson.Utils.JSON.stringify(request, this.options, function(err, message) {
+        if(err) throw err;
+
+        self.server.call(message, function(error, success) {
+          if (reply) {
+            callback(null, error || success);
+          }
+        });
+
+        if (!reply) {
+          callback();
+        }
+      });
+    };
+
+    var server = jayson.server(support.server.methods, support.server.options);
+    var client = new OptionalClient(server, support.server.options);
+
+    it('should support request options', function (done) {
+      var time = Date.now();
+      client.request('delay', [1000], {reply: false}, function (err, result) {
+        if (err) throw err;
+        time = Date.now() - time;
+        time.should.lessThan(1000);
+        should.not.exists(result);
+        done();
+      });
+    });
+  });
+
 });

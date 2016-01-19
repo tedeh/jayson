@@ -61,7 +61,7 @@ describe('Jayson.Utils', function() {
     });
 
     it('should return the correct names when passed a odd-formatted function', function() {
-      var func = function     (a, b            , __b) { 
+      var func = function     (a, b            , __b) {
         func(2, 3, 55, 4);
         return a + b;
       };
@@ -151,7 +151,25 @@ describe('Jayson.Utils', function() {
 
       stream.end("\"");
     });
-  
+
+  });
+
+  describe('stringify', function(done) {
+
+    it('should not throw with circular JSON reference', function(done) {
+
+      var foo = {};
+      var bar = { foo: foo };
+      foo.bar = bar;
+
+      var fn = utils.JSON.stringify(bar, {}, function(err, str) {
+        should(err).not.exist;
+        done();
+      });
+
+      should(fn).not.throw();
+    });
+
   });
 
 });

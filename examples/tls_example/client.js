@@ -1,6 +1,6 @@
 var jayson = require(__dirname + '/../..');
-var fs = require('fs')
-var path = require('path')
+var fs = require('fs');
+var path = require('path');
 
 // Read node's tls documentation for more information about these options:
 // https://nodejs.org/api/tls.html#tls_tls_connect_options_callback

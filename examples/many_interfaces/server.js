@@ -16,9 +16,9 @@ var https = server.https({
 });
 
 http.listen(80, function() {
-  console.log('Listening on *:80')
+  console.log('Listening on *:80');
 });
 
 https.listen(443, function() {
-  console.log('Listening on *:443')
+  console.log('Listening on *:443');
 });

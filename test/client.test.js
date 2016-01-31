@@ -1,5 +1,5 @@
 var should = require('should');
-var jayson = require(__dirname + '/..');
+var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support');
 var common = support.common;
 
@@ -29,7 +29,7 @@ describe('Jayson.Client', function() {
 
   describe('instance', function() {
     
-    var server = jayson.server(support.server.methods, support.server.options);
+    var server = jayson.Server(support.server.methods, support.server.options);
     var client = jayson.client(server, support.server.options);
 
     describe('common tests', common(client));

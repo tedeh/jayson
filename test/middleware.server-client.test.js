@@ -43,8 +43,8 @@ describe('Jayson.Middleware', function() {
         res.end();
       });
       client.request('add', [3, 4], function(err, error, response) {
-        if(err) throw err;
-        if(error) throw error;
+        if(err) return done(err);
+        if(error) return done(error);
         response.should.eql(3 + 4);
         invocations.should.eql(1);
         done();

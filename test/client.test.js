@@ -38,7 +38,7 @@ describe('Jayson.Client', function() {
       client.options.version = 1; // change option
 
       client.request('add', [11, 9], function(err, response) {
-        if(err) throw err;
+        if(err) return done(err);
         should.not.exist(response.result);
         response.should.containDeep({error: {code: -32600}}); // "Request Error"
         client.options.version = 2; // reset option
@@ -48,7 +48,7 @@ describe('Jayson.Client', function() {
 
     it('should return the response as received if given a callback with length 2', function(done) {
       client.request('add', [11, 12], function(err, response) {
-        if(err) throw err;
+        if(err) return done(err);
         arguments.length.should.equal(2);
         response.should.containDeep({result: 11 + 12});
         done();
@@ -57,7 +57,7 @@ describe('Jayson.Client', function() {
 
     it('should split out a response when given a length 3 callback', function(done) {
       client.request('add', [4, 3], function(err, error, result) {
-        if(err) throw err;
+        if(err) return done(err);
         should(error).not.exist;
         should(result).exist;
         result.should.equal(4 + 3);
@@ -67,7 +67,7 @@ describe('Jayson.Client', function() {
 
     it('should out an error when given a length 3 callback', function(done) {
       client.request('error', [], function(err, error, result) {
-        if(err) throw err;
+        if(err) return done(err);
         should(error).exist;
         error.should.have.property('code', -1000);
         should(result).not.exist;
@@ -83,7 +83,7 @@ describe('Jayson.Client', function() {
           result: 5
         };
         client._parseResponse(null, response, function(err, error, response) {
-          if(err) throw err;
+          if(err) return done(err);
           should(error).equal(null);
           should(response).equal(5);
           done();
@@ -96,7 +96,7 @@ describe('Jayson.Client', function() {
           result: 2 // should not be here
         };
         client._parseResponse(null, response, function(err, error, response) {
-          if(err) throw err;
+          if(err) return done(err);
           should(error).have.property('code', 10000);
           should(response).equal(2);
           done();
@@ -111,7 +111,7 @@ describe('Jayson.Client', function() {
       client.options.generator = function(request) { return ordinal++; };
 
       client.request('add', [9, 2], function(err, response) {
-        if(err) throw err;
+        if(err) return done(err);
         response.should.containDeep({
           id: 0,
           result: 9 + 2
@@ -148,7 +148,7 @@ describe('Jayson.Client', function() {
       });
 
       client.request('add', [5, 8], function(err) {
-        if(err) throw err;
+        if(err) return done(err);
         hasFired.should.be.ok;
         done();
       });
@@ -156,7 +156,7 @@ describe('Jayson.Client', function() {
 
     it('should be able to execute a notification request', function(done) {
       client.request('add', [3, 4], null, function(err, response) {
-        if(err) throw err;
+        if(err) return done(err);
         arguments.length.should.equal(0);
         should.not.exist(response);
         done();
@@ -165,7 +165,7 @@ describe('Jayson.Client', function() {
 
     it('should be able to execute a named-parameter request', function(done) {
       client.request('add', {a: 5, b: -2}, function(err, error, response) {
-        if(err) throw err;
+        if(err) return done(err);
         should.not.exist(error);
         response.should.equal(5 - 2);
         done();
@@ -183,7 +183,7 @@ describe('Jayson.Client', function() {
         ];
 
         client.request(batch, function(err, responses) {
-          if(err) throw err;
+          if(err) return done(err);
 
           responses.should.be.instanceof(Array).and.have.length(3);
 
@@ -206,7 +206,7 @@ describe('Jayson.Client', function() {
         ];
 
         client.request(batch, function(err, responses) {
-          if(err) throw err;
+          if(err) return done(err);
 
           responses.should.be.instanceof(Array).and.have.length(2);
 
@@ -231,7 +231,7 @@ describe('Jayson.Client', function() {
         ];
 
         client.request(batch, function(err, errors, successes) {
-          if(err) throw err;
+          if(err) return done(err);
 
           errors.should.be.instanceof(Array).and.have.length(1);
           successes.should.be.instanceof(Array).and.have.length(1);
@@ -256,7 +256,7 @@ describe('Jayson.Client', function() {
         ];
 
         client.request(batch, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
           should.not.exist(response);
           done();
         });

@@ -120,7 +120,7 @@ describe('Jayson.Utils', function() {
       var obj = {asdf: true, complex: {value: 2, a: 3}};
 
       parseBody(stream, {}, function(err, result) {
-        if(err) throw err;
+        if(err) return done(err);
         obj.should.eql(result);
         done();
       });
@@ -133,7 +133,7 @@ describe('Jayson.Utils', function() {
       var arr = [{first: true}, {asdf: true, complex: {value: 2, a: 3}}];
 
       parseBody(stream, {}, function(err, result) {
-        if(err) throw err;
+        if(err) return done(err);
         arr.should.eql(result);
         done();
       });

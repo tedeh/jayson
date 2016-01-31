@@ -42,7 +42,7 @@ describe('Jayson.Bin', function() {
       });
 
       exec(args, function(err, stdout, stderr) {
-        if(err) throw err;
+        if(err) return done(err);
 
         should.exist(stdout, stderr);
         stderr.should.equal('');
@@ -86,7 +86,7 @@ describe('Jayson.Bin', function() {
       });
 
       exec(args, function(err, stdout, stderr) {
-        if(err) throw err;
+        if(err) return done(err);
         var json = JSON.parse(stdout);
         stderr.should.equal('');
 
@@ -130,7 +130,7 @@ describe('Jayson.Bin', function() {
       });
 
       exec(args, function(err, stdout, stderr) {
-        if(err) throw err;
+        if(err) return done(err);
         var json = JSON.parse(stdout);
         stderr.should.equal('');
 

@@ -56,7 +56,7 @@ describe('Jayson.Http', function() {
       });
 
       client.request('add', [10, 2], function(err, response) {
-        if(err) throw err;
+        if(err) return done(err);
         hasFired.should.be.ok;
         done();
       });
@@ -73,7 +73,7 @@ describe('Jayson.Http', function() {
       });
 
       client.request('add', [9, 4], function(err, response) {
-        if(err) throw err;
+        if(err) return done(err);
         hasFired.should.be.ok;
         done();
       });

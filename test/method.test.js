@@ -67,7 +67,7 @@ describe('Jayson.Method', function() {
 
           it('should pass named params as an array', function(done) {
             method.execute(server, {a: 1, b: 2, c: 3}, function(err, sum) {
-              if(err) throw err;
+              if(err) return done(err);
               sum.should.eql(1 + 2 + 3);
               done();
             });
@@ -75,7 +75,7 @@ describe('Jayson.Method', function() {
 
           it('should pass array params as given', function(done) {
             method.execute(server, [1, 2, 3, 4], function(err, sum) {
-              if(err) throw err;
+              if(err) return done(err);
               sum.should.eql(1 + 2 + 3 + 4);
               done();
             });
@@ -107,7 +107,7 @@ describe('Jayson.Method', function() {
 
           it('should pass a param object as given', function(done) {
             method.execute(server, {a: 1, b: 2, c: 3}, function(err, sum) {
-              if(err) throw err;
+              if(err) return done(err);
               sum.should.eql(1 + 2 + 3);
               done();
             });
@@ -115,7 +115,7 @@ describe('Jayson.Method', function() {
 
           it('should cast an array to an object', function(done) {
             method.execute(server, [1, 2, 3, 4], function(err, sum) {
-              if(err) throw err;
+              if(err) return done(err);
               sum.should.eql(1 + 2 + 3 + 4);
               done();
             });
@@ -146,7 +146,7 @@ describe('Jayson.Method', function() {
 
           it('should replace left-out params with undefined', function(done) {
             method.execute(server, {a: 1}, function(err, sum) {
-              if(err) throw err;
+              if(err) return done(err);
               sum.should.eql(1);
               done();
             });
@@ -154,7 +154,7 @@ describe('Jayson.Method', function() {
 
           it('should leave all params as undefined when given an array', function(done) {
             method.execute(server, [1,2,3], function(err, sum) {
-              if(err) throw err;
+              if(err) return done(err);
               sum.should.eql(0);
               done();
             });
@@ -185,7 +185,7 @@ describe('Jayson.Method', function() {
 
           it('should fill in missing properties with named param values as defaults', function(done) {
             method.execute(server, {a: 5}, function(err, sum) {
-              if(err) throw err;
+              if(err) return done(err);
               sum.should.eql(5);
               done();
             });
@@ -193,7 +193,7 @@ describe('Jayson.Method', function() {
 
           it('should fill in defaults when given an array', function(done) {
             method.execute(server, [1,2,3], function(err, sum) {
-              if(err) throw err;
+              if(err) return done(err);
               sum.should.eql(0);
               done();
             });
@@ -264,7 +264,7 @@ describe('Jayson.Method', function() {
 
         it('should pass array params in order and callback last', function(done) {
           method.execute(server, [1,2], function(err, sum) {
-            if(err) throw err;
+            if(err) return done(err);
             sum.should.eql(1 + 2);
             done();
           });
@@ -272,7 +272,7 @@ describe('Jayson.Method', function() {
 
         it('should attempt to fill in named params', function(done) {
           method.execute(server, {a: 1, b: 2}, function(err, sum) {
-            if(err) throw err;
+            if(err) return done(err);
             sum.should.eql(1 + 2);
             done();
           });

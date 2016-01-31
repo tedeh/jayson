@@ -48,7 +48,7 @@ common.clientRequest = function(client) {
 common.clientError = function(client) {
   return function(done) {
     client.request('error', [], function(err, error, result) {
-      should.not.exist(err);
+      if(err) return done(err);
       should.not.exist(result);
       should.exist(error);
       error.should.have.property('message', 'An error message');
@@ -76,7 +76,7 @@ common.clientReviveReplace = function(client) {
 common.clientNotification = function(client) {
   return function(done) {
     client.request('add', [3, 4], null, function(err) {
-      if(err) throw err;
+      if(err) return done(err);
       arguments.length.should.equal(0);
       done();
     });

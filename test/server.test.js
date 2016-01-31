@@ -131,7 +131,7 @@ describe('Jayson.Server', function() {
       it('should call a method by router completion', function(done) {
         var request = utils.request('add_2', [2]);
         server.call(request, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
           response.should.have.property('result', 4);
           done();
         });
@@ -217,7 +217,7 @@ describe('Jayson.Server', function() {
           });
 
           server.call(request, function(err) {
-            if(err) throw err;
+            if(err) return done(err);
             fired.should.be.ok;
             done();
           });
@@ -308,7 +308,7 @@ describe('Jayson.Server', function() {
         var request = utils.request('add', [1, 2]);
         delete request.id;
         server.call(request, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
           should(response).not.exist;
           done();
         });
@@ -334,7 +334,7 @@ describe('Jayson.Server', function() {
       it('should return the expected result', function(done) {
         var request = utils.request('add', [3, 9]);
         server.call(request, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
           response.should.have.property('result', 3 + 9);
           done();
         });
@@ -356,7 +356,7 @@ describe('Jayson.Server', function() {
       it('should return a result regardless', function(done) {
         var request = utils.request('empty', [true]);
         server.call(request, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
           response.should.have.property('result');
           done();
         });
@@ -369,7 +369,7 @@ describe('Jayson.Server', function() {
       it('should return as expected', function(done) {
         var request = utils.request('add', {b: 2, a: 9});
         server.call(request, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
           response.should.containDeep({result: 2 + 9});
           done();
         });
@@ -378,7 +378,7 @@ describe('Jayson.Server', function() {
       it('should not fail when not given sufficient arguments', function(done) {
         var request = utils.request('add', {});
         server.call(request, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
           isNaN(response.result).should.be.ok;
           done();
         });
@@ -391,7 +391,7 @@ describe('Jayson.Server', function() {
       it('should handle a valid notification request', function(done) {
         var request = utils.request('add', [3, -3], null);
         server.call(request, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
           should.not.exist(response);
           done();
         });
@@ -400,7 +400,7 @@ describe('Jayson.Server', function() {
       it('should handle an erroneous notification request', function(done) {
         var request = utils.request('subtract', [3, -3], null);
         server.call(request, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
           should.not.exist(response);
           done();
         });
@@ -414,7 +414,7 @@ describe('Jayson.Server', function() {
         var counter = new support.Counter(5);
         var request = utils.request('incrementCounterBy', [counter, 5]);
         server.call(request, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
           var result = response.result;
           result.should.be.an.instanceof(support.Counter);
           result.count.should.equal(5 + 5);
@@ -460,7 +460,7 @@ describe('Jayson.Server', function() {
       it('should handle a batch with only invalid requests', function(done) {
         var requests = [1, 'a', true];
         server.call(requests, function(err, response) {
-          if(err) throw err;
+          if(err) return done(err);
 
           response.should.be.instanceof(Array).and.have.length(3);
           response.forEach(function(response) {
@@ -478,7 +478,7 @@ describe('Jayson.Server', function() {
         ];
 
         server.call(request, function(err, responses) {
-          if(err) throw err;
+          if(err) return done(err);
           should(responses).not.exist;
           done();
         });
@@ -494,7 +494,7 @@ describe('Jayson.Server', function() {
         ];
 
         server.call(request, function(err, responses) {
-          if(err) throw err;
+          if(err) return done(err);
 
           responses.should.be.instanceof(Array).and.have.length(2);
           responses[0].should.containDeep({error: {code: ServerErrors.INVALID_REQUEST}});
@@ -513,7 +513,7 @@ describe('Jayson.Server', function() {
         ];
 
         server.call(request, function(err, responses) {
-          if(err) throw err;
+          if(err) return done(err);
           responses.should.be.instanceof(Array).and.have.length(2);
           responses[0].should.have.property('result', 1 + 1);
           responses[1].should.have.property('result', 1 + 2);

@@ -14,13 +14,13 @@ JaysonPromise.Client = JaysonPromise.client = require(__dirname + '/client');
 
 /**
  * @static
- * @type PromiseServer
+ * @type Server
  */
 JaysonPromise.Server = JaysonPromise.server = require(__dirname + '/server');
 
 /**
  * @static
- * @type PromiseUtils
+ * @type Utils
  */
 JaysonPromise.Utils = JaysonPromise.utils = Jayson.utils;
 

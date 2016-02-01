@@ -32,6 +32,13 @@ describe('Jayson.Server', function() {
       server.removeMethod('subtract');
       server.hasMethod('subtract').should.be.false;
     });
+    
+    it('should pass options methodConstructor and make new methods an instanceof it', function() {
+      var ctor = function() {};
+      server.options.methodConstructor = ctor;
+      server.method('add', function(args, done) { done(); });
+      server.getMethod('add').should.be.instanceof(ctor);
+    });
 
     it('should pass options collect and params as defaults to jayson.Method', function() {
       server.options.collect = true;

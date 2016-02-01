@@ -1,11 +1,18 @@
 var should = require('should');
 var jayson = require(__dirname + '/../../');
+var fs = require('fs');
 
 exports.Counter = require(__dirname + '/counter');
 
 exports.common = require(__dirname + '/common');
 
 exports.server = {};
+
+exports.server.keys = {
+  ca: [fs.readFileSync(__dirname + '/../fixtures/keys/ca1-cert.pem')],
+  key: fs.readFileSync(__dirname + '/../fixtures/keys/agent1-key.pem'),
+  cert: fs.readFileSync(__dirname + '/../fixtures/keys/agent1-cert.pem')
+};
 
 /*
  * Methods for the common test server

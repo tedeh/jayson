@@ -1,4 +1,3 @@
-var _ = require('lodash');
 var promisify = require('es6-promisify');
 var jayson = require('../../../');
 
@@ -19,6 +18,28 @@ var PromiseClient = function(server, options) {
 };
 require('util').inherits(PromiseClient, jayson.Client);
 
-_.extend(PromiseClient, _.omit(jayson.Client, '_super'));
+/**
+ * @type PromiseClientHttp
+ * @static
+ */
+PromiseClient.http = require('./http');
+
+/**
+ * @type PromiseClientHttps
+ * @static
+ */
+PromiseClient.https = require('./https');
+
+/**
+ * @type PromiseClientTls
+ * @static
+ */
+
+PromiseClient.tls = require('./tls');
+/**
+ * @type PromiseClientTcp
+ * @static
+ */
+PromiseClient.tcp = require('./tcp');
 
 module.exports = PromiseClient;

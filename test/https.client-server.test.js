@@ -1,17 +1,10 @@
 var should = require('should');
-var fs = require('fs');
 var jayson = require(__dirname + '/..');
 var support = require('./support');
 var common = support.common;
 var http = require('http');
 var https = require('https');
 var url = require('url');
-
-var serverOptions = {
-  ca: [fs.readFileSync('./test/fixtures/keys/ca1-cert.pem')],
-  key: fs.readFileSync('./test/fixtures/keys/agent1-key.pem'),
-  cert: fs.readFileSync('./test/fixtures/keys/agent1-cert.pem')
-};
 
 describe('Jayson.Https', function() {
 
@@ -24,7 +17,7 @@ describe('Jayson.Https', function() {
     });
 
     it('should listen to a local port', function(done) {
-        server = jayson.server(support.methods, support.options).https(serverOptions);
+        server = jayson.server(support.methods, support.options).https(support.server.keys);
         server.listen(3000, 'localhost', done);
     });
 
@@ -37,13 +30,13 @@ describe('Jayson.Https', function() {
   describe('client', function() {
     
     var server = jayson.server(support.server.methods, support.server.options);
-    var server_https = server.https(serverOptions);
+    var server_https = server.https(support.server.keys);
     var client = jayson.client.https({
       reviver: support.server.options.reviver,
       replacer: support.server.options.replacer,
       host: 'localhost',
       port: 3000,
-      ca: serverOptions.ca
+      ca: support.server.keys.ca
     });
 
     before(function(done) {

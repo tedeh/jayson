@@ -1,74 +1,165 @@
+var _ = require('lodash');
 var should = require('should');
 var jayson = require(__dirname + '/../promise');
+var jaysonPromise = require(__dirname + '/../promise');
 var support = require(__dirname + '/support');
 
 describe('JaysonPromise', function() {
 
-  describe('PromiseServer', function() {
+  describe('Server', function() {
 
-    var PromiseServer = jayson.Server;
+    var Server = jaysonPromise.Server;
 
-    it('should return an instance without using "new"', function() {
-      PromiseServer().should.be.instanceof(PromiseServer);
+    it('should return a correct instance without using "new"', function() {
+      var instance = Server(function() {});
+      instance.should.be.instanceof(Server);
+      instance.should.be.instanceof(jayson.Server);
     });
 
     describe('instance', function() {
 
       var server = null;
       beforeEach(function() {
-        server = new jayson.Server(support.server.methods, support.server.options);
+        server = new Server(support.server.methods, support.server.options);
       });
 
-      describe('call', function() {
-
-        it('should return a fulfilled promise', function() {
-          var request = jayson.utils.request('add', [1, 2]);
-          return server.call(request).should.be.fulfilled().then(function(response) {
-            response.should.containDeep({result: 3});
-          });
-        });
-
-        it('should return a rejected promise', function() {
-          var request = jayson.utils.request('error', []);
-          return server.call(request).should.be.rejected().then(function(response) {
-            response.should.containDeep({error: {code: -1000}});
-          });
-        });
-
+      it('should make methods instance of Method', function() {
+        server.method('add', function(args, done) { done(); });
+        server.getMethod('add').should.be.instanceof(jaysonPromise.Method);
       });
-      
+    
     });
   
   });
 
-  describe('PromiseClient', function() {
+  describe('Client', function() {
 
-    var PromiseClient = jayson.Client;
+    // auto-generated test-suite
+    var suites = {
+      'PromiseClient': {
+        server: function(done) {
+          done();
+          return new jaysonPromise.Server(support.server.methods, support.server.options);
+        },
+        client: function(server) {
+          return jaysonPromise.Client(server, support.server.options);
+        }
+      },
+      'PromiseClientHttp': {
+        server: function(done) {
+          var server = jaysonPromise.Server(support.server.methods, support.server.options);
+          var http = server.http();
+          http.listen(3000, 'localhost', done);
+          return http;
+        },
+        client: function(server) {
+          return jaysonPromise.Client.http({
+            reviver: support.server.options.reviver,
+            replacer: support.server.options.replacer,
+            host: 'localhost',
+            port: 3000
+          })
+        },
+        closeServer: function(http, done) {
+          http.close(done);
+        }
+      },
+      'PromiseClientHttps': {
+        server: function(done) {
+          var server = jaysonPromise.Server(support.server.methods, support.server.options);
+          var https = server.https(support.server.keys);
+          https.listen(3000, 'localhost', done);
+          return https;
+        },
+        client: function(server) {
+          return jaysonPromise.Client.https({
+            reviver: support.server.options.reviver,
+            replacer: support.server.options.replacer,
+            host: 'localhost',
+            port: 3000,
+            ca: support.server.keys.ca
+          })
+        },
+        closeServer: function(https, done) {
+          https.close(done);
+        }
+      },
+      'PromiseClientTcp': {
+        server: function(done) {
+          var server = jaysonPromise.Server(support.server.methods, support.server.options);
+          var tcp = server.tcp();
+          tcp.listen(3000, 'localhost', done);
+          return tcp;
+        },
+        client: function(server) {
+          return jaysonPromise.Client.tcp({
+            reviver: support.server.options.reviver,
+            replacer: support.server.options.replacer,
+            host: 'localhost',
+            port: 3000,
+            ca: support.server.keys.ca
+          })
+        },
+        closeServer: function(tcp, done) {
+          tcp.close(done);
+        }
+      },
+      'PromiseClientTls': {
+        server: function(done) {
+          var server = jaysonPromise.Server(support.server.methods, support.server.options);
+          var tls = server.tls(support.server.keys);
+          tls.listen(3000, 'localhost', done);
+          return tls;
+        },
+        client: function(server) {
+          return jaysonPromise.Client.tls({
+            reviver: support.server.options.reviver,
+            replacer: support.server.options.replacer,
+            host: 'localhost',
+            port: 3000,
+            ca: support.server.keys.ca
+          })
+        },
+        closeServer: function(tls, done) {
+          tls.close(done);
+        }
+      }
+    };
 
-    it('should return an instance without using "new"', function() {
-      PromiseClient(jayson.Server()).should.be.instanceof(PromiseClient);
-    });
+    _.forEach(suites, function(suite, name) {
 
-    describe('instance', function() {
+      describe(name, function() {
 
-      var server, client = null;
-      beforeEach(function() {
-        server = new jayson.Server(support.server.methods, support.server.options);
-        client = new jayson.Client(server, support.server.options);
-      });
-
-      describe('request', function() {
-
-        it('should do a request and fulfill a promise', function() {
-          return client.request('add', [333, 333]).should.be.fulfilled().then(function(response) {
-            response.should.containDeep({result: 666});
-          });
+        var server = null
+        before(function(done) {
+          server = suite.server(done);
         });
 
-        it('should do a request and fulfill a promise that errored', function() {
-          return client.request('error', []).should.be.fulfilled().then(function(response) {
-            response.should.containDeep({error: {code: -1000}});
+        var client = null;
+        beforeEach(function() {
+          client = suite.client(server);
+        });
+
+        if(suite.closeServer) {
+          after(function(done) {
+            suite.closeServer(server, done);
           });
+        }
+
+        describe('request', function() {
+
+          it('should do a request and fulfill a promise', function() {
+            return client.request('add', [333, 333]).should.be.fulfilled().then(function(response) {
+              response.should.containDeep({result: 666});
+            });
+          });
+
+          it('should do a request and fulfill a promise that errored', function() {
+            return client.request('error', []).should.be.fulfilled().then(function(response) {
+              response.should.containDeep({error: {code: -1000}});
+            });
+          });
+
         });
       
       });
@@ -77,19 +168,19 @@ describe('JaysonPromise', function() {
   
   });
 
-  describe('PromiseMethod', function() {
+  describe('Method', function() {
 
-    var PromiseMethod = jayson.Method;
+    var Method = jaysonPromise.Method;
 
     it('should return an instance without using "new"', function() {
-      PromiseMethod(function() {}).should.be.instanceof(PromiseMethod);
+      Method(function() {}).should.be.instanceof(Method);
     });
 
     describe('instance', function() {
 
-      var method = null, server = new jayson.Server();
+      var method = null, server = new jaysonPromise.Server();
       beforeEach(function() {
-        method = new PromiseMethod({collect: true});
+        method = new Method({collect: true});
       });
 
       describe('execute', function() {
@@ -109,10 +200,20 @@ describe('JaysonPromise', function() {
           }
         };
 
-        it('should allow a promise to be returned by the handler', function() {
+        it('should allow a promise to be returned and fulfilled by the handler', function(done) {
           method.setHandler(handlers.sum);
-          return method.execute(server, [1, 2, 3]).should.be.fulfilled().then(function(response) {
-            response.should.containDeep({result: 6});
+          method.execute(server, [1, 2, 3], function(err, response) {
+            if(err) return done(err);
+            response.should.equal(6);
+            done();
+          });
+        });
+
+        it('should allow a promise to be returned and rejected by the handler', function(done) {
+          method.setHandler(handlers.error);
+          method.execute(server, [], function(err, response) {
+            err.should.containDeep({code: -1});
+            done();
           });
         });
 

@@ -141,18 +141,22 @@ The client is available as the `Client` or `client` property of `require('jayson
 
 #### Client interface description
 
-* `Client` Base class for interfacing with a server.
-* `Client.tcp` TCP interface
-* `Client.tls` TLS interface
-* `Client.http` HTTP interface
-* `Client.https` HTTPS interface
+| Name            | Description     |
+| --------------- | --------------- |
+| `Client`        | Base class      |
+| `Client.tcp`    | TCP interface   |
+| `Client.tls`    | TLS interface   |
+| `Client.http`   | HTTP interface  |
+| `Client.https`  | HTTPS interface |
 
 Every client supports these options:
 
-* `reviver` -> Function to use as a JSON reviver
-* `replacer` -> Function to use as a JSON replacer
-* `generator` -> Function to generate request ids with. If omitted, Jayson will just generate a "random" number that is [RFC4122][rfc_4122_spec] compliant and looks similar to this: `3d4be346-b5bb-4e28-bc4a-0b721d4f9ef9`
-* `version` -> Can be either `1` or `2` depending on which specification should be followed in communicating with the server. Defaults to `2` for [JSON-RPC 2.0][jsonrpc-spec]
+| Option      	| Default                            	| Type       	| Description                                              	|
+|-------------	|------------------------------------	|------------	|----------------------------------------------------------	|
+| `reviver`   	| `undefined`                        	| `Function` 	| `JSON.parse` reviver                                    	|
+| `replacer`  	| `undefined`                        	| `Function` 	| `JSON.stringify` replacer                               	|
+| `generator` 	| [RFC4122][rfc_4122_spec] generator 	| `Function` 	| Generates a `String` for request ID.                     	|
+| `version`   	| 2                                  	| `Number`   	| JSON-RPC version to support (1 or 2)                      |
 
 [rfc_4122_spec]: http://www.ietf.org/rfc/rfc4122.txt
 
@@ -160,16 +164,20 @@ Every client supports these options:
 
 Uses the same options as [http.request][nodejs_docs_http_request] in addition to these options:
 
-* `encoding` -> String that determines the encoding to use and defaults to utf8
+| Option     	| Default 	| Type     	| Description                    	|
+|------------	|---------	|----------	|--------------------------------	|
+| `encoding` 	| `utf8`  	| `String` 	| Determines the encoding to use 	|
 
 ###### Client.http Events
 
 The HTTP server will emit the following events:
 
-* `http request` Emitted when the client has just created a HTTP request. First argument is an instance of `http.ClientRequest`
-* `http response` Emitted when the client has received an HTTP response. First argument is an instance of `http.IncomingMessage` and second argument an instance of `http.ClientRequest`.
-* `http error` Emitted when the underlying stream emits `error`. First argument is the error.
-* `http timeout` Emitter when the underlying stream emits `timeout`. When emitted, it will automatically cause the request to abort.
+| Event           	| When                              	| Arguments                                                                 	| Notes                                     	|
+|-----------------	|-----------------------------------	|---------------------------------------------------------------------------	|-------------------------------------------	|
+| `http request`  	| Created an HTTP request           	| 1: Instance of `http.ClientRequest`                                       	|                                           	|
+| `http response` 	| Received an HTTP response         	| 1. Instance of `http.IncomingMessage` 2. Instance of `http.ClientRequest` 	|                                           	|
+| `http error`    	| Underlying stream emits `error`   	| 1. Error                                                                  	|                                           	|
+| `http timeout`  	| Underlying stream emits `timeout` 	|                                                                           	| Automatically causes the request to abort 	|
 
 It is possible to pass a string URL as the first argument. The URL will be run through [url.parse][nodejs_docs_url_parse]. Example:
 
@@ -309,8 +317,10 @@ When doing a batch request with a 3-length callback, the second argument will be
 
 A client will emit the following events (in addition to any special ones emitted by a specific interface):
 
-* `request` Emitted when a client is just about to dispatch a request. First argument is the request object.
-* `response` Emitted when a client has just received a reponse. First argument is the request object, second argument is the response as received.
+| Event      	| When                        	| Arguments                                     	| Notes 	|
+|------------	|-----------------------------	|-----------------------------------------------	|-------	|
+| `request`  	| About to dispatch a request 	| 1: Request object                             	|       	|
+| `response` 	| Received a response         	| 1: Request object 2: Response object received 	|       	|
 
 ### Server
 
@@ -320,12 +330,14 @@ The server also sports several interfaces that can be accessed as properties of 
 
 #### Server interface description
 
-* `Server` - Base interface for a server that supports receiving JSON-RPC 2.0 requests.
-* `Server.tcp` - TCP server that inherits from [net.Server][nodejs_doc_net_server].
-* `Server.tls` - TLS server that inherits from [tls.Server][nodejs_doc_tls_server].
-* `Server.http` - HTTP server that inherits from [http.Server][nodejs_doc_http_server].
-* `Server.https` - HTTPS server that inherits from [https.Server][nodejs_doc_https_server].
-* `Server.middleware` - Method that returns a [Connect][connect]/[Express][express] compatible middleware function.
+| Name                	| Description                                                                                	|
+|---------------------	|--------------------------------------------------------------------------------------------	|
+| `Server`            	| Base interface for a server that supports receiving JSON-RPC requests                      	|
+| `Server.tcp`        	| TCP server that inherits from [net.Server][nodejs_doc_net_server]                          	|
+| `Server.tls`        	| TLS server that inherits from [tls.Server][nodejs_doc_tls_server]                          	|
+| `Server.http`       	| HTTP server that inherits from [http.Server][nodejs_doc_http_server]                       	|
+| `Server.https`      	| HTTPS server that inherits from [https.Server][nodejs_doc_https_server]                    	|
+| `Server.middleware` 	| Method that returns a [Connect][connect]/[Express][express] compatible middleware function 	|
 
 [nodejs_doc_net_server]: http://nodejs.org/docs/latest/api/net.html#net_class_net_server
 [nodejs_doc_http_server]: http://nodejs.org/docs/latest/api/http.html#http_class_http_server
@@ -336,13 +348,15 @@ The server also sports several interfaces that can be accessed as properties of 
 
 Servers supports these options:
 
-* `reviver` -> Function to use as a JSON reviver
-* `replacer` -> Function to use as a JSON replacer
-* `router` -> Function to find which method to use for a request. See the chapter on [method routing](#method-routing).
-* `collect` -> Collect JSON-RPC parameters inside a single function argument. Default `true`. See [method definition](#method-definition)
-* `methodConstructor` -> Class used to instantiate raw functions. Default is `jayson.Method`. *Since 2.0.0* 
-* `params` -> Force collected JSON-RPC parameters to be `Object` or `Array`. Default `false`. See [method definition](#method-definition)
-* `version` -> Can be either `1` or `2` depending on which specification clients are expected to follow. Defaults to `2` for [JSON-RPC 2.0][jsonrpc-spec]
+| Option              	| Default         	| Type                	| Description                                               	|
+|---------------------	|-----------------	|---------------------	|-----------------------------------------------------------	|
+| `reviver`           	| `null`          	| `Function`          	| `JSON.parse` reviver                                      	|
+| `replacer`          	| `null `         	| `Function`          	| `JSON.stringify` replacer                                 	|
+| `router`            	| `null `         	| `Function`          	| Return the function for [method routing](#method-routing) 	|
+| `collect`           	| `true`          	| `Boolean`           	| Passed to `methodConstructor` options                     	|
+| `params`            	| `undefined`     	| `Array|Object|null` 	| Passed to `methodConstructor` options                     	|
+| `methodConstructor` 	| `jayson.Method` 	| `Function`          	| Server functions are made an instance of this class       	|
+| `version`           	| 2               	| `Number`            	| JSON-RPC version to support (1 or 2)                      	|
 
 ##### Server.tcp
 
@@ -366,7 +380,9 @@ Uses the same options as the base class. Returns a function that is compatible w
 
 The middleware supports the following options:
 
-* `end` Defaults to `true`. If set to `false` will cause the middleware to `next()` instead of `res.end()` at the end of a request. `res.body` and the response header may or may not be set when the next middleware is called.
+| Option 	| Default 	| Type      	| Description                                                                               	|
+|--------	|---------	|-----------	|-------------------------------------------------------------------------------------------	|
+| `end`  	| `true`  	| `Boolean` 	| If set to `false` causes the middleware to `next()` instead of `res.end()` when finished. 	|
 
 Middleware example in [examples/middleware/server.js](examples/middleware/server.js):
 
@@ -646,9 +662,11 @@ client.request('acceptArray', {a: 5, b: 2, c: 9}, function(err, response) {
 
 In addition to events that are specific to certain interfaces, all servers will emit the following events:
 
-* `request` Emitted when the server receives an interpretable (non-batch) request. First argument is the request object.
-* `response` Emitted when the server is returning a response. First argument is the request object, the second is the response object.
-* `batch` Emitted when the server receives a batch request. First argument is an array of requests. Will emit `request` for each interpretable request in the batch.
+| Event      	| When                                     	| Arguments                            	| Notes                          	|
+|------------	|------------------------------------------	|--------------------------------------	|--------------------------------	|
+| `request`  	| Interpretable non-batch request received 	| 1: Request object                    	|                                	|
+| `response` 	| Returning a response                     	| 1: Request object 2: Response object 	|                                	|
+| `batch`    	| Interpretable batch request received     	| 1. Array of requests                 	| Emits `request` for every part 	|
 
 #### Server Errors
 

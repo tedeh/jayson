@@ -1,4 +1,3 @@
-var _ = require('lodash');
 var jayson = require('../../');
 
 /**
@@ -22,14 +21,13 @@ module.exports = PromiseMethod;
 /**
  * @summary Executes this method in the context of a server
  * @param {ServerHttp} server
- * @param {Array|Object} params
+ * @param {Array|Object} requestParams
  * @param {Function} outerCallback
  */
-PromiseMethod.prototype.execute = function(server, params, outerCallback) {
-  var options = this.options;
+PromiseMethod.prototype.execute = function(server, requestParams, outerCallback) {
   var wasPromised = false;
 
-  var promise = jayson.Method.prototype.execute.call(this, server, params, function() {
+  var promise = jayson.Method.prototype.execute.call(this, server, requestParams, function() {
     if(wasPromised) return; // ignore any invocations of the callback if a promise was returned
     outerCallback.apply(null, arguments);
   });

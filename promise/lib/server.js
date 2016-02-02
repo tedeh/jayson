@@ -1,4 +1,3 @@
-var promisify = require('es6-promisify');
 var Method = require('./method');
 var jayson = require('../../');
 

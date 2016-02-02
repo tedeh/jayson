@@ -93,11 +93,11 @@ client.request('add', [1, 1], function(err, error, response) {
 
 Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want the `jayson` client CLI in your PATH.
 
-## Changelog (notable milestones)
+## Changelog (only notable milestones)
 
 - *2.0*
   - Added [support for promises][#promises]
-  - _Breaking_: `collect: true` is now the default option for a new Server
+  - _Breaking_: `collect: true` is now the default option for a new `jayson.Server` and `jayson.Method`
 - *1.2*
   - Greatly improved [server method definition](#method-definition)
 - *1.1.1*
@@ -106,8 +106,6 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
   - Add server routing
 - *1.0.11*
   Add support for a HTTPS client
-- *1.0.10*
-  Bugfixes
 - *1.0.9*
   Add support for TCP servers and clients
 
@@ -132,10 +130,7 @@ In addition to this document, a comprehensive class documentation made with [jsd
 ## Running tests
 
 - Change directory to the repository root
-- Install the testing framework
-  ([mocha](https://github.com/visionmedia/mocha) together with
-  [should](https://github.com/visionmedia/should.js)) by executing `npm install
-  --dev`
+- Install the development packages by executing `npm install --dev`
 - Run the tests with `make test`
 
 ## Usage
@@ -175,7 +170,6 @@ The HTTP server will emit the following events:
 * `http response` Emitted when the client has received an HTTP response. First argument is an instance of `http.IncomingMessage` and second argument an instance of `http.ClientRequest`.
 * `http error` Emitted when the underlying stream emits `error`. First argument is the error.
 * `http timeout` Emitter when the underlying stream emits `timeout`. When emitted, it will automatically cause the request to abort.
-
 
 It is possible to pass a string URL as the first argument. The URL will be run through [url.parse][nodejs_docs_url_parse]. Example:
 
@@ -340,12 +334,13 @@ The server also sports several interfaces that can be accessed as properties of 
 [connect]: http://www.senchalabs.org/connect/
 [express]: http://expressjs.com/
 
-Every server supports these options:
+Servers supports these options:
 
 * `reviver` -> Function to use as a JSON reviver
 * `replacer` -> Function to use as a JSON replacer
 * `router` -> Function to find which method to use for a request. See the chapter on [method routing](#method-routing).
-* `collect` -> Collect JSON-RPC parameters inside a single function argument. Default `false`. See [method definition](#method-definition)
+* `collect` -> Collect JSON-RPC parameters inside a single function argument. Default `true`. See [method definition](#method-definition)
+* `methodConstructor` -> Class used to instantiate raw functions. Default is `jayson.Method`. *Since 2.0.0* 
 * `params` -> Force collected JSON-RPC parameters to be `Object` or `Array`. Default `false`. See [method definition](#method-definition)
 * `version` -> Can be either `1` or `2` depending on which specification clients are expected to follow. Defaults to `2` for [JSON-RPC 2.0][jsonrpc-spec]
 

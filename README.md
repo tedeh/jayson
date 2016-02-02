@@ -15,7 +15,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 - [Features](#features)
 - [Example](#example)
 - [Installation](#installation)
-- [Changelog](#changelog-notable-milestones)
+- [Changelog](#changelog-only-notable-milestones)
 - [Requirements](#requirements)
 - [Class Documentation](#class-documentation)
 - [Running tests](#running-tests)

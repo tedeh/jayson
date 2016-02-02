@@ -36,6 +36,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
      - [Errors](#server-errors)
 - [Revivers and replacers](#revivers-and-replacers)
 - [Named parameters](#named-parameters)
+- [Promises](#promises)
 - [Contributing](#contributing)
 
 ## Features
@@ -46,6 +47,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 * Relaying of requests to other servers
 * JSON reviving and replacing for transparent serialization of complex objects
 * CLI client
+* Promises
 * Fully tested to comply with the [official JSON-RPC 2.0 specification][jsonrpc-spec]
 * Also supports [JSON-RPC 1.0][jsonrpc1-spec]
 
@@ -60,8 +62,8 @@ var jayson = require(__dirname + '/../..');
 
 // create a server
 var server = jayson.server({
-  add: function(a, b, callback) {
-    callback(null, a + b);
+  add: function(args, callback) {
+    callback(null, args[0] + args[1]);
   }
 });
 
@@ -93,6 +95,9 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ## Changelog (notable milestones)
 
+- *2.0*
+  - Added [support for promises][#promises]
+  - _Breaking_: `collect: true` is now the default option for a new Server
 - *1.2*
   - Greatly improved [server method definition](#method-definition)
 - *1.1.1*
@@ -114,9 +119,8 @@ There is a CLI client in `bin/jayson.js` and it should be available as `jayson` 
 
 Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It is being continuously tested using [travis-ci](https://travis-ci.org/) on the following versions:
 
-- node.js v0.8.x
-- node.js v0.10.x
-- node.js v0.12.x
+- node.js 0.10
+- node.js 0.12
 - iojs
 
 ## Class documentation
@@ -132,7 +136,7 @@ In addition to this document, a comprehensive class documentation made with [jsd
   ([mocha](https://github.com/visionmedia/mocha) together with
   [should](https://github.com/visionmedia/should.js)) by executing `npm install
   --dev`
-- Run the tests with `make test` or `npm test`
+- Run the tests with `make test`
 
 ## Usage
 
@@ -830,7 +834,59 @@ server.http().listen(3000);
 * Too many arguments or arguments with invalid names will be ignored
 * It is assumed that the last argument to a server method is the callback and it will not be filled with something else
 
+### Promises
+
+[es6-promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+*Since version 2.0.0*
+
+A separate tree that does limited usage of the [ES6 Promise][es6-promise] object is available. The internal API remains callback based, with the addition that promises may be used for two things:
+
+* Returning a Promise when requesting a JSON-RPC method using a Client
+* Returning a Promise inside of a Server method
+
+To use the separate tree, do a `require('jayson/promise')` instead of `require('jayson')`.
+
+Server example in [examples/promise/server.js](examples/promise/server.js) showing how to return a `Promise` in a server method:
+
+```javascript
+var _ = require('lodash');
+var jayson = require('jayson/promise');
+
+var server = jayson.server({
+  add: function(args) {
+    return new Promise(function(resolve, reject) {
+      var sum = _.reduce(args, function(sum, value) { return sum + value; }, 0);
+      resolve(sum);
+    });
+  }
+});
+
+var http = server.http();
+
+http.listen(3000, function() {
+  console.log('Listening on *:3000');
+});
+```
+
+Client example in [examples/promise/client.js](examples/promise/client.js) showing how to do a request:
+
+```javascript
+var jayson = require('jayson/promise');
+
+var client = jayson.client.http({
+  port: 3000,
+  hostname: 'localhost'
+});
+
+client.request('add', [1, 2, 3, 4, 5]).then(function(response) {
+  console.log(response.result); // 15!
+});
+```
+
 ### Contributing
 
 Highlighting [issues](https://github.com/tedeh/jayson/issues) or submitting pull
 requests on [Github](https://github.com/tedeh/jayson) is most welcome.
+
+Please make sure to follow the style of the project, and lint your code before submitting a patch.

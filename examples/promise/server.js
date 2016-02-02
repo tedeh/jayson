@@ -1,5 +1,5 @@
+var jayson = require('../../promise');
 var _ = require('lodash');
-var jayson = require(__dirname + '/../../promise');
 
 var server = jayson.server({
   add: function(args) {

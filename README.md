@@ -98,6 +98,7 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 - *2.0*
   - Added [support for promises][#promises]
   - _Breaking_: `collect: true` is now the default option for a new `jayson.Server` and `jayson.Method`
+  - _Breaking_: Syntactic sugar for client request callbacks removed
 - *1.2*
   - Greatly improved [server method definition](#method-definition)
 - *1.1.1*

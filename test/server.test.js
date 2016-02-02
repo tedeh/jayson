@@ -24,6 +24,12 @@ describe('Jayson.Server', function() {
       server = Server(support.server.methods, support.server.options);
     });
 
+    it('should have some default options', function() {
+      new Server().options.should.containDeep({
+        collect: true
+      });
+    });
+
     it('should allow a method to be added and removed', function() {
       server.method('subtract', function(a, b, callback) {
         callback(null, a - b);
@@ -122,15 +128,13 @@ describe('Jayson.Server', function() {
     describe('router', function() {
 
       beforeEach(function() {
-        server.options.router = function(method) {
-
+        server.options.router = function(method, params) {
           if(typeof(this._methods[method]) === 'function') {
             return this._methods[method];
           }
-
           if(method === 'add_2') {
             var fn = server.getMethod('add').getHandler();
-            return fn.bind(null, 2);
+            return new jayson.Method(fn.bind(null, 2), {collect: false});
           }
         };
       });

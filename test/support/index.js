@@ -83,6 +83,8 @@ exports.server.options = {
       return {$class: 'counter', $props: {count: value.count}};
     }
     return value;
-  }
+  },
+
+  collect: false
 
 };

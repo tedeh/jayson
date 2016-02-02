@@ -18,6 +18,12 @@ describe('Jayson.Method', function() {
       method = new Method();
     });
 
+    it('should have some default options', function() {
+      method.options.should.containDeep({
+        collect: true
+      });
+    });
+
     describe('getHandler and setHandler', function() {
 
       var fn = function() {};

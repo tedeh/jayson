@@ -10,7 +10,7 @@ var client = jayson.client.http({
 // create the object
 var params = {
   counter: new shared.Counter(2)
-}
+};
 
 // invoke "increment"
 client.request('increment', params, function(err, response) {

@@ -543,9 +543,17 @@ function collapse(stem, sep) {
 
 #### Method definition
 
-You can also define server methods inside a wrapping object named `jayson.Method`. This allows additional options about the method to be specified. It is possible to define what kind of params it expects, default values for these params, and wheter or not all JSON-RPC params should be collected in a single argument to the function. Using this wrapper, it is for instance trivial to have your method accept a variable amount of arguments.
+You can also define server methods inside a wrapping object named `jayson.Method`. This allows additional options about the method to be specified. Using this wrapper - explicitly or implicitly (via server options) - it is for instance trivial to have your method accept a variable amount of arguments.
 
-Server example showcasing most features in [examples/method_definitions/server.js](examples/method_definitions/server.js):
+The method class is available as the `Method` or `method` property of  `require('jayson')`. It supports these options:
+
+| Option    	| Default                        	| Type                	| Description                                                            	|
+|-----------	|--------------------------------	|---------------------	|------------------------------------------------------------------------	|
+| `handler` 	|                                	| `Function`          	| The actual function that will handle a JSON-RPC request to this method 	|
+| `collect` 	| >= 2.0.0 `true` before `false` 	| `Boolean`           	| Collect JSON-RPC parameters in a single function argument              	|
+| `params`  	| null                           	| `Array|Object|null` 	| Force JSON-RPC parameters to be of a certain type                      	|
+
+Server example showcasing most features and options in [examples/method_definitions/server.js](examples/method_definitions/server.js):
 
 ```javascript
 var jayson = require(__dirname + '/../..');

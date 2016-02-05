@@ -43,7 +43,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 
 * Servers that can listen to several interfaces at the same time
 * Supports both HTTP and TCP client and server connections
-* Server-side method - [Method routing]
+* Server-side method routing
 * Relaying of requests to other servers
 * JSON reviving and replacing for transparent serialization of complex objects
 * CLI client

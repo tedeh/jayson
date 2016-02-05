@@ -8,10 +8,6 @@ var server = jayson.server({
       resolve(sum);
     });
   }
-}, {collect: true});
-
-var http = server.http();
-
-http.listen(3000, function() {
-  console.log('Listening on *:3000');
 });
+
+server.http().listen(3000);

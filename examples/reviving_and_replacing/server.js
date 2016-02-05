@@ -9,11 +9,10 @@ var options = {
 
 // create a server
 var server = jayson.server({
-  increment: function(counter, callback) {
-    counter.increment();
-    callback(null, counter);
+  increment: function(args, callback) {
+    args.counter.increment();
+    callback(null, args.counter);
   }
 }, options);
 
-// let the server listen to for http connections on localhost:3000
 server.http().listen(3000);

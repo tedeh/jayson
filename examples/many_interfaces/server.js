@@ -1,10 +1,6 @@
 var jayson = require(__dirname + '/../..');
 
-var server = jayson.server({
-  add: function(a, b, callback) {
-    return callback(null, a + b);
-  }
-});
+var server = jayson.server();
 
 // "http" will be an instance of require('http').Server
 var http = server.http();

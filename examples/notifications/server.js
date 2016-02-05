@@ -1,8 +1,8 @@
 var jayson = require(__dirname + '/../..');
 
 var server = jayson.server({
-  ping: function(callback) {
-    // do something
+  ping: function(args, callback) {
+    // do something, do nothing
     callback();
   }
 });

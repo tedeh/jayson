@@ -18,7 +18,7 @@ var options = {
 var client = jayson.client.tls(options);
 
 // invoke "add"
-client.request('add', [1, 1], function(err, error, response) {
+client.request('add', [1, 1], function(err, response) {
   if(err) throw err;
-  console.log(response); // 2!
+  console.log(response.result); // 2
 });

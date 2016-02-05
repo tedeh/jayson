@@ -3,8 +3,8 @@ var connect = require('connect');
 var app = connect();
 
 var server = jayson.server({
-  add: function(a, b, callback) {
-    callback(null, a + b);
+  add: function(args, callback) {
+    callback(null, args[0] + args[1]);
   }
 });
 

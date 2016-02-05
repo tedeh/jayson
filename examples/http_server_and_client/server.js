@@ -1,11 +1,8 @@
-var jayson = require(__dirname + '/../../');
+var jayson = require(__dirname + '/../..');
 
 var server = jayson.server({
-  echo: function(msg, callback) {
-    callback(null, msg);
-  },
-  multiply: function(a, b, callback) {
-    callback(null, a * b);
+  multiply: function(args, callback) {
+    callback(null, args[0] * args[1]);
   }
 });
 

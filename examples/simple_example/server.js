@@ -2,10 +2,9 @@ var jayson = require(__dirname + '/../..');
 
 // create a server
 var server = jayson.server({
-  add: function(a, b, callback) {
-    callback(null, a + b);
+  add: function(args, callback) {
+    callback(null, args[0] + args[1]);
   }
 });
 
-// Bind a http interface to the server and let it listen to localhost:3000
 server.http().listen(3000);

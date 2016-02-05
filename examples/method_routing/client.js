@@ -2,13 +2,12 @@ var jayson = require(__dirname + '/../..');
 
 // create a client
 var client = jayson.client.http({
-  port: 3000,
-  hostname: 'localhost'
+  port: 3000
 });
 
 // invoke "add_2"
-client.request('add_2', [3], function(err, error, response) {
+client.request('add_2', [3], function(err, response) {
   if(err) throw err;
-  console.log(response); // 5!
+  console.log(response.result); // 5!
 });
 

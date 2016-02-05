@@ -3,8 +3,13 @@ var _ = require('lodash');
 
 var methods = {
 
+  // this function will be wrapped in jayson.Method with options given to the server
+  sum: function(args, done) {
+    done(null, sum(args));
+  },
+
   // this method gets the raw params as first arg to handler
-  addCollect: new jayson.Method({
+  sumCollect: new jayson.Method({
     handler: function(args, done) {
       var total = sum(args);
       done(null, total);
@@ -13,7 +18,7 @@ var methods = {
   }),
 
   // specifies some default values (alternate definition too)
-  addDefault: jayson.Method(function(args, done) {
+  sumDefault: jayson.Method(function(args, done) {
     var total = sum(args);
     done(null, total);
   }, {
@@ -22,7 +27,7 @@ var methods = {
   }),
 
   // this method returns true when it gets an array (which it always does)
-  acceptArray: new jayson.Method({
+  isArray: new jayson.Method({
     handler: function(args, done) {
       var result = _.isArray(args);
       done(null, result);
@@ -33,11 +38,15 @@ var methods = {
 
 };
 
-var server = jayson.server(methods);
+var server = jayson.server(methods, {
+  // Given as options to jayson.Method when adding the method "sum"
+  collect: true,
+  params: Array
+});
 
 server.http().listen(3000);
 
-// sums all enumerable properties in a list
+// sums all numbers in an array
 function sum(list) {
   return _.reduce(list, function(sum, val) {
     return sum + val;

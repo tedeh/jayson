@@ -10,4 +10,10 @@ test:
 test-cov:
 	./node_modules/.bin/mocha --require blanket -R html-cov > coverage.html
 
-.PHONY: test test-cov lint
+docs:
+	node_modules/.bin/jsdoc -t node_modules/ink-docstrap/template -R README.md -c ./jsdoc.conf.json
+
+docs_deploy:
+	rsync --delete -r out/ oceandatorn:~/shared/jayson/public_html
+
+.PHONY: test test-cov lint docs docs_deploy

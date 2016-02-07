@@ -7,7 +7,6 @@ var jayson = require('../../../');
  * @class PromiseClientHttp
  * @extends ClientHttp
  * @return {PromiseClientHttp}
- * @api public
  */
 var PromiseClientHttp = function(options) {
   if(!(this instanceof PromiseClientHttp)) {

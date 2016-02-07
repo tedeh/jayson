@@ -28,7 +28,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
      - [Events](#client-events)
   - [Server](#server)
      - [Interface description](#server-interface-description)
-     - [Using many interfaces at the same time](#using-many-server-interfaces-at-the-same-time)
+     - [Many interfaces at the same time](#many-interfaces-at-the-same-time)
      - [Using the server as a relay](#using-the-server-as-a-relay)
      - [Method routing](#method-routing)
      - [Method definition](#method-definition)
@@ -387,7 +387,7 @@ app.use(server.middleware());
 app.listen(3000);
 ```
 
-#### Using many server interfaces at the same time
+#### Many interfaces at the same time
 
 A Jayson server can use many interfaces at the same time.
 

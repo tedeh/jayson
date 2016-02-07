@@ -13,7 +13,12 @@ test-cov:
 docs:
 	node_modules/.bin/jsdoc -t node_modules/ink-docstrap/template -R README.md -c ./jsdoc.conf.json
 
-docs_deploy:
-	rsync --delete -r out/ oceandatorn:~/shared/jayson/public_html
+docs_clear:
+	rm -rf ./docs/jayson/*
 
-.PHONY: test test-cov lint docs docs_deploy
+docs_refresh: docs_clear docs
+
+docs_deploy:
+	rsync --delete -r docs/jayson oceandatorn:~/shared/jayson/public_html
+
+.PHONY: test test-cov lint docs docs_deploy docs_refresh docs_clear

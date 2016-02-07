@@ -7,7 +7,6 @@ var jayson = require('../../../');
  * @class PromiseClientTcp
  * @extends ClientTcp
  * @return {PromiseClientTcp}
- * @api public
  */
 var PromiseClientTcp = function(options) {
   if(!(this instanceof PromiseClientTcp)) {

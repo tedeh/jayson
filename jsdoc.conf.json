@@ -10,13 +10,13 @@
   },
   "opts": {
     "destination": "./docs/",
-    "package": "./package.json"
+    "package": "./package.json",
+    "recurse": true
   },
   "templates": {
     "systemName": "Jayson",
     "copyright": "The MIT License",
     "includeDate": false,
-    "theme": "united",
     "linenums": true,
     "outputSourceFiles": true
   }

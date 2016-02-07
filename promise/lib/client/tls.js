@@ -7,7 +7,6 @@ var jayson = require('../../../');
  * @class PromiseClientTls
  * @extends ClientTls
  * @return {PromiseClientTls}
- * @api public
  */
 var PromiseClientTls = function(options) {
   if(!(this instanceof PromiseClientTls)) {

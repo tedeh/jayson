@@ -6,7 +6,6 @@ var jayson = require('../../');
  * @class PromiseMethod
  * @extends Method
  * @return {PromiseMethod}
- * @api public
  */
 var PromiseMethod = module.exports = function(handler, options) {
   if(!(this instanceof PromiseMethod)) {
@@ -20,9 +19,10 @@ module.exports = PromiseMethod;
 
 /**
  * @summary Executes this method in the context of a server
- * @param {ServerHttp} server
+ * @param {Server} server
  * @param {Array|Object} requestParams
  * @param {Function} outerCallback
+ * @return {Promise}
  */
 PromiseMethod.prototype.execute = function(server, requestParams, outerCallback) {
   var wasPromised = false;

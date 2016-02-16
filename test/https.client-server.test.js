@@ -1,7 +1,7 @@
 var should = require('should');
 var jayson = require(__dirname + '/..');
 var support = require('./support');
-var common = support.common;
+var suites = require(__dirname + '/support/suites');
 var http = require('http');
 var https = require('https');
 var url = require('url');
@@ -13,7 +13,7 @@ describe('Jayson.Https', function() {
     var server = null;
 
     after(function() {
-      server.close();
+      if(server) server.close();
     });
 
     it('should listen to a local port', function(done) {
@@ -47,7 +47,7 @@ describe('Jayson.Https', function() {
       server_https.close();
     });
 
-    describe('common tests', common(client));
+    describe('common tests', suites.getCommonForClient(client));
 
     it('should emit an event with the http response', function(done) {
       var hasFired = false;

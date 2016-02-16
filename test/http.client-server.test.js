@@ -1,7 +1,7 @@
 var should = require('should');
 var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support');
-var common = support.common;
+var suites = require(__dirname + '/support/suites');
 var http = require('http');
 var url = require('url');
 
@@ -12,7 +12,7 @@ describe('Jayson.Http', function() {
     var server = null;
 
     after(function() {
-      server.close();
+      if(server) server.close();
     });
 
     it('should listen to a local port', function(done) {
@@ -22,6 +22,10 @@ describe('Jayson.Http', function() {
 
     it('should be an instance of http.Server', function() {
       server.should.be.instanceof(http.Server);
+    });
+
+    it('should allow server response headers to be changed', function() {
+
     });
 
   });
@@ -46,7 +50,7 @@ describe('Jayson.Http', function() {
       server_http.close();
     });
 
-    describe('common tests', common(client));
+    describe('common tests', suites.getCommonForClient(client));
 
     it('should emit an event with the http request', function(done) {
       var hasFired = false;

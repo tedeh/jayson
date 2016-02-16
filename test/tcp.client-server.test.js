@@ -2,7 +2,7 @@ var should = require('should');
 var _ = require('lodash');
 var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support');
-var common = support.common;
+var suites = require(__dirname + '/support/suites');
 var net = require('net');
 var url = require('url');
 var JSONStream = require('JSONStream');
@@ -103,7 +103,7 @@ describe('Jayson.Tcp', function() {
       server_tcp.close();
     });
 
-    describe('common tests', common(client));
+    describe('common tests', suites.getCommonForClient(client));
 
   });
 

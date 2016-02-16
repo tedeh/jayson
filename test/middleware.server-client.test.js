@@ -1,6 +1,6 @@
 var should = require('should');
 var support = require('./support');
-var common = support.common;
+var suites = require(__dirname + '/support/suites');
 var jayson = require(__dirname + '/..');
 var connect = require('connect');
 
@@ -25,7 +25,7 @@ describe('Jayson.Middleware', function() {
     server.close();
   });
 
-  describe('common tests', common(client));
+  describe('common tests', suites.getCommonForClient(client));
 
   describe('options.end false', function() {
 

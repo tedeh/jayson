@@ -4,8 +4,6 @@ var fs = require('fs');
 
 exports.Counter = require(__dirname + '/counter');
 
-exports.common = require(__dirname + '/common');
-
 exports.server = {};
 
 exports.server.keys = {

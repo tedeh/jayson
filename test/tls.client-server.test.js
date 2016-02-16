@@ -2,7 +2,7 @@ var should = require('should');
 var fs = require('fs');
 var jayson = require(__dirname + '/..');
 var support = require('./support');
-var common = support.common;
+var suites = require(__dirname + '/support/suites');
 var JSONStream = require('JSONStream');
 var tls = require('tls');
 
@@ -54,7 +54,7 @@ describe('Jayson.Tls', function() {
       server_tls.close();
     });
 
-    describe('common tests', common(client));
+    describe('common tests', suites.getCommonForClient(client));
 
     it('should send a parse error for invalid JSON data', function(done) {
       var socket = tls.connect(3000, 'localhost', serverOptions, function() {

@@ -1,7 +1,7 @@
 var should = require('should');
 var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support');
-var common = support.common;
+var suites = require(__dirname + '/support/suites');
 
 describe('Jayson.Client', function() {
 
@@ -32,7 +32,7 @@ describe('Jayson.Client', function() {
     var server = jayson.Server(support.server.methods, support.server.options);
     var client = jayson.client(server, support.server.options);
 
-    describe('common tests', common(client));
+    describe('common tests', suites.getCommonForClient(client));
 
     it('should not talk to a version 2.0 server when client is 1.0', function(done) {
       client.options.version = 1; // change option

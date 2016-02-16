@@ -2,6 +2,7 @@ var should = require('should');
 var support = require(__dirname);
 var jayson = require(__dirname + '/../../');
 var Counter = support.Counter;
+var http = require('http');
 
 /**
  * Get a mocha suite for common test cases for a client
@@ -73,5 +74,67 @@ exports.getCommonForClient = function(client) {
       });
     });
 
+  };
+};
+
+/**
+ * Get a mocha suite for common test cases for a HTTP client
+ * @param {Client} Client instance to use
+ * @return {Function}
+ */
+exports.getCommonForHttpClient = function(client) {
+  return function() {
+
+    it('should emit an event with the http request', function(done) {
+      var hasFired = false;
+      client.once('http request', function(req) {
+        req.should.be.instanceof(http.ClientRequest);
+        hasFired = true;
+      });
+
+      client.request('add', [10, 2], function(err, response) {
+        if(err) return done(err);
+        hasFired.should.be.ok;
+        done();
+      });
+    });
+
+    it('should emit an event with the http response', function(done) {
+      var hasFired = false;
+      client.once('http response', function(res) {
+        res.should.be.instanceof(http.IncomingMessage);
+        hasFired = true;
+      });
+
+      client.request('add', [9, 4], function(err, response) {
+        if(err) return done(err);
+        hasFired.should.be.ok;
+        done();
+      });
+    });
+
+    it('should callback with an error on timeout', function(done) {
+      client.once('http request', function(req) {
+        req.setTimeout(5); // timeout 5 ms
+      });
+
+      client.request('add_slow', [4, 3, true], function(err, response) {
+        should(err).be.instanceof(Error);
+        should(response).not.exist;
+        done();
+      });
+    });
+  
+  };
+};
+
+/**
+ * Get a mocha suite for common test cases for a HTTP server
+ * @param {HttpServer} server
+ * @return {Function}
+ */
+exports.getCommonForHttpServer = function(server) {
+  return function() {
+  
   };
 };

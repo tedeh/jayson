@@ -24,10 +24,6 @@ describe('Jayson.Http', function() {
       server.should.be.instanceof(http.Server);
     });
 
-    it('should allow server response headers to be changed', function() {
-
-    });
-
   });
 
   describe('client', function() {
@@ -50,62 +46,16 @@ describe('Jayson.Http', function() {
       server_http.close();
     });
 
-    describe('common tests', suites.getCommonForClient(client));
-
-    it('should emit an event with the http request', function(done) {
-      var hasFired = false;
-      client.once('http request', function(req) {
-        req.should.be.instanceof(http.ClientRequest);
-        hasFired = true;
-      });
-
-      client.request('add', [10, 2], function(err, response) {
-        if(err) return done(err);
-        hasFired.should.be.ok;
-        done();
-      });
-
-    });
-
-    it('should emit an event with the http response', function(done) {
-      var hasFired = false;
-
-      client.once('http response', function(res, req) {
-        res.should.be.instanceof(http.IncomingMessage);
-        req.should.be.instanceof(http.ClientRequest);
-        hasFired = true;
-      });
-
-      client.request('add', [9, 4], function(err, response) {
-        if(err) return done(err);
-        hasFired.should.be.ok;
-        done();
-      });
-
-    });
-
     it('should accept a URL string as the first argument', function() {
       var urlStr = 'http://localhost:3000';
       var client = jayson.client.http(urlStr);
-      var urlObj = url.parse(urlStr);
-      Object.keys(urlObj).forEach(function(key) {
-        client.options.should.have.property(key, urlObj[key]);
-      });
+      var tokens = url.parse(urlStr);
+      client.options.should.containDeep(tokens);
     });
 
-    it('should callback with an error on timeout', function(done) {
+    describe('common tests', suites.getCommonForClient(client));
 
-      client.once('http request', function(req) {
-        req.setTimeout(5); // timeout 5 ms
-      });
-
-      client.request('add_slow', [4, 3, true], function(err, response) {
-        should(err).be.instanceof(Error);
-        should(response).not.exist;
-        done();
-      });
-
-    });
+    describe('common http client tests', suites.getCommonForHttpClient(client));
 
   });
 

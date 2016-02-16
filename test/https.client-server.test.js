@@ -47,31 +47,16 @@ describe('Jayson.Https', function() {
       server_https.close();
     });
 
-    describe('common tests', suites.getCommonForClient(client));
-
-    it('should emit an event with the http response', function(done) {
-      var hasFired = false;
-
-      client.on('http response', function(res) {
-        res.should.be.instanceof(http.IncomingMessage);
-        hasFired = true;
-      });
-
-      client.request('add', [9, 4], function(err, response) {
-        if(err) return done(err);
-        hasFired.should.be.ok;
-        done();
-      });
-    });
-
     it('should accept a URL string as the first argument', function() {
       var urlStr = 'https://localhost:3000';
       var client = jayson.client.https(urlStr);
-      var urlObj = url.parse(urlStr);
-      Object.keys(urlObj).forEach(function(key) {
-        client.options.should.have.property(key, urlObj[key]);
-      });
+      var tokens = url.parse(urlStr);
+      client.options.should.containDeep(tokens);
     });
+
+    describe('common tests', suites.getCommonForClient(client));
+
+    describe('common http client tests', suites.getCommonForHttpClient(client));
 
   });
 

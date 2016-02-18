@@ -5,13 +5,15 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] compliant server and client written in 
 [jsonrpc-spec]: http://jsonrpc.org/spec.html 
 [jsonrpc1-spec]: http://json-rpc.org/wiki/specification
 [node.js]: http://nodejs.org/
-[badge-travis]: https://travis-ci.org/tedeh/jayson
-[badge-travis-img]: https://travis-ci.org/tedeh/jayson.png?branch=master
-[badge-npm]: https://badge.fury.io/js/jayson
-[badge-npm-img]: https://badge.fury.io/js/jayson.svg
+[jayson-npm]: https://www.npmjs.com/package/jayson
+[jayson-travis]: https://travis-ci.org/tedeh/jayson
+[badge-travis]: https://img.shields.io/travis/tedeh/jayson/master.svg?style=flat-square
+[badge-npm]: https://img.shields.io/npm/v/jayson.svg?style=flat-square
+[badge-downloads-month]: https://img.shields.io/npm/dm/jayson.svg?style=flat-square
 
-[![Build Status][badge-travis-img]][badge-travis] 
-[![npm version][badge-npm-img]][badge-npm]
+[![travis build status][badge-travis]][jayson-travis] 
+[![npm version][badge-npm]][jayson-npm]
+[![npm][badge-downloads-month]][jayson-npm]
 
 ## Table of contents
 

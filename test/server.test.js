@@ -229,7 +229,7 @@ describe('Jayson.Server', function() {
 
           server.call(request, function(err) {
             if(err) return done(err);
-            fired.should.be.ok;
+            fired.should.equal(true);
             done();
           });
 
@@ -390,7 +390,7 @@ describe('Jayson.Server', function() {
         var request = utils.request('add', {});
         server.call(request, function(err, response) {
           if(err) return done(err);
-          isNaN(response.result).should.be.ok;
+          isNaN(response.result).should.equal(true);
           done();
         });
       });

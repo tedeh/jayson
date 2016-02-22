@@ -79,7 +79,7 @@ exports.getCommonForClient = function(client) {
 
 /**
  * Get a mocha suite for common test cases for a HTTP client
- * @param {Client} Client instance to use
+ * @param {Client} client Client instance to use
  * @return {Function}
  */
 exports.getCommonForHttpClient = function(client) {
@@ -94,7 +94,7 @@ exports.getCommonForHttpClient = function(client) {
 
       client.request('add', [10, 2], function(err, response) {
         if(err) return done(err);
-        hasFired.should.be.ok;
+        hasFired.should.equal(true);
         done();
       });
     });
@@ -108,7 +108,7 @@ exports.getCommonForHttpClient = function(client) {
 
       client.request('add', [9, 4], function(err, response) {
         if(err) return done(err);
-        hasFired.should.be.ok;
+        hasFired.should.equal(true);
         done();
       });
     });
@@ -131,10 +131,42 @@ exports.getCommonForHttpClient = function(client) {
 /**
  * Get a mocha suite for common test cases for a HTTP server
  * @param {HttpServer} server
+ * @param {Client} client Client instance coupled to the server
  * @return {Function}
  */
-exports.getCommonForHttpServer = function(server) {
+exports.getCommonForHttpServer = function(server, client) {
   return function() {
+
+    it('should emit an event with the http request', function(done) {
+      var hasFired = false;
+
+      server.once('http request', function(req) {
+        hasFired = true;
+        req.should.be.instanceof(http.IncomingMessage);
+      });
+
+      client.request('add', [9, 4], function(err, response) {
+        if(err) return done(err);
+        hasFired.should.equal(true);
+        done();
+      });
+    });
+
+    it('should emit an event with the http response', function(done) {
+      var hasFired = false;
+
+      server.once('http response', function(res, req) {
+        hasFired = true;
+        req.should.be.instanceof(http.IncomingMessage);
+        res.should.be.instanceof(http.ServerResponse);
+      });
+
+      client.request('add', [9, 4], function(err, response) {
+        if(err) return done(err);
+        hasFired.should.equal(true);
+        done();
+      });
+    });
   
   };
 };

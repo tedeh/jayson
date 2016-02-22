@@ -7,44 +7,34 @@ var url = require('url');
 
 describe('Jayson.Http', function() {
 
+  var server = jayson.server(support.server.methods, support.server.options);
+  var serverHttp = server.http();
+  var client = jayson.client.http({
+    reviver: support.server.options.reviver,
+    replacer: support.server.options.replacer,
+    host: 'localhost',
+    port: 3000
+  });
+
+  before(function(done) {
+    serverHttp.listen(3000, 'localhost', done);
+  });
+
+  after(function() {
+    if(serverHttp) serverHttp.close();
+  });
+
   describe('server', function() {
 
-    var server = null;
-
-    after(function() {
-      if(server) server.close();
-    });
-
-    it('should listen to a local port', function(done) {
-      server = jayson.server(support.server.methods, support.server.options).http();
-      server.listen(3000, 'localhost', done);
-    });
-
     it('should be an instance of http.Server', function() {
-      server.should.be.instanceof(http.Server);
+      serverHttp.should.be.instanceof(http.Server);
     });
+
+    describe('common http server tests', suites.getCommonForHttpServer(server, client));
 
   });
 
   describe('client', function() {
-
-    var client = jayson.client.http({
-      reviver: support.server.options.reviver,
-      replacer: support.server.options.replacer,
-      host: 'localhost',
-      port: 3000
-    });
-
-    var server = jayson.server(support.server.methods, support.server.options);
-    var server_http = server.http();
-
-    before(function(done) {
-      server_http.listen(3000, 'localhost', done);
-    });
-
-    after(function() {
-      server_http.close();
-    });
 
     it('should accept a URL string as the first argument', function() {
       var urlStr = 'http://localhost:3000';

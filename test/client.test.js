@@ -133,7 +133,7 @@ describe('Jayson.Client', function() {
 
       client.request('add', [6, 9], function(err) {
         if(err) return done(err);
-        hasFired.should.be.ok;
+        hasFired.should.equal(true);
         done();
       });
     });
@@ -149,7 +149,7 @@ describe('Jayson.Client', function() {
 
       client.request('add', [5, 8], function(err) {
         if(err) return done(err);
-        hasFired.should.be.ok;
+        hasFired.should.equal(true);
         done();
       });
     });

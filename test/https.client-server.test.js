@@ -30,7 +30,7 @@ describe('Jayson.Https', function() {
   describe('client', function() {
     
     var server = jayson.server(support.server.methods, support.server.options);
-    var server_https = server.https(support.server.keys);
+    var https = server.https(support.server.keys);
     var client = jayson.client.https({
       reviver: support.server.options.reviver,
       replacer: support.server.options.replacer,
@@ -40,11 +40,11 @@ describe('Jayson.Https', function() {
     });
 
     before(function(done) {
-      server_https.listen(3000, 'localhost', done);
+      https.listen(3000, 'localhost', done);
     });
 
     after(function() {
-      server_https.close();
+      https.close();
     });
 
     it('should accept a URL string as the first argument', function() {

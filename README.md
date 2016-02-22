@@ -177,7 +177,7 @@ The HTTP server will emit the following events:
 
 | Event           	| When                              	| Arguments                                                                 	| Notes                                     	|
 |-----------------	|-----------------------------------	|---------------------------------------------------------------------------	|-------------------------------------------	|
-| `http request`  	| Created an HTTP request           	| 1: Instance of `http.ClientRequest`                                       	|                                           	|
+| `http request`  	| Created an HTTP request           	| 1. Instance of `http.ClientRequest`                                       	|                                           	|
 | `http response` 	| Received an HTTP response         	| 1. Instance of `http.IncomingMessage` 2. Instance of `http.ClientRequest` 	|                                           	|
 | `http error`    	| Underlying stream emits `error`   	| 1. Error                                                                  	|                                           	|
 | `http timeout`  	| Underlying stream emits `timeout` 	|                                                                           	| Automatically causes the request to abort 	|
@@ -197,6 +197,8 @@ var client = jayson.client.http('http://localhost:3000');
 
 Uses the same options as [https.request][nodejs_docs_https_request] in addition _to the same options as `Client.http`_. This means it is also possible
 to pass a string URL as the first argument and have it interpreted by [url.parse][nodejs_docs_url_parse].
+
+Will emit the [same custom events](#client-http-events) as `Client.http`.
 
 [nodejs_docs_https_request]: http://nodejs.org/api/all.html#all_https_request_options_callback
 
@@ -361,6 +363,8 @@ Uses the same options as the base class. Inherits from [http.Server][nodejs_doc_
 ##### Server.https
 
 Uses the same options as the base class. Inherits from [https.Server][nodejs_doc_https_server] and `jayson.Server.http`. For information on how to configure certificates, [see the documentation on https.Server][nodejs_doc_https_server].
+
+Will emit the [same custom events](#server-http-events) as `Server.http`.
 
 ##### Server.middleware
 

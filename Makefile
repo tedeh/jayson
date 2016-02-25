@@ -22,6 +22,6 @@ docs_clear:
 docs_refresh: docs_clear docs
 
 docs_deploy:
-	rsync --delete -r docs/jayson oceandatorn:~/shared/jayson/public_html
+	rsync --delete -r docs/jayson/* oceandatorn:~/shared/nginx/domains/jayson.tedeh.net
 
 .PHONY: test test-cov lint docs docs_deploy docs_refresh docs_clear

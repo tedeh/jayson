@@ -39,6 +39,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
      - [Method definition](#method-definition)
      - [Events](#server-events)
      - [Errors](#server-errors)
+     - [CORS](#server-cors)
 - [Revivers and replacers](#revivers-and-replacers)
 - [Named parameters](#named-parameters)
 - [Promises](#promises)
@@ -387,6 +388,7 @@ Middleware example in [examples/middleware/server.js](examples/middleware/server
 
 ```javascript
 var jayson = require(__dirname + '/../..');
+var jsonParser = require('body-parser').json;
 var connect = require('connect');
 var app = connect();
 
@@ -397,7 +399,7 @@ var server = jayson.server({
 });
 
 // parse request body before the jayson middleware
-app.use(connect.bodyParser());
+app.use(jsonParser());
 app.use(server.middleware());
 
 app.listen(3000);
@@ -729,6 +731,31 @@ var server = jayson.server({
 
 // Override the default message
 server.errorMessages[Server.errors.INTERNAL_ERROR] = 'I has a sad. I cant do anything right';
+```
+
+#### Server CORS
+
+Jayson does not include functionality for supporting CORS requests natively but it is easy to use a CORS-enabling middleware
+like [cors](https://github.com/expressjs/cors). An example of this can be found in [examples/cors/server.js](examples/cors/server.js):
+
+```javascript
+var jayson = require(__dirname + '/../..');
+var cors = require('cors');
+var connect = require('connect');
+var jsonParser = require('body-parser').json;
+var app = connect();
+
+var server = jayson.server({
+  myNameIs: function(args, callback) {
+    callback(null, 'Your name is: ' + args.name);
+  }
+});
+
+app.use(cors({methods: ['POST']}));
+app.use(jsonParser());
+app.use(server.middleware());
+
+app.listen(3000);
 ```
 
 ### Revivers and Replacers

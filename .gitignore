@@ -4,4 +4,4 @@ node_modules
 !.travis.yml
 !.jshintrc
 sandbox
-coverage.html
+coverage

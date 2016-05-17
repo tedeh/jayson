@@ -1,15 +1,16 @@
 var jayson = require(__dirname + '/../..');
-var jsonParser = require('body-parser').json;
+var cors = require('cors');
 var connect = require('connect');
+var jsonParser = require('body-parser').json;
 var app = connect();
 
 var server = jayson.server({
-  add: function(args, callback) {
-    callback(null, args[0] + args[1]);
+  myNameIs: function(args, callback) {
+    callback(null, 'Your name is: ' + args.name);
   }
 });
 
-// parse request body before the jayson middleware
+app.use(cors({methods: ['POST']}));
 app.use(jsonParser());
 app.use(server.middleware());
 

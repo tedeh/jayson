@@ -70,6 +70,7 @@
   "devDependencies": {
     "connect": "2.15.0",
     "es6-promise": "3.0.2",
+    "ink-docstrap": "1.1.4",
     "istanbul": "0.4.3",
     "jsdoc": "3.4.0",
     "jshint": "2.9.1",

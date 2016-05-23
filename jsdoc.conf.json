@@ -18,6 +18,8 @@
     "copyright": "The MIT License",
     "includeDate": false,
     "linenums": true,
+    "theme": "simplex",
+    "inverseNav": true,
     "outputSourceFiles": true
   }
 }

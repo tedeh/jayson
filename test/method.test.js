@@ -291,6 +291,14 @@ describe('Jayson.Method', function() {
             done();
           });
         });
+
+        it('should not give an error when omitting params to empty methods', function(done) {
+          var method = new Method(function(done) { done(); }, {collect: false});
+          method.execute(server, null, function(err) {
+            should(err).not.exist;
+            done();
+          });
+        });
       
       });
     

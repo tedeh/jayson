@@ -197,6 +197,13 @@ describe('JaysonPromise', function() {
               var code = args.code || -1;
               reject({code: code});
             })
+          },
+          // returns a "Promise-like" object
+          thenable: function(args) {
+            return {then: function(resolve, reject) {
+              var sum = _.reduce(args, function(sum, arg) { return sum + arg; }, 0);
+              resolve(sum);
+            }};
           }
         };
 
@@ -213,6 +220,15 @@ describe('JaysonPromise', function() {
           method.setHandler(handlers.error);
           method.execute(server, [], function(err, response) {
             err.should.containDeep({code: -1});
+            done();
+          });
+        });
+
+        it('should allow a "Promise-like" object to be returned and fulfilled by the handler', function(done) {
+          method.setHandler(handlers.thenable);
+          method.execute(server, [3, 4, 5], function(err, response) {
+            if(err) return done(err);
+            response.should.equal(12);
             done();
           });
         });

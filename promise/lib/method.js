@@ -1,4 +1,5 @@
 var jayson = require('../../');
+var _ = require('lodash');
 
 /**
  * Constructor for a Jayson Promise Method
@@ -32,7 +33,7 @@ PromiseMethod.prototype.execute = function(server, requestParams, outerCallback)
     outerCallback.apply(null, arguments);
   });
 
-  wasPromised = promise instanceof Promise;
+  wasPromised = promise && _.isFunction(promise.then);
 
   // if the handler returned a promise, call the callback when it resolves
   if(wasPromised) {

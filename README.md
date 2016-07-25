@@ -938,6 +938,7 @@ client.request('add', [1, 2, 3, 4, 5]).then(function(response) {
 #### Notes
 
 * JSON-RPC errors will not result in rejection of the Promise. It is however possible that a future version will include a client setting to have JSON-RPC errors result in rejection.
+* A `Promise` is considered to have been returned from a server method if the returned object has a property `then` that is a function.
 
 ### Contributing
 

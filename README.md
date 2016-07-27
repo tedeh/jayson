@@ -135,7 +135,7 @@ In addition to this document, a comprehensive class documentation made with [jsd
 
 - Change directory to the repository root
 - Install the development packages by executing `npm install --dev`
-- Run the tests with `make test`
+- Run the tests with `npm run test`
 
 ## Usage
 
@@ -937,7 +937,7 @@ client.request('add', [1, 2, 3, 4, 5]).then(function(response) {
 
 #### Notes
 
-* JSON-RPC errors will not result in rejection of the Promise. It is however possible that a future version will include a client setting to have JSON-RPC errors result in rejection.
+* JSON-RPC errors will not result in rejection of the Promise. It is however possible that a future version will include a client setting to have JSON-RPC errors result in rejection. Please note that network errors and the like will result in rejection.
 * A `Promise` is considered to have been returned from a server method if the returned object has a property `then` that is a function.
 
 ### Contributing
@@ -945,4 +945,4 @@ client.request('add', [1, 2, 3, 4, 5]).then(function(response) {
 Highlighting [issues](https://github.com/tedeh/jayson/issues) or submitting pull
 requests on [Github](https://github.com/tedeh/jayson) is most welcome.
 
-Please make sure to follow the style of the project, and lint your code with `make lint` before submitting a patch.
+Please make sure to follow the style of the project, and lint your code with `npm run lint` before submitting a patch.

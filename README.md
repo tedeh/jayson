@@ -910,12 +910,22 @@ var jayson = require('../../promise');
 var _ = require('lodash');
 
 var server = jayson.server({
+
   add: function(args) {
     return new Promise(function(resolve, reject) {
       var sum = _.reduce(args, function(sum, value) { return sum + value; }, 0);
       resolve(sum);
     });
+  },
+
+  // example on how to reject
+  rejection: function(args) {
+    return new Promise(function(resolve, reject) {
+      // server.error just returns {code: 501, message: 'not implemented'}
+      reject(server.error(501, 'not implemented'));
+    });
   }
+
 });
 
 server.http().listen(3000);
@@ -930,8 +940,14 @@ var client = jayson.client.http({
   port: 3000
 });
 
-client.request('add', [1, 2, 3, 4, 5]).then(function(response) {
-  console.log(response.result); // 15!
+var reqs = [
+  client.request('add', [1, 2, 3, 4, 5]),
+  client.request('rejection', [])
+];
+
+Promise.all(reqs).then(function(responses) {
+  console.log(responses[0].result);
+  console.log(responses[1].error);
 });
 ```
 

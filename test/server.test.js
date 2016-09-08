@@ -386,11 +386,11 @@ describe('Jayson.Server', function() {
         });
       });
 
-      it('should not fail when not given sufficient arguments', function(done) {
+      it('should fail when not given sufficient arguments', function(done) {
         var request = utils.request('add', {});
         server.call(request, function(err, response) {
-          if(err) return done(err);
-          isNaN(response.result).should.equal(true);
+          should.not.exist(response);
+          err.should.containDeep({error: {code: ServerErrors.INVALID_PARAMS}});
           done();
         });
       });

@@ -348,6 +348,7 @@ Servers supports these options:
 | `params`            	| `undefined`     	| `Array|Object|null` 	| Passed to `methodConstructor` options                     	|
 | `methodConstructor` 	| `jayson.Method` 	| `Function`          	| Server functions are made an instance of this class       	|
 | `version`           	| 2               	| `Number`            	| JSON-RPC version to support (1 or 2)                      	|
+| `noUndefinedArgs`     | `false`           | `Boolean`             | Client must provide all method arguments in request object  |
 
 ##### Server.tcp
 

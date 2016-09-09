@@ -46,14 +46,15 @@ describe('Jayson.Server', function() {
       server.getMethod('add').should.be.instanceof(ctor);
     });
 
-    it('should pass options collect and params as defaults to jayson.Method', function() {
+    it('should pass options collect, params, noUndefinedArgs as defaults to jayson.Method', function() {
       server.options.collect = true;
       server.options.params = Object;
+      server.options.noUndefinedArgs = true;
       server.method('add', function(args, done) {
         done();
       });
       server.getMethod('add').should.containDeep({
-        options: {collect: true, params: Object}
+        options: {collect: true, params: Object, noUndefinedArgs: true}
       });
     });
 
@@ -386,15 +387,26 @@ describe('Jayson.Server', function() {
         });
       });
 
-      it('should fail when not given sufficient arguments', function(done) {
+      it('should pass when not given sufficient arguments', function(done) {
         var request = utils.request('add', {});
+        server.call(request, function(err, response) {
+          if (err) return done(err);
+          isNaN(response.result).should.equal(true);
+          done();
+        });
+      });
+      
+      it('should fail when noUndefinedArgs set and not given sufficient arguments', function(done) {
+        var request = utils.request('add', {});
+        var serverOptions = support.server.options;
+        serverOptions.noUndefinedArgs = true;
+        server = Server(support.server.methods, support.server.options);
         server.call(request, function(err, response) {
           should.not.exist(response);
           err.should.containDeep({error: {code: ServerErrors.INVALID_PARAMS}});
           done();
         });
       });
-
     });
 
     describe('notification requests', function() {

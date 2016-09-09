@@ -109,6 +109,21 @@ describe('Jayson.Utils', function() {
       result.should.containDeep(['b', 'c', 'a']);
     });
 
+    it('should return the correct paremters when passed an ES6 style function with zero parameters', function() {
+      var func = () => {};
+      var result = utils.getParameterNames(func);
+      should.exist(result);
+      result.should.be.instanceof(Array).and.have.length(0);
+    });
+
+    it('should return the correct paremters when passed an ES6 style function with more than zero parameters', function() {
+      var func = (b, c, a) => {};
+      var result = utils.getParameterNames(func);
+      should.exist(result);
+      result.should.be.instanceof(Array).and.have.length(func.length);
+      result.should.containDeep(['b', 'c', 'a']);
+    });
+
   });
 
   describe('parseBody', function() {

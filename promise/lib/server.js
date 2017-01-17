@@ -13,7 +13,7 @@ var PromiseServer = function(methods, options) {
     return new PromiseServer(methods, options);
   }
   options = options || {};
-  options.methodConstructor = Method;
+  options.methodConstructor = options.methodConstructor || Method;
   jayson.Server.call(this, methods, options);
 };
 require('util').inherits(PromiseServer, jayson.Server);

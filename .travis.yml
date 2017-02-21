@@ -1,7 +1,11 @@
 # Language/versions
 language: node_js
 node_js:
+  - "latest"
   - "iojs"
+  - "4"
+  - "5"
+  - "6"
   - "0.12"
 
 # Build script

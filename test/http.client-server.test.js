@@ -32,6 +32,25 @@ describe('Jayson.Http', function() {
 
     describe('common http server tests', suites.getCommonForHttpServer(server, client));
 
+    it('should not crash when given invalid JSON', function(done) {
+      var reqOptions = {
+        hostname: 'localhost',
+        port: 3000,
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+      };
+      var req = http.request(reqOptions);
+      req.end('invalid json', 'utf8');
+      req.on('response', function(res) {
+        var body = '';
+        res.on('data', function(chunk) { body += chunk; });
+        res.on('end', function() {
+          res.statusCode.should.equal(400)
+          done();
+        });
+      });
+    });
+
   });
 
   describe('client', function() {

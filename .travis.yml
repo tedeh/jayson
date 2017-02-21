@@ -1,7 +1,7 @@
 # Language/versions
 language: node_js
 node_js:
-  - "latest"
+  - "node"
   - "iojs"
   - "4"
   - "5"

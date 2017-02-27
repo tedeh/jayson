@@ -208,7 +208,19 @@ Will emit the [same custom events](#clienthttp-events) as `Client.http`.
 
 ##### Client.tcp
 
-Uses the same options as the base class.
+Uses the same options as the base class in addition to these options:
+
+* `delimiter` -> String that determines the message delimiter to used on server as pipeline splitter marker. Example:
+
+```javascript
+var client = jayson.client.tcp({
+  delimiter : '\r\n',
+  host: 'localhost',
+  port: 3001
+});
+// now server will be get numder of commands as {object}\r\n{object}... sequence.
+
+```
 
 ##### Client.tls
 

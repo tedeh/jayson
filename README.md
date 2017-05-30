@@ -558,13 +558,13 @@ function collapse(stem, sep) {
 
 ##### Notes
 
-* If `router` does not return anything, the reserver will respond with a `Method Not Found` error.
+* If `router` does not return anything, the server will respond with a `Method Not Found` error.
 * The `Server.prototype` methods `method`, `methods`, `removeMethod` and `hasMethod` will not use the `router` method, but will operate on the internal `Server.prototype._methods` map.
-* The `router` method is expected to return instances of jayson.Method (new in 1.2)
+* The `router` method is expected to return instances of `jayson.Method` (>=1.2.0)
 
 #### Method definition
 
-You can also define server methods inside a wrapping object named `jayson.Method`. This allows additional options about the method to be specified. Using this wrapper - explicitly or implicitly (via server options) - it is for instance trivial to have your method accept a variable amount of arguments.
+You can also define server methods inside a wrapping object named `jayson.Method`. This allows additional options about the method to be specified. Using this wrapper - explicitly or implicitly (via server options) - makes it trivial to have your method accept a variable amount of arguments.
 
 The method class is available as the `Method` or `method` property of  `require('jayson')`. It supports these options:
 
@@ -674,7 +674,7 @@ client.request('sum', [1, 2, 3], function(err, response) {
 
 ##### Notes
 
-* Adding methods as a plain JavaScript function creates an instance of `jayson.Method` internally. For backwards compatibility it will be created with the option "collect" set to `false`. It is possible to affect this by passing the `collect` option to the server. This works similarly for the `params` option.
+* Adding methods as a plain JavaScript function creates an instance of `jayson.Method` internally. For backwards compatibility it will be created with the option "collect" set to `false` (v2.0.0). It is possible to affect this by passing the `collect` option to the server. This works similarly for the `params` option.
 
 #### Server events
 

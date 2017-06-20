@@ -29,7 +29,9 @@ PromiseMethod.prototype.execute = function(server, requestParams, outerCallback)
   var wasPromised = false;
 
   var promise = jayson.Method.prototype.execute.call(this, server, requestParams, function() {
-    if(wasPromised) return; // ignore any invocations of the callback if a promise was returned
+    if(wasPromised) {
+      return; // ignore any invocations of the callback if a promise was returned
+    }
     outerCallback.apply(null, arguments);
   });
 

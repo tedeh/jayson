@@ -3,5 +3,12 @@
   "laxbreak": true,
   "unused": "vars",
   "undef": true,
-  "esversion": 6
+  "esversion": 6,
+  "nonew": true,
+  "freeze": true,
+  "eqeqeq": true,
+  "curly": true,
+  "withstmt": false,
+  "loopfunc": false,
+  "eqnull": false
 }

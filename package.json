@@ -45,7 +45,7 @@
     "docs_clear": "rm -rf ./docs/jayson/*; exit 0",
     "docs_refresh": "npm run docs_clear && npm run docs",
     "docs_deploy": "rsync --delete -r docs/jayson/* oceandatorn:~/shared/nginx/domains/jayson.tedeh.net; exit 0",
-    "lint": "jshint -c .jshintrc -c .jshintrc lib/*.js lib/**/*.js examples/**/*.js promise/*.js promise/**/*.js; exit 0"
+    "lint": "jshint lib/*.js lib/**/*.js promise/*.js promise/**/*.js; exit 0"
   },
   "config": {
     "blanket": {

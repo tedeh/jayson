@@ -208,11 +208,13 @@ Will emit the [same custom events](#clienthttp-events) as `Client.http`.
 
 ##### Client.tcp
 
-Uses the same options as the base class.
+Uses the same options as [net.connect][nodejs_docs_net_connect] in addition _to the same options as `Client.http`_.
+
+[nodejs_docs_net_connect]: https://nodejs.org/api/net.html#net_net_connect
 
 ##### Client.tls
 
-Uses the same options as [tls.connect][nodejs_docs_tls_connect].
+Uses the same options as [tls.connect][nodejs_docs_tls_connect] in addition _to the same options as `Client.http`_.
 
 [nodejs_docs_tls_connect]: https://nodejs.org/api/tls.html#tls_tls_connect_options_callback
 

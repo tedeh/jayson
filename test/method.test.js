@@ -2,7 +2,7 @@ var should = require('should');
 var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support');
 
-describe('Jayson.Method', function() {
+describe('jayson.method', function() {
 
   var Method = jayson.Method;
 

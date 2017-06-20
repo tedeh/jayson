@@ -7,7 +7,7 @@ var net = require('net');
 var url = require('url');
 var JSONStream = require('JSONStream');
 
-describe('Jayson.Tcp', function() {
+describe('jayson.tcp', function() {
 
   describe('server', function() {
 
@@ -22,7 +22,7 @@ describe('Jayson.Tcp', function() {
     });
 
     it('should listen to a local port', function(done) {
-      server.listen(3000, 'localhost', done);
+      server.listen(3999, 'localhost', done);
     });
 
     it('should be an instance of net.Server', function() {
@@ -35,11 +35,11 @@ describe('Jayson.Tcp', function() {
       var responses = null;
 
       beforeEach(function(done) {
-        server.listen(3000, 'localhost', done);
+        server.listen(3999, 'localhost', done);
       });
 
       beforeEach(function(done) {
-        socket = net.connect(3000, 'localhost', done);
+        socket = net.connect(3999, 'localhost', done);
         responses = JSONStream.parse();
         socket.pipe(responses);
       });
@@ -92,11 +92,11 @@ describe('Jayson.Tcp', function() {
       reviver: support.server.options.reviver,
       replacer: support.server.options.replacer,
       host: 'localhost',
-      port: 3000
+      port: 3999
     });
 
     before(function(done) {
-      server_tcp.listen(3000, 'localhost', done);
+      server_tcp.listen(3999, 'localhost', done);
     });
 
     after(function() {

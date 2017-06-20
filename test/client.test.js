@@ -3,7 +3,7 @@ var jayson = require(__dirname + '/../');
 var support = require(__dirname + '/support');
 var suites = require(__dirname + '/support/suites');
 
-describe('Jayson.Client', function() {
+describe('jayson.client', function() {
 
   it('should return an instance without using "new"', function() {
     var client = jayson.client(jayson.server());

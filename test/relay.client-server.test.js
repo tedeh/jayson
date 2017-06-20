@@ -3,7 +3,7 @@ var jayson = require(__dirname + '/..');
 var support = require('./support');
 var suites = require(__dirname + '/support/suites');
 
-describe('Jayson.Relay', function() {
+describe('jayson.relay', function() {
 
   describe('server', function() {
 

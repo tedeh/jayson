@@ -6,7 +6,7 @@ var http = require('http');
 var https = require('https');
 var url = require('url');
 
-describe('Jayson.Https', function() {
+describe('jayson.https', function() {
 
   describe('server', function() {
 
@@ -18,7 +18,7 @@ describe('Jayson.Https', function() {
 
     it('should listen to a local port', function(done) {
         server = jayson.server(support.methods, support.options).https(support.server.keys);
-        server.listen(3000, 'localhost', done);
+        server.listen(3999, 'localhost', done);
     });
 
     it('should be an instance of https.Server', function() {
@@ -35,12 +35,12 @@ describe('Jayson.Https', function() {
       reviver: support.server.options.reviver,
       replacer: support.server.options.replacer,
       host: 'localhost',
-      port: 3000,
+      port: 3999,
       ca: support.server.keys.ca
     });
 
     before(function(done) {
-      https.listen(3000, 'localhost', done);
+      https.listen(3999, 'localhost', done);
     });
 
     after(function() {
@@ -48,7 +48,7 @@ describe('Jayson.Https', function() {
     });
 
     it('should accept a URL string as the first argument', function() {
-      var urlStr = 'https://localhost:3000';
+      var urlStr = 'https://localhost:3999';
       var client = jayson.client.https(urlStr);
       var tokens = url.parse(urlStr);
       client.options.should.containDeep(tokens);

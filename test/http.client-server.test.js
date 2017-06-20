@@ -5,7 +5,7 @@ var suites = require(__dirname + '/support/suites');
 var http = require('http');
 var url = require('url');
 
-describe('Jayson.Http', function() {
+describe('jayson.http', function() {
 
   var server = jayson.server(support.server.methods, support.server.options);
   var serverHttp = server.http();
@@ -13,11 +13,11 @@ describe('Jayson.Http', function() {
     reviver: support.server.options.reviver,
     replacer: support.server.options.replacer,
     host: 'localhost',
-    port: 3000
+    port: 3999
   });
 
   before(function(done) {
-    serverHttp.listen(3000, 'localhost', done);
+    serverHttp.listen(3999, 'localhost', done);
   });
 
   after(function() {
@@ -35,7 +35,7 @@ describe('Jayson.Http', function() {
     it('should not crash when given invalid JSON', function(done) {
       var reqOptions = {
         hostname: 'localhost',
-        port: 3000,
+        port: 3999,
         method: 'POST',
         headers: {'Content-Type': 'application/json'}
       };
@@ -56,7 +56,7 @@ describe('Jayson.Http', function() {
   describe('client', function() {
 
     it('should accept a URL string as the first argument', function() {
-      var urlStr = 'http://localhost:3000';
+      var urlStr = 'http://localhost:3999';
       var client = jayson.client.http(urlStr);
       var tokens = url.parse(urlStr);
       client.options.should.containDeep(tokens);

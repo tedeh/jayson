@@ -4,7 +4,7 @@ var jayson = require(__dirname + '/../promise');
 var jaysonPromise = require(__dirname + '/../promise');
 var support = require(__dirname + '/support');
 
-describe('JaysonPromise', function() {
+describe('jayson/promise', function() {
 
   describe('Server', function() {
 
@@ -49,7 +49,7 @@ describe('JaysonPromise', function() {
         server: function(done) {
           var server = jaysonPromise.Server(support.server.methods, support.server.options);
           var http = server.http();
-          http.listen(3000, 'localhost', done);
+          http.listen(3999, 'localhost', done);
           return http;
         },
         client: function(server) {
@@ -57,7 +57,7 @@ describe('JaysonPromise', function() {
             reviver: support.server.options.reviver,
             replacer: support.server.options.replacer,
             host: 'localhost',
-            port: 3000
+            port: 3999
           })
         },
         closeServer: function(http, done) {
@@ -68,7 +68,7 @@ describe('JaysonPromise', function() {
         server: function(done) {
           var server = jaysonPromise.Server(support.server.methods, support.server.options);
           var https = server.https(support.server.keys);
-          https.listen(3000, 'localhost', done);
+          https.listen(3999, 'localhost', done);
           return https;
         },
         client: function(server) {
@@ -76,7 +76,7 @@ describe('JaysonPromise', function() {
             reviver: support.server.options.reviver,
             replacer: support.server.options.replacer,
             host: 'localhost',
-            port: 3000,
+            port: 3999,
             ca: support.server.keys.ca
           })
         },
@@ -88,7 +88,7 @@ describe('JaysonPromise', function() {
         server: function(done) {
           var server = jaysonPromise.Server(support.server.methods, support.server.options);
           var tcp = server.tcp();
-          tcp.listen(3000, 'localhost', done);
+          tcp.listen(3999, 'localhost', done);
           return tcp;
         },
         client: function(server) {
@@ -96,7 +96,7 @@ describe('JaysonPromise', function() {
             reviver: support.server.options.reviver,
             replacer: support.server.options.replacer,
             host: 'localhost',
-            port: 3000,
+            port: 3999,
             ca: support.server.keys.ca
           })
         },
@@ -108,7 +108,7 @@ describe('JaysonPromise', function() {
         server: function(done) {
           var server = jaysonPromise.Server(support.server.methods, support.server.options);
           var tls = server.tls(support.server.keys);
-          tls.listen(3000, 'localhost', done);
+          tls.listen(3999, 'localhost', done);
           return tls;
         },
         client: function(server) {
@@ -116,7 +116,7 @@ describe('JaysonPromise', function() {
             reviver: support.server.options.reviver,
             replacer: support.server.options.replacer,
             host: 'localhost',
-            port: 3000,
+            port: 3999,
             ca: support.server.keys.ca
           })
         },

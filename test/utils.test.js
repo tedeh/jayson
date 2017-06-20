@@ -3,7 +3,7 @@ var PassStream = require('pass-stream');
 var jayson = require(__dirname + '/..');
 var utils = jayson.utils;
 
-describe('Jayson.Utils', function() {
+describe('jayson.utils', function() {
 
   describe('request', function() {
 

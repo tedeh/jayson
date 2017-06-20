@@ -4,7 +4,7 @@ var suites = require(__dirname + '/support/suites');
 var jayson = require(__dirname + '/..');
 var connect = require('connect');
 
-describe('Jayson.Middleware', function() {
+describe('jayson.middleware', function() {
 
   var app = connect.createServer();
   var server = null; // set in before()
@@ -12,13 +12,13 @@ describe('Jayson.Middleware', function() {
     reviver: support.server.options.reviver,
     replacer: support.server.options.replacer,
     host: 'localhost',
-    port: 3000
+    port: 3999
   });
 
   before(function(done) {
     app.use(connect.json({reviver: support.server.options.reviver}));
     app.use(jayson.server(support.server.methods, support.server.options).middleware());
-    server = app.listen(3000, done);
+    server = app.listen(3999, done);
   });
 
   after(function() {

@@ -4,7 +4,7 @@ var support = require('./support');
 var exec = require('child_process').exec;
 var fs = require('fs');
 var url = require('url');
-var bin = './../bin/jayson.js';
+var bin = __dirname + '/../bin/jayson.js';
 
 describe('jayson.bin', function() {
 
@@ -103,7 +103,7 @@ describe('jayson.bin', function() {
   describe('unix domain socket-listening server', function() {
 
     var http = null;
-    var socketPath = './support/bin.test.socket';
+    var socketPath = __dirname + '/support/bin.test.socket';
 
     before(function(done) {
       try {

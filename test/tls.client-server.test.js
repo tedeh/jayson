@@ -7,11 +7,23 @@ var JSONStream = require('JSONStream');
 var tls = require('tls');
 
 var serverOptions = {
-  ca: [fs.readFileSync('./test/fixtures/keys/ca1-cert.pem')],
-  key: fs.readFileSync('./test/fixtures/keys/agent1-key.pem'),
+  ca: [fs.readFileSync(__dirname + '/fixtures/keys/ca1-cert.pem')],
+  key: fs.readFileSync(__dirname + '/fixtures/keys/agent1-key.pem'),
+  cert: fs.readFileSync(__dirname + '/fixtures/keys/agent1-cert.pem'),
   requestCert: true,
-  cert: fs.readFileSync('./test/fixtures/keys/agent1-cert.pem')
+  secureProtocol: 'TLSv1_2_method'
 };
+
+var clientOptions = {
+  ca: serverOptions.ca,
+  secureProtocol: serverOptions.secureProtocol,
+  key: serverOptions.key,
+  cert: serverOptions.cert,
+  reviver: support.server.options.reviver,
+  replacer: support.server.options.replacer,
+  host: 'localhost',
+  port: 3999
+}
 
 describe('jayson.tls', function() {
 
@@ -24,8 +36,8 @@ describe('jayson.tls', function() {
     });
 
     it('should listen to a local port', function(done) {
-        server = jayson.server(support.methods, support.options).tls(serverOptions);
-        server.listen(3000, 'localhost', done);
+      server = jayson.server(support.methods, support.options).tls(serverOptions);
+      server.listen(3999, 'localhost', done);
     });
 
     it('should be an instance of tls.Server', function() {
@@ -38,16 +50,10 @@ describe('jayson.tls', function() {
     
     var server = jayson.server(support.server.methods, support.server.options);
     var server_tls = server.tls(serverOptions);
-    var client = jayson.client.tls({
-      reviver: support.server.options.reviver,
-      replacer: support.server.options.replacer,
-      host: 'localhost',
-      port: 3000,
-      ca: serverOptions.ca
-    });
+    var client = jayson.client.tls(clientOptions);
 
     before(function(done) {
-      server_tls.listen(3000, 'localhost', done);
+      server_tls.listen(3999, 'localhost', done);
     });
 
     after(function() {
@@ -57,7 +63,7 @@ describe('jayson.tls', function() {
     describe('common tests', suites.getCommonForClient(client));
 
     it('should send a parse error for invalid JSON data', function(done) {
-      var socket = tls.connect(3000, 'localhost', serverOptions, function() {
+      var socket = tls.connect(3999, 'localhost', serverOptions, function() {
         var response = JSONStream.parse();
 
         response.on('data', function(data) {

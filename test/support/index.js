@@ -7,9 +7,9 @@ exports.Counter = require('./counter');
 exports.server = {};
 
 exports.server.keys = {
-  ca: [fs.readFileSync('./../fixtures/keys/ca1-cert.pem')],
-  key: fs.readFileSync('./../fixtures/keys/agent1-key.pem'),
-  cert: fs.readFileSync('./../fixtures/keys/agent1-cert.pem')
+  ca: [fs.readFileSync(__dirname + '/../fixtures/keys/ca1-cert.pem')],
+  key: fs.readFileSync(__dirname + '/../fixtures/keys/agent1-key.pem'),
+  cert: fs.readFileSync(__dirname + '/../fixtures/keys/agent1-cert.pem')
 };
 
 /*

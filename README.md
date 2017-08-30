@@ -64,7 +64,7 @@ A basic JSON-RPC 2.0 server via HTTP:
 Server example in [examples/simple_example/server.js](examples/simple_example/server.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 // create a server
 var server = jayson.server({
@@ -79,7 +79,7 @@ server.http().listen(3000);
 Client example in [examples/simple_example/client.js](examples/simple_example/client.js) invoking `add` on the above server:
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 // create a client
 var client = jayson.client.http({
@@ -225,7 +225,7 @@ Notification requests are for cases where the reply from the server is not impor
 Client example in [examples/notifications/client.js](examples/notifications/client.js) doing a notification request:
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 var client = jayson.client.http({
   port: 3000
@@ -241,7 +241,7 @@ client.request('ping', [], null, function(err) {
 Server example in [examples/notifications/server.js](examples/notifications/server.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 var server = jayson.server({
   ping: function(args, callback) {
@@ -267,7 +267,7 @@ A batch request is an array of individual requests that are sent to the server a
 Combined server/client example in [examples/batch_request/index.js](examples/batch_request/index.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 var server = jayson.server({
   add: function(args, callback) {
@@ -392,7 +392,7 @@ The middleware supports the following options:
 Middleware example in [examples/middleware/server.js](examples/middleware/server.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 var jsonParser = require('body-parser').json;
 var connect = require('connect');
 var app = connect();
@@ -417,7 +417,7 @@ A Jayson server can use many interfaces at the same time.
 Server example in [examples/many_interfaces/server.js](examples/many_interfaces/server.js) that listens to both `http` and a `https` requests:
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 var server = jayson.server();
 
@@ -446,7 +446,7 @@ Passing an instance of a client as a method to the server makes the server relay
 Frontend server example in [examples/relay/server_public.js](examples/relay/server_public.js) listening on `*:3000`:
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 // create a server where "add" will relay a localhost-only server
 var server = jayson.server({
@@ -462,7 +462,7 @@ server.http().listen(3000);
 Backend server example in [examples/relay/server_private.js](examples/relay/server_private.js) listening on `*:3001`:
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 var server = jayson.server({
   add: function(args, callback) {
@@ -483,7 +483,7 @@ Passing a property named `router` in the server options will enable you to write
 Server example with custom routing logic in [examples/method_routing/server.js](examples/method_routing/server.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 var methods = {
   add: function(args, callback) {
@@ -511,7 +511,7 @@ server.http().listen(3000);
 Client example in [examples/method_routing/client.js](examples/method_routing/client.js) invoking `add_2` on the above server:
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 // create a client
 var client = jayson.client.http({
@@ -579,7 +579,7 @@ The method class is available as the `Method` or `method` property of  `require(
 Server example showcasing most features and options in [examples/method_definitions/server.js](examples/method_definitions/server.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 var _ = require('lodash');
 
 var methods = {
@@ -638,7 +638,7 @@ function sum(list) {
 Client example in [examples/method_definitions/client.js](examples/method_definitions/client.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 var client = jayson.client.http({
   port: 3000
@@ -744,7 +744,7 @@ Jayson does not include functionality for supporting CORS requests natively but 
 like [cors](https://github.com/expressjs/cors). An example of this can be found in [examples/cors/server.js](examples/cors/server.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 var cors = require('cors');
 var connect = require('connect');
 var jsonParser = require('body-parser').json;
@@ -800,7 +800,7 @@ exports.reviver = function(key, value) {
 Server example in [examples/reviving_and_replacing/server.js](examples/reviving_and_replacing/server.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 var shared = require('./shared');
 
 // Set the reviver/replacer options
@@ -823,7 +823,7 @@ server.http().listen(3000);
 A client example in [examples/reviving_and_replacing/client.js](examples/reviving_and_replacing/client.js) invoking "increment" on the server:
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 var shared = require('./shared');
 
 var client = jayson.client.http({
@@ -860,7 +860,7 @@ It is possible to specify named parameters when doing a client request by passin
 Client example in [examples/named_parameters/client.js](examples/named_parameters/client.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 var client = jayson.client.http({
   port: 3000
@@ -875,7 +875,7 @@ client.request('add', {b: 1, a: 2}, function(err, response) {
 Server example in [examples/named_parameters/server.js](examples/named_parameters/server.js):
 
 ```javascript
-var jayson = require(__dirname + '/../..');
+var jayson = require('jayson');
 
 var server = jayson.server({
   add: function(a, b, callback) {

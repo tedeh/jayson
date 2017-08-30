@@ -1,4 +1,4 @@
-var jayson = require(__dirname + '/../..');
+var jayson = require('./../..');
 var _ = require('lodash');
 
 var methods = {

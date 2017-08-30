@@ -1,4 +1,4 @@
-var jayson = require(__dirname + '/../..');
+var jayson = require('./../..');
 
 // create a server where "add" will relay a localhost-only server
 var server = jayson.server({

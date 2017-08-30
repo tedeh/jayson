@@ -1,7 +1,7 @@
 var should = require('should');
-var jayson = require(__dirname + '/../');
-var support = require(__dirname + '/support');
-var suites = require(__dirname + '/support/suites');
+var jayson = require('./../');
+var support = require('./support');
+var suites = require('./support/suites');
 
 describe('jayson.client', function() {
 

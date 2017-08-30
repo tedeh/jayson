@@ -1,8 +1,8 @@
 var _ = require('lodash');
 var should = require('should');
-var jayson = require(__dirname + '/../promise');
-var jaysonPromise = require(__dirname + '/../promise');
-var support = require(__dirname + '/support');
+var jayson = require('./../promise');
+var jaysonPromise = require('./../promise');
+var support = require('./support');
 
 describe('jayson/promise', function() {
 

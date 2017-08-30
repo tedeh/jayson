@@ -1,8 +1,8 @@
 var should = require('should');
 var fs = require('fs');
-var jayson = require(__dirname + '/..');
+var jayson = require('./..');
 var support = require('./support');
-var suites = require(__dirname + '/support/suites');
+var suites = require('./support/suites');
 var JSONStream = require('JSONStream');
 var tls = require('tls');
 

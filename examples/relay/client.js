@@ -1,4 +1,4 @@
-var jayson = require(__dirname + '/../..');
+var jayson = require('./../..');
 
 var client = jayson.client.http({
   port: 3000 // the port of the frontend server

@@ -1,4 +1,4 @@
-var jayson = require(__dirname + '/../..');
+var jayson = require('./../..');
 
 var methods = {
   add: function(args, callback) {

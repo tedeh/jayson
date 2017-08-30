@@ -1,4 +1,4 @@
-var jayson = require(__dirname + '/../..');
+var jayson = require('./../..');
 var shared = require('./shared');
 
 // Set the reviver/replacer options

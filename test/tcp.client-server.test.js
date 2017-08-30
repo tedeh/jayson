@@ -1,8 +1,8 @@
 var should = require('should');
 var _ = require('lodash');
-var jayson = require(__dirname + '/../');
-var support = require(__dirname + '/support');
-var suites = require(__dirname + '/support/suites');
+var jayson = require('./../');
+var support = require('./support');
+var suites = require('./support/suites');
 var net = require('net');
 var url = require('url');
 var JSONStream = require('JSONStream');

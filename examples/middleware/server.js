@@ -1,4 +1,4 @@
-var jayson = require(__dirname + '/../..');
+var jayson = require('./../..');
 var jsonParser = require('body-parser').json;
 var connect = require('connect');
 var app = connect();

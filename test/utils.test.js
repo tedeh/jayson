@@ -1,6 +1,6 @@
 var should = require('should');
 var PassStream = require('pass-stream');
-var jayson = require(__dirname + '/..');
+var jayson = require('./..');
 var utils = jayson.utils;
 
 describe('jayson.utils', function() {

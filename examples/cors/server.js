@@ -1,4 +1,4 @@
-var jayson = require(__dirname + '/../..');
+var jayson = require('./../..');
 var cors = require('cors');
 var connect = require('connect');
 var jsonParser = require('body-parser').json;

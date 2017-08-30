@@ -1,6 +1,6 @@
 var should = require('should');
-var support = require(__dirname);
-var jayson = require(__dirname + '/../../');
+var support = require('./');
+var jayson = require('./../../');
 var Counter = support.Counter;
 var http = require('http');
 

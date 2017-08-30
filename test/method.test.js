@@ -1,6 +1,6 @@
 var should = require('should');
-var jayson = require(__dirname + '/../');
-var support = require(__dirname + '/support');
+var jayson = require('./../');
+var support = require('./support');
 
 describe('jayson.method', function() {
 

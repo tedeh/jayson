@@ -8,9 +8,6 @@ node_js:
   - "6"
   - "0.12"
 
-# Build script
-script: 'make test'
-
 # Notifications
 notifications:
  email:

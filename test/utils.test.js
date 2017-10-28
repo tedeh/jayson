@@ -72,6 +72,20 @@ describe('jayson.utils', function() {
       result.should.containDeep(['a', 'b', '__b']);
     });
 
+    it('should return the correct names when passed multi-line arguments', function() {
+      var func = function (
+        a,
+        b , __b) {
+        func(2, 3, 55, 4);
+        return a + b;
+      };
+      var result = utils.getParameterNames(func);
+      should.exist(result);
+      result.should.be.instanceof(Array);
+      result.should.have.length(func.length);
+      result.should.containDeep(['a', 'b', '__b']);
+    });
+
     it('should return the correct names when passed a function with complex parameters', function() {
       var func = function(_$foo, $$, FOO, $F00, _) { return false; };
       var result = utils.getParameterNames(func);

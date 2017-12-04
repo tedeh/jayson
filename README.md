@@ -43,6 +43,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Revivers and replacers](#revivers-and-replacers)
 - [Named parameters](#named-parameters)
 - [Promises](#promises)
+  - [Batches](#promise-batches)
 - [Contributing](#contributing)
 
 ## Features
@@ -960,6 +961,38 @@ Promise.all(reqs).then(function(responses) {
 
 * JSON-RPC errors will not result in rejection of the Promise. It is however possible that a future version will include a client setting to have JSON-RPC errors result in rejection. Please note that network errors and the like will result in rejection.
 * A `Promise` is considered to have been returned from a server method if the returned object has a property `then` that is a function.
+
+#### Promise Batches
+
+*Since version 2.0.5*
+
+Sometimes you may want to return raw requests from a promise client. This needs to be handled differently, because `PromiseClient.prototype.request` would normally always be expected to *return a Promise* which we in this case don't want.
+
+To solve this, we need to set the fourth parameter to `PromiseClient.prototype.request` explicitly to `false` in order to *not* return a Promise.
+
+Client example in [examples/promise_batches/client.js](examples/promise/client.js) showing how to properly execute a batch request:
+
+```javascript
+var jayson = require('../../promise');
+
+var client = jayson.client.http({
+  port: 3000
+});
+
+var batch = [
+  client.request('add', [1, 2, 3, 4, 5], undefined, false),
+  client.request('add', [5, 6, 7, 8, 9], undefined, false),
+];
+
+client.request(batch).then(function(responses) {
+  console.log(responses[0].result); // 15
+  console.log(responses[1].result); // 35
+});
+```
+
+##### Notes
+
+* The third parameter to `PromiseClient.prototype.request` above is explicitly set to `undefined` - this parameter would normally represent the desired ID of the call. Remember that `null` would mean a notification (which does not return a response) and other falsy values may actually be used as ids. Setting `undefined` ensures that the id is generated automatically.
 
 ### Contributing
 

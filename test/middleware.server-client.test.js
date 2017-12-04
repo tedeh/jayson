@@ -1,12 +1,14 @@
 var should = require('should');
 var support = require('./support');
 var suites = require('./support/suites');
+var http = require('http');
 var jayson = require('./..');
 var connect = require('connect');
+var bodyParser = require('body-parser');
 
 describe('jayson.middleware', function() {
 
-  var app = connect.createServer();
+  var app = connect();
   var server = null; // set in before()
   var client = jayson.client.http({
     reviver: support.server.options.reviver,
@@ -16,9 +18,9 @@ describe('jayson.middleware', function() {
   });
 
   before(function(done) {
-    app.use(connect.json({reviver: support.server.options.reviver}));
+    app.use(bodyParser.json({reviver: support.server.options.reviver}));
     app.use(jayson.server(support.server.methods, support.server.options).middleware());
-    server = app.listen(3999, done);
+    server = http.createServer(app).listen(3999, done);
   });
 
   after(function() {

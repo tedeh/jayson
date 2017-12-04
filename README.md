@@ -47,13 +47,13 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 
 ## Features
 
-* Servers that can listen to several interfaces at the same time
+* [Servers that can listen to several interfaces at the same time](#many-interfaces-at-the-same-time)
 * Supports both HTTP and TCP client and server connections
-* Server-side method routing
-* Relaying of requests to other servers
-* JSON reviving and replacing for transparent serialization of complex objects
-* CLI client
-* Promises
+* [Server-side method routing](#method-routing)
+* [Relaying of requests to other servers](#using-the-server-as-a-relay)
+* [JSON reviving and replacing for transparent serialization of complex objects](#revivers-and-replacers)
+* [CLI client](#cli-client)
+* [Promises](#promises)
 * Fully tested to comply with the [official JSON-RPC 2.0 specification][jsonrpc-spec]
 * Also supports [JSON-RPC 1.0][jsonrpc1-spec]
 
@@ -115,7 +115,7 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ### CLI client
 
-There is a CLI client in `bin/jayson.js` and it should be available as `jayson` in your shell if you installed the package with the `--global` switch. Run `jayson --help` to see how it works.
+There is a CLI client in `bin/jayson.js` and it should be available as `jayson` in your shell if you installed the package globally. Run `jayson --help` to see how it works.
 
 ## Requirements
 

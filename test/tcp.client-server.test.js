@@ -22,7 +22,9 @@ describe('jayson.tcp', function() {
     });
 
     it('should listen to a local port', function(done) {
-      server.listen(3999, 'localhost', done);
+      server.listen(3999, 'localhost', function() {
+        server.close(done);
+      });
     });
 
     it('should be an instance of net.Server', function() {

@@ -6,7 +6,7 @@ var support = require('./support');
 
 describe('jayson/promise', function() {
 
-  describe('Server', function() {
+  describe('server', function() {
 
     var Server = jaysonPromise.Server;
 
@@ -32,11 +32,11 @@ describe('jayson/promise', function() {
   
   });
 
-  describe('Client', function() {
+  describe('client', function() {
 
     // auto-generated test-suite
     var suites = {
-      'PromiseClient': {
+      'regular': {
         server: function(done) {
           done();
           return new jaysonPromise.Server(support.server.methods, support.server.options);
@@ -45,7 +45,7 @@ describe('jayson/promise', function() {
           return jaysonPromise.Client(server, support.server.options);
         }
       },
-      'PromiseClientHttp': {
+      'http': {
         server: function(done) {
           var server = jaysonPromise.Server(support.server.methods, support.server.options);
           var http = server.http();
@@ -64,7 +64,7 @@ describe('jayson/promise', function() {
           http.close(done);
         }
       },
-      'PromiseClientHttps': {
+      'https': {
         server: function(done) {
           var server = jaysonPromise.Server(support.server.methods, support.server.options);
           var https = server.https(support.server.keys);
@@ -84,7 +84,7 @@ describe('jayson/promise', function() {
           https.close(done);
         }
       },
-      'PromiseClientTcp': {
+      'tcp': {
         server: function(done) {
           var server = jaysonPromise.Server(support.server.methods, support.server.options);
           var tcp = server.tcp();
@@ -104,7 +104,7 @@ describe('jayson/promise', function() {
           tcp.close(done);
         }
       },
-      'PromiseClientTls': {
+      'tls': {
         server: function(done) {
           var server = jaysonPromise.Server(support.server.methods, support.server.options);
           var tls = server.tls(support.server.keys);
@@ -149,7 +149,9 @@ describe('jayson/promise', function() {
         describe('request', function() {
 
           it('should do a request and fulfill a promise', function() {
-            return client.request('add', [333, 333]).should.be.fulfilled().then(function(response) {
+            return client.request('add', [333, 333]).should.be.fulfilled().catch(err => {
+              console.log(err, err.stack);
+            }).then(function(response) {
               response.should.containDeep({result: 666});
             });
           });

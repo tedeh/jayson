@@ -13,7 +13,7 @@ var PromiseClient = function(server, options) {
     return new PromiseClient(server, options);
   }
   jayson.Client.apply(this, arguments);
-  this.request = promisify(this.request);
+  this.request = promisify(this.request.bind(this));
 };
 require('util').inherits(PromiseClient, jayson.Client);
 

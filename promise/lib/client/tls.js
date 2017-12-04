@@ -13,7 +13,7 @@ var PromiseClientTls = function(options) {
     return new PromiseClientTls(options);
   }
   jayson.Client.tls.apply(this, arguments);
-  this.request = promisify(this.request);
+  this.request = promisify(this.request.bind(this));
 };
 require('util').inherits(PromiseClientTls, jayson.Client.tls);
 

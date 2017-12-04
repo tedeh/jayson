@@ -18,7 +18,7 @@ program.version(pkg.version)
        .option('-u, --url [url]', 'URL to server', url.parse)
        .option('-q, --quiet', 'Only output the response value and any errors', Boolean)
        .option('-s, --socket [path] or [ip:port]', 'Path to UNIX socket, or TCP socket address', parseSocket)
-       .option('-j, --json', 'Only output the response value as JSON (implies --quiet)', Boolean)
+       .option('-j, --json', 'Only output the response value as JSON (implies --quiet)')
        .option('-c, --color', 'Color output', Boolean)
        .parse(process.argv);
 

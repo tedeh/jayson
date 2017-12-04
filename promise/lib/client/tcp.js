@@ -13,7 +13,7 @@ var PromiseClientTcp = function(options) {
     return new PromiseClientTcp(options);
   }
   jayson.Client.tcp.apply(this, arguments);
-  this.request = promisify(this.request);
+  this.request = promisify(this.request.bind(this));
 };
 require('util').inherits(PromiseClientTcp, jayson.Client.tcp);
 

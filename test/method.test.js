@@ -134,11 +134,7 @@ describe('jayson.method', function() {
           var add = function(args, callback) {
             args.should.be.instanceof(Object);
             args.should.not.be.instanceof(Array);
-
-            args.should.have.property('a');
-            args.should.have.property('b');
-            args.should.have.property('c');
-
+            args.should.have.keys('a', 'b', 'c');
             var sum = (args.a || 0) + (args.b || 0) + (args.c || 0);
             callback(null, sum);
           };
@@ -150,7 +146,7 @@ describe('jayson.method', function() {
             });
           });
 
-          it('should replace left-out params with undefined', function(done) {
+          it('should replace missing params with undefined', function(done) {
             method.execute(server, {a: 1}, function(err, sum) {
               if(err) return done(err);
               sum.should.eql(1);

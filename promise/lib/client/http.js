@@ -13,7 +13,7 @@ var PromiseClientHttp = function(options) {
     return new PromiseClientHttp(options);
   }
   jayson.Client.http.apply(this, arguments);
-  this.request = promisify(this.request);
+  this.request = promisify(this.request.bind(this));
 };
 require('util').inherits(PromiseClientHttp, jayson.Client.http);
 

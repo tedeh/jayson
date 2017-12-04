@@ -13,7 +13,7 @@ var PromiseClientHttps = function(options) {
     return new PromiseClientHttps(options);
   }
   jayson.Client.https.apply(this, arguments);
-  this.request = promisify(this.request);
+  this.request = promisify(this.request.bind(this));
 };
 require('util').inherits(PromiseClientHttps, jayson.Client.https);
 

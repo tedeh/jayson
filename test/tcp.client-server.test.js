@@ -34,7 +34,7 @@ describe('jayson.tcp', function() {
       var socket = null;
       var responses = null;
 
-      beforeEach(function(done) {
+      before(function(done) {
         server.listen(3999, 'localhost', done);
       });
 

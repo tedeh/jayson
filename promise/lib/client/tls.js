@@ -1,5 +1,6 @@
 var promisify = require('es6-promisify');
 var jayson = require('../../../');
+var promiseUtils = require('../utils');
 
 /**
  * Constructor for a Jayson Promise Client Tls
@@ -13,7 +14,7 @@ var PromiseClientTls = function(options) {
     return new PromiseClientTls(options);
   }
   jayson.Client.tls.apply(this, arguments);
-  this.request = promisify(this.request.bind(this));
+  this.request = promiseUtils.wrapClientRequestMethod(this.request.bind(this));
 };
 require('util').inherits(PromiseClientTls, jayson.Client.tls);
 

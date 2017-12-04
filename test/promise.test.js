@@ -148,6 +148,14 @@ describe('jayson/promise', function() {
 
         describe('request', function() {
 
+          it('should return a raw request when fourth parameter is false', function() {
+            const request = client.request('add', [1, 2], false, false);
+            request.should.not.be.a.Promise();
+            should(request.id).be.a.string;
+            should(request.method).equal('add');
+            should(request.params).eql([1,2]);
+          });
+
           it('should do a request and fulfill a promise', function() {
             return client.request('add', [333, 333]).should.be.fulfilled().catch(err => {
               console.log(err, err.stack);
@@ -170,7 +178,7 @@ describe('jayson/promise', function() {
   
   });
 
-  describe('Method', function() {
+  describe('method', function() {
 
     var Method = jaysonPromise.Method;
 

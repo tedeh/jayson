@@ -1,5 +1,6 @@
 var promisify = require('es6-promisify');
 var jayson = require('../../../');
+var promiseUtils = require('../utils');
 
 /**
  * Constructor for a Jayson Promise Client Http
@@ -13,7 +14,7 @@ var PromiseClientHttps = function(options) {
     return new PromiseClientHttps(options);
   }
   jayson.Client.https.apply(this, arguments);
-  this.request = promisify(this.request.bind(this));
+  this.request = promiseUtils.wrapClientRequestMethod(this.request.bind(this));
 };
 require('util').inherits(PromiseClientHttps, jayson.Client.https);
 

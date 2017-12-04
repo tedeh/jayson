@@ -19,6 +19,6 @@ PromiseUtils.wrapClientRequestMethod = function(request) {
       // this should return a raw request for use in batches
       return request(method, params, id)
     };
-    return promisified(method, params, id);
+    return promisified.apply(this, arguments);
   };
 };

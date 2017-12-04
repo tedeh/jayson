@@ -148,14 +148,6 @@ describe('jayson/promise', function() {
 
         describe('request', function() {
 
-          it('should return a raw request when fourth parameter is false', function() {
-            const request = client.request('add', [1, 2], false, false);
-            request.should.not.be.a.Promise();
-            should(request.id).be.a.string;
-            should(request.method).equal('add');
-            should(request.params).eql([1,2]);
-          });
-
           it('should do a request and fulfill a promise', function() {
             return client.request('add', [333, 333]).should.be.fulfilled().catch(err => {
               console.log(err, err.stack);
@@ -167,6 +159,23 @@ describe('jayson/promise', function() {
           it('should do a request and fulfill a promise that errored', function() {
             return client.request('error', []).should.be.fulfilled().then(function(response) {
               response.should.containDeep({error: {code: -1000}});
+            });
+          });
+
+          it('should return a raw request when fourth parameter is false', function() {
+            const request = client.request('add', [1, 2], false, false);
+            request.should.not.be.a.Promise();
+            should(request.id).be.a.string;
+            should(request.method).equal('add');
+            should(request.params).eql([1,2]);
+          });
+
+          it('should accept an array of requests and make a batch', function() {
+            const batch = [client.request('add', [1,2], undefined, false)];
+            return client.request(batch).should.be.fulfilled().then(function(responses) {
+              responses.should.be.an.array;
+              responses.should.have.lengthOf(1);
+              responses[0].should.have.property('result', 3);
             });
           });
 

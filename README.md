@@ -120,14 +120,7 @@ There is a CLI client in `bin/jayson.js` and it should be available as `jayson` 
 
 ## Requirements
 
-Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It is being [continuously tested][jayson-travis] using [travis-ci](https://travis-ci.org/) on the following versions/releases:
-
-- "node"
-- "iojs"
-- "4"
-- "5"
-- "6"
-- "0.12"
+Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It is being [continuously tested][jayson-travis] using [travis-ci](https://travis-ci.org/). You can look inside [.travis.yml](.travis.yml) if you want to see which versions are tested against.
 
 ## Class documentation
 

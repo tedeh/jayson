@@ -165,9 +165,10 @@ Every client supports these options:
 
 Uses the same options as [http.request][nodejs_docs_http_request] in addition to these options:
 
-| Option     	| Default 	| Type     	| Description                    	|
-|------------	|---------	|----------	|--------------------------------	|
-| `encoding` 	| `utf8`  	| `String` 	| Determines the encoding to use 	|
+| Option     	| Default 	  | Type     	| Description                    	        |
+|------------	|------------ |----------	|---------------------------------------- |
+| `encoding` 	| `utf8`  	  | `String` 	| Determines the encoding to use 	        |
+| `headers` 	| `undefined` | `Object` 	| Extend the headers sent by the client 	|
 
 ###### Client.http Events
 

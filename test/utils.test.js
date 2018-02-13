@@ -34,108 +34,90 @@ describe('jayson.utils', function() {
 
   describe('getParameterNames', function() {
 
-    it('should return an empty array when passed a parameter-less function', function() {
-      var func = function() { return true; };
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array);
-      result.should.have.length(func.length);
-    });
+    var specs = [
+      {
+        desc: 'no parameters',
+        fn: function() { return true; },
+        expected: [],
+      },
+      {
+        desc: 'single-parameter fn',
+        fn: function(a) {},
+        expected: ['a'],
+      },
+      {
+        desc: 'simple fn',
+        fn: function(a, b) {},
+        expected: ['a', 'b'],
+      },
+      {
+        desc: 'odd-formatted function',
+        fn: function     (a, b            , __b) {},
+        expected: ['a', 'b', '__b'],
+      },
+      {
+        desc: 'multi-line arguments',
+        fn: function (
+          a,
+          b , __b) {},
+        expected: ['a', 'b', '__b'],
+      },
+      {
+        desc: 'complex parameters',
+        fn: function(_$foo, $$, FOO, $F00, _) {},
+        expected: ['_$foo', '$$', 'FOO', '$F00', '_'],
+      },
+      {
+        desc: 'returning in right order',
+        fn: function(b, c, a) {},
+        expected: ['b', 'c', 'a'],
+      },
+      {
+        desc: 'named function',
+        fn: function named(b, c, a) {},
+        expected: ['b', 'c', 'a'],
+      },
+      {
+        desc: 'complex named function',
+        fn: function named_complex$(b, c, a) {},
+        expected: ['b', 'c', 'a'],
+      },
+      {
+        desc: 'arrow function no parameters',
+        fn: () => {},
+        expected: [],
+      },
+      {
+        desc: 'arrow function simple parameters',
+        fn: (a, b, c) =>  {},
+        expected: ['a', 'b', 'c'],
+      },
+      {
+        desc: 'class function no params',
+        fn: (function() {
+          var obj = {a() {}};
+          return obj.a;
+        })(),
+        expected: [],
+      },
+      {
+        desc: 'class function',
+        fn: (function() {
+          var obj = {a(a, b, c) {}};
+          return obj.a;
+        })(),
+        expected: ['a', 'b', 'c'],
+      },
+    ];
 
-    it('should return the correct names when passed a single-parameter function', function() {
-      var func = function(a) { return a; };
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array);
-      result.should.have.length(func.length);
-      result.should.containDeep(['a']);
-    });
+    specs.forEach(function(spec) {
 
-    it('should return the correct names when passed a simple function', function() {
-      var func = function(a, b) { return a + b; };
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array);
-      result.should.have.length(func.length);
-      result.should.containDeep(['a', 'b']);
-    });
+      it('should handle ' + spec.desc, function() {
+        var result = utils.getParameterNames(spec.fn);
+        should.exist(result);
+        result.should.eql(spec.expected);
+      });
 
-    it('should return the correct names when passed a odd-formatted function', function() {
-      var func = function     (a, b            , __b) {
-        func(2, 3, 55, 4);
-        return a + b;
-      };
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array);
-      result.should.have.length(func.length);
-      result.should.containDeep(['a', 'b', '__b']);
-    });
-
-    it('should return the correct names when passed multi-line arguments', function() {
-      var func = function (
-        a,
-        b , __b) {
-        func(2, 3, 55, 4);
-        return a + b;
-      };
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array);
-      result.should.have.length(func.length);
-      result.should.containDeep(['a', 'b', '__b']);
-    });
-
-    it('should return the correct names when passed a function with complex parameters', function() {
-      var func = function(_$foo, $$, FOO, $F00, _) { return false; };
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array);
-      result.should.have.length(func.length);
-      result.should.containDeep(['_$foo', '$$', 'FOO', '$F00', '_']);
-    });
-
-    it('should return the correct names in the right order', function() {
-      var func = function(b, c, a) { return false; };
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array);
-      result.should.have.length(func.length);
-      result.should.containDeep(['b', 'c', 'a']);
-      result[0].should.equal('b');
-      result[1].should.equal('c');
-      result[2].should.equal('a');
-    });
-
-    it('should return the correct parameters when passed a simple named function', function() {
-      var func = function named(b, c, a) {};
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array).and.have.length(func.length);
-      result.should.containDeep(['b', 'c', 'a']);
-    });
-
-    it('should return the correct parameters when passed a complex named function', function() {
-      var func = function named_complex$(b, c, a) {};
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array).and.have.length(func.length);
-      result.should.containDeep(['b', 'c', 'a']);
-    });
-
-    it('should return the correct paremters when passed an ES6 style function with zero parameters', function() {
-      var func = () => {};
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array).and.have.length(0);
-    });
-
-    it('should return the correct paremters when passed an ES6 style function with more than zero parameters', function() {
-      var func = (b, c, a) => {};
-      var result = utils.getParameterNames(func);
-      should.exist(result);
-      result.should.be.instanceof(Array).and.have.length(func.length);
-      result.should.containDeep(['b', 'c', 'a']);
     });
 
   });

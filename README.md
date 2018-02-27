@@ -345,7 +345,7 @@ Servers supports these options:
 | `replacer`          	| `null `         	| `Function`          	| `JSON.stringify` replacer                                 	|
 | `router`            	| `null `         	| `Function`          	| Return the function for [method routing](#method-routing) 	|
 | `collect`           	| `true`          	| `Boolean`           	| Passed to `methodConstructor` options                     	|
-| `params`            	| `undefined`     	| `Array|Object|null` 	| Passed to `methodConstructor` options                     	|
+| `params`            	| `undefined`     	| `Array/Object/null` 	| Passed to `methodConstructor` options                     	|
 | `methodConstructor` 	| `jayson.Method` 	| `Function`          	| Server functions are made an instance of this class       	|
 | `version`           	| 2               	| `Number`            	| JSON-RPC version to support (1 or 2)                      	|
 

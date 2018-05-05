@@ -27,6 +27,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Usage](#usage)
   - [Client](#client)
      - [Interface description](#client-interface-description)
+     - [Browser usage](#clientbrowser)
      - [Notifications](#notifications)
      - [Batches](#batches)
      - [Callback syntactic sugar](#client-callback-syntactic-sugar)
@@ -116,7 +117,7 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ### CLI client
 
-There is a CLI client in `bin/jayson.js` and it should be available as `jayson` in your shell if you installed the package globally. Run `jayson --help` to see how it works.
+There is a basic CLI client in `bin/jayson.js` and it should be available as `jayson` in your shell if you installed the package globally. Run `jayson --help` to see how it works.
 
 ## Requirements
 
@@ -142,13 +143,14 @@ The client is available as the `Client` or `client` property of `require('jayson
 
 #### Client interface description
 
-| Name            | Description     |
-| --------------- | --------------- |
-| `Client`        | Base class      |
-| `Client.tcp`    | TCP interface   |
-| `Client.tls`    | TLS interface   |
-| `Client.http`   | HTTP interface  |
-| `Client.https`  | HTTPS interface |
+| Name            | Description       |
+| --------------- | ----------------  |
+| `Client`        | Base class        |
+| `Client.tcp`    | TCP interface     |
+| `Client.tls`    | TLS interface     |
+| `Client.http`   | HTTP interface    |
+| `Client.https`  | HTTPS interface   |
+| `Client.browser`| Browser interface |
 
 Every client supports these options:
 
@@ -212,6 +214,47 @@ Uses the same options as [net.connect][nodejs_docs_net_connect] in addition _to 
 Uses the same options as [tls.connect][nodejs_docs_tls_connect] in addition _to the same options as `Client.http`_.
 
 [nodejs_docs_tls_connect]: https://nodejs.org/api/tls.html#tls_tls_connect_options_callback
+
+##### Client.browser
+
+The browser client is a simplified version of the regular client for use browser-side. It does not have any dependencies on node.js core libraries (but does depend on the `uuid` and `lodash`) and also does not know how to "send" a request to a server like the other clients.
+
+Because it does not depend on any core libraries, the browser client is **not** an instance of `JaysonClient` or `EventEmitter` and therefore does **not** emit any of the normal request events that the other clients do.
+
+To use the browser client, `require('jayson/lib/client/browser')` and pass a calling/transport function as the first argument. The transport function receives a JSON-RPC string request and is expected to callback with a string response received from the server (not JSON) or an error (not a JSON-RPC error).
+
+The reason for dealing with strings is to support the `reviver` and `replacer` options like the other clients.
+
+This client example in [examples/browser_client/client.js](examples/browser_client/client.js) below uses [node-fetch](https://github.com/bitinn/node-fetch) in the transport function, but a dropin replacement for use in an *actual* browser could instead use [whatwg-fetch](https://github.com/github/fetch/issues/184).
+
+```javascript
+var jaysonBrowserClient = require('./../../lib/client/browser'); // i.e. require('jayson/lib/client/browser')
+var fetch = require('node-fetch');
+
+var callServer = function(request, callback) {
+  var options = {
+    method: 'POST',
+    body: request, // request is a string
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  };
+
+  fetch('http://localhost:3000', options)
+    .then(function(res) { return res.text(); })
+    .then(function(text) { callback(null, text); })
+    .catch(function(err) { callback(err); });
+};
+
+var client = jaysonBrowserClient(callServer, {
+  // other options go here
+});
+
+client.request('multiply', [5, 5], function(err, error, result) {
+  if(err) throw err;
+  console.log(result); // 25
+});
+```
 
 #### Notifications
 

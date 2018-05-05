@@ -27,7 +27,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Usage](#usage)
   - [Client](#client)
      - [Interface description](#client-interface-description)
-     - [Browser usage](#client-browser)
+     - [Browser usage](#clientbrowser)
      - [Notifications](#notifications)
      - [Batches](#batches)
      - [Callback syntactic sugar](#client-callback-syntactic-sugar)

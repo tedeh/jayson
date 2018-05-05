@@ -7,15 +7,19 @@ var http = require('http');
 /**
  * Get a mocha suite for common test cases for a client
  * @param {Client} Client instance to use
+ * @param {Boolean} [options.instanceOfClient=true] When false, don't check if the client is an instance of Client
  * @return {Function}
  */
-exports.getCommonForClient = function(client) {
+exports.getCommonForClient = function(client, options) {
+  options = options || {instanceOfClient: true};
 
   return function() {
 
-    it('should be an instance of jayson.Client', function() {
-      client.should.be.instanceof(jayson.Client);
-    });
+    if(options.instanceOfClient) {
+      it('should be an instance of jayson.Client', function() {
+        client.should.be.instanceof(jayson.Client);
+      });
+    }
 
     it('should be able to request a success-method on the server', function(done) {
       var a = 11, b = 12;

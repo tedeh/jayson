@@ -29,7 +29,7 @@
     "type": "git",
     "url": "git://github.com/tedeh/jayson.git"
   },
-  "homepage": "http://jayson.tedeh.net",
+  "homepage": "https://jayson.tedeh.net",
   "bugs": "https://github.com/tedeh/jayson/issues",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",

@@ -62,7 +62,7 @@ interface MethodOptions {
 };
 
 declare class Method {
-  constructor(handler: MethodHandlerType, options?: MethodOptions);
+  constructor(handler?: MethodHandlerType, options?: MethodOptions);
   constructor(options: MethodOptions);
 
   getHandler(): MethodHandlerType;
@@ -86,7 +86,7 @@ interface ServerOptions {
 }
 
 declare class Server {
-  constructor([methods: string]?: MethodLike, options?: object);
+  constructor([methods: string]?): MethodLike, options?: object);
 
   [errorMessages: string]: string;
   [interfaces: string]: Function;

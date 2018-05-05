@@ -5,3 +5,4 @@ node_modules
 !.jshintrc
 sandbox
 coverage
+yarn-error.log

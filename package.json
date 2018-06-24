@@ -31,8 +31,6 @@
   },
   "homepage": "https://jayson.tedeh.net",
   "bugs": "https://github.com/tedeh/jayson/issues",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
   "contributors": [
     "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",
     "Daniel Vicory <dvicory@gmail.com> (http://bzfx.net)",

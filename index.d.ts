@@ -1,21 +1,17 @@
-declare namespace jayson {
-  const client: Client;
-  const Client: Client;
+import http = require('http');
+import events = require('events');
 
-  const server: Server;
-  const Server: Server;
+export as namespace jayson;
 
-  const method: Method;
-  const Method: Method;
-
-  const Utils: Utils;
-  const utils: Utils;
-}
+export const client: Client;
+export const server: Server;
+export const method: Method;
+export const utils: Utils;
 
 interface Utils {
 }
 
-type RequestParamsLike = Array<any> | object;
+declare type RequestParamsLike = Array<any> | object;
 
 interface JSONRPCError {
   code: number;
@@ -36,30 +32,30 @@ interface JSONRPCVersionTwoRequest {
   id?: JSONRPCIDLike | null;
 }
 
-type JSONRPCIDLike = number | string;
+declare type JSONRPCIDLike = number | string;
 
-type JSONRPCRequest = JSONRPCVersionOneRequest | JSONRPCVersionTwoRequest;
+declare type JSONRPCRequest = JSONRPCVersionOneRequest | JSONRPCVersionTwoRequest;
 
-type JSONRPCRequestLike = JSONRPCRequest | string;
+declare type JSONRPCRequestLike = JSONRPCRequest | string;
 
-type JSONRPCResultLike = any;
+declare type JSONRPCResultLike = any;
 
 interface JSONRPCCallbackType {
-  (err?: JSONRPCError, result? JSONRPCResultLike): void
+  (err?: JSONRPCError, result?: JSONRPCResultLike): void
 }
 
 interface MethodHandlerType {
   (args: RequestParamsLike, callback: JSONRPCCallbackType): void;
-  (...args: any[], callback: JSONRPCCallbackType): void;
+  (...args: any[]): void; // callback still expected to be last
 }
 
-type MethodOptionsParamsLike = Array | Array<any> | Object | object;
+declare type MethodOptionsParamsLike = Array<any> | Object | object;
 
 interface MethodOptions {
   handler?: MethodHandlerType;
   collect?: boolean;
   params?: MethodOptionsParamsLike;
-};
+}
 
 declare class Method {
   constructor(handler?: MethodHandlerType, options?: MethodOptions);
@@ -70,9 +66,9 @@ declare class Method {
   execute(server: Server, requestParams: RequestParamsLike, callback: JSONRPCCallbackType);
 }
 
-type MethodLike = Method | Client
+declare type MethodLike = Function | Method | Client
 
-type ServerRouterFunction = (method: string, params: RequestParamsLike) => MethodLike;
+declare type ServerRouterFunction = (method: string, params: RequestParamsLike) => MethodLike;
 
 interface ServerOptions {
   collect?: boolean;
@@ -86,13 +82,16 @@ interface ServerOptions {
 }
 
 declare class Server {
-  constructor([methods: string]?): MethodLike, options?: object);
+  constructor(methods?: {[methodName: string]: MethodLike}, options?: object);
 
-  [errorMessages: string]: string;
-  [interfaces: string]: Function;
+  static errors: {[errorName: string]: number};
+  static errorMessages: {[errorMessage: string]: string};
+  static interfaces: {[interfaces: string]: Function};
+
+  http(options?: HttpServerOptions): HttpServer;
 
   method(name: string, definition: MethodLike): void;
-  methods([methods: string]: MethodLike): void;
+  methods(methods: {[methodName: string]: MethodLike}): void;
   hasMethod(name: string): boolean;
   removeMethod(name: string): void;
   getMethod(name: string): MethodLike;
@@ -100,10 +99,17 @@ declare class Server {
   call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: JSONRPCCallbackType);
 }
 
-type JSONParseReviver = (key: string, value: any) => any;
-type JSONStringifyReplacer = (key: string, value: any) => any;
+interface HttpServerOptions {
+}
 
-type IDGenerator = () => string;
+declare class HttpServer extends http.Server {
+  constructor(server: Server, options?: HttpServerOptions);
+}
+
+declare type JSONParseReviver = (key: string, value: any) => any;
+declare type JSONStringifyReplacer = (key: string, value: any) => any;
+
+declare type IDGenerator = () => string;
 
 interface ClientOptions {
   version?: number;
@@ -112,9 +118,19 @@ interface ClientOptions {
   generator: IDGenerator;
 }
 
-declare class Client {
+interface HttpClientOptions extends ClientOptions {
+  encoding?: string;
+}
+
+declare class HttpClient extends Client {
+  constructor(options?: HttpClientOptions);
+}
+
+declare class Client extends events.EventEmitter {
   constructor(server: Server, options: ClientOptions);
   constructor(options: ClientOptions);
+
+  static http(options?: HttpClientOptions): HttpClient;
 
   request(method: string, params: RequestParamsLike, id?: string, callback?: JSONRPCCallbackType);
   request(method: Array<JSONRPCRequestLike>, callback?: JSONRPCCallbackType);

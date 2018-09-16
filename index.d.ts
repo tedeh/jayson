@@ -79,7 +79,7 @@ declare class Method {
 
   getHandler(): MethodHandlerType;
   setHandler(handler: MethodHandlerType): void;
-  execute(server: Server, requestParams: RequestParamsLike, callback: JSONRPCCallbackType);
+  execute(server: Server, requestParams: RequestParamsLike, callback: JSONRPCCallbackType): any | Promise<any>;
 }
 
 declare type MethodLike = Function | Method | Client
@@ -116,7 +116,7 @@ declare class Server {
   removeMethod(name: string): void;
   getMethod(name: string): MethodLike;
   error(code?: number, message?: string, data?: object): JSONRPCError;
-  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: JSONRPCCallbackType);
+  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: JSONRPCCallbackType): void;
 }
 
 interface MiddlewareServerOptions extends ServerOptions {
@@ -199,7 +199,7 @@ declare class Client extends events.EventEmitter {
   static tcp(options?: TcpClientOptions): TcpClient;
   static tls(options?: TlsClientOptions): TlsClient;
 
-  request(method: string, params: RequestParamsLike, id?: string, callback?: JSONRPCCallbackType);
-  request(method: string, params: RequestParamsLike, callback?: JSONRPCCallbackType);
-  request(method: Array<JSONRPCRequestLike>, callback?: JSONRPCCallbackTypeBatch);
+  request(method: string, params: RequestParamsLike, id?: string, callback?: JSONRPCCallbackType): JSONRPCRequest;
+  request(method: string, params: RequestParamsLike, callback?: JSONRPCCallbackType): JSONRPCRequest;
+  request(method: Array<JSONRPCRequestLike>, callback?: JSONRPCCallbackTypeBatch): Array<JSONRPCRequest>;
 }

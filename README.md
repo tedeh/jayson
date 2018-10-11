@@ -46,6 +46,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Named parameters](#named-parameters)
 - [Promises](#promises)
   - [Batches](#promise-batches)
+- [FAQ](#faq)
 - [Contributing](#contributing)
 
 ## Features
@@ -944,7 +945,7 @@ server.http().listen(3000);
 * It is assumed that the last argument to a server method is the callback and it will not be filled with something else
 * Parsing a function signature and filling in arguments is generally *not recommended* and should be avoided
 
-### Promises
+## Promises
 
 [es6-promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
@@ -1042,7 +1043,12 @@ client.request(batch).then(function(responses) {
 
 * The third parameter to `PromiseClient.prototype.request` above is explicitly set to `undefined` - this parameter would normally represent the desired ID of the call. Remember that `null` would mean a notification (which does not return a response) and other falsy values may actually be used as ids. Setting `undefined` ensures that the id is generated automatically.
 
-### Contributing
+## FAQ
+
+### I'm using the middleware. How can I pass headers/session/etc into my JSON-RPC request handler?
+
+
+## Contributing
 
 Highlighting [issues](https://github.com/tedeh/jayson/issues) or submitting pull
 requests on [Github](https://github.com/tedeh/jayson) is most welcome.

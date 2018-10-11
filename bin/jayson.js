@@ -44,7 +44,9 @@ if(!(program.method && (program.url || program.socket))) {
 
 var client = (program.socket && program.socket.host)
   ? jayson.client.tcp(program.socket)
-  : jayson.client.http(program.url || program.socket);
+  : (program.url && program.url.protocol == 'https:')
+    ? jayson.client.https(program.url || program.socket)
+    : jayson.client.http(program.url || program.socket);
 
 std.out.noise(
   colorize('magenta', '-> %s(%s)'),

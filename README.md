@@ -1019,7 +1019,7 @@ Sometimes you may want to return raw requests from a promise client. This needs 
 
 To solve this, we need to set the fourth parameter to `PromiseClient.prototype.request` explicitly to `false` in order to *not* return a Promise.
 
-Client example in [examples/promise_batches/client.js](examples/promise/client.js) showing how to properly execute a batch request:
+Client example in [examples/promise_batches/client.js](examples/promise_batches/client.js) showing how to properly execute a batch request:
 
 ```javascript
 var jayson = require('../../promise');
@@ -1047,6 +1047,39 @@ client.request(batch).then(function(responses) {
 
 ### I'm using the middleware. How can I pass headers/session/etc into my JSON-RPC request handler?
 
+This is probably the single most asked question for this project. You are recommended to modify the JSON-RPC request arguments prior to the jayson middleware being called.
+
+Example in [examples/faq_request_context/server.js](examples/faq_request_context/server.js):
+
+```javascript
+var _ = require('lodash');
+var jayson = require('./../..');
+var jsonParser = require('body-parser').json;
+var connect = require('connect');
+var app = connect();
+
+var server = jayson.server({
+  getHeaders: function(args, callback) {
+    callback(null, args.headers);
+  }
+}, {
+  params: Object, // all method args are always objects (never arrays)
+});
+
+app.use(jsonParser());
+app.use(function(req, res, next) {
+  // decorate the request with header params or whatever other contextual values are desired
+  _.set(req.body, 'params.headers', req.headers);
+  next();
+});
+app.use(server.middleware());
+
+app.listen(3001);
+```
+
+#### I have essentially the same question, but I'm using the jayson http server and not the middleware
+
+Use jayson with the Express/Connect middleware.
 
 ## Contributing
 

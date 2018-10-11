@@ -1081,6 +1081,24 @@ app.listen(3001);
 
 Use jayson with the Express/Connect middleware.
 
+### What is the recommended way to use jayson?
+
+Using the provided http, https, tls, tcp and express middleware is fine and good, and works well for most use cases. However, these methods come with some assumptions that are outside of the scope of the concept "JSON-RPC client/server built to spec" which gives some people trouble from time to time, especially when parts of this library is used with a non-jayson client or non-jayson server. Examples: the middleware requires the request method POST, tcp mandates that the client closes the request to begin server processing, no easy way to manage timeouts, and so on.
+
+It is therefore the *opinion* of the library author [tedeh](https://github.com/tedeh) that the least *opinionated* and most *compatible* way to setup a jayson is use the plain jayson server and let the user (*you*) setup the details of the transport layer yourself.
+
+Example of a http server built with express in [examples/faq_recommended_http_server/server.js](examples/faq_recommended_http_server/server.js):
+
+```javascript
+
+```
+
+Using some of the utilities provided and exported by jayson, creating a client offering this kind of flexibility is also quite simple. Example of a compatible http client built with superagent in [examples/faq_recommended_http_server/client.js]:
+
+```javascript
+
+```
+
 ## Contributing
 
 Highlighting [issues](https://github.com/tedeh/jayson/issues) or submitting pull

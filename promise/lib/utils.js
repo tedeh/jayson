@@ -3,9 +3,6 @@ var promisify = require('es6-promisify');
 /** * @namespace */
 var PromiseUtils = module.exports;
 
-// same reference as other files use, for tidyness
-var promiseUtils = PromiseUtils;
-
 /**
  * Wraps the client request method on an instance, making it return a promise in every case except when the fourth argument is explicitly set to false
  * @param {Function} request The original request method
@@ -17,8 +14,8 @@ PromiseUtils.wrapClientRequestMethod = function(request) {
   return function(method, params, id, shouldCall) {
     if(shouldCall === false) {
       // this should return a raw request for use in batches
-      return request(method, params, id)
-    };
+      return request(method, params, id);
+    }
     return promisified.apply(this, arguments);
   };
 };

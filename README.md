@@ -24,6 +24,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Requirements](#requirements)
 - [Class Documentation](#class-documentation)
 - [Running tests](#running-tests)
+- [Typescript](#typescript)
 - [Usage](#usage)
   - [Client](#client)
      - [Interface description](#client-interface-description)
@@ -101,6 +102,8 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ## Changelog (only notable milestones)
 
+- *2.1.0*
+  - Experimental typescript support
 - *2.0.6*
   - Clarified how to use [in the browser](#clientbrowser)
 - *2.0.0*
@@ -136,6 +139,12 @@ In addition to this document, a comprehensive class documentation made with [jsd
 - Change directory to the repository root
 - Install the development packages by executing `npm install --dev`
 - Run the tests with `npm run test`
+
+## Typescript
+
+Since `v2.1.0` there is experimental typescript support available with jayson. Anyone that would like to improve on the type definitions is most welcome to provide a pull request.
+
+If you would just like to report an issue with the type definitions that you can't solve by yourself, please read the previous discussion here first: https://github.com/tedeh/jayson/issues/99
 
 ## Usage
 

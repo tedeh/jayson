@@ -29,9 +29,8 @@
     "type": "git",
     "url": "git://github.com/tedeh/jayson.git"
   },
-  "homepage": "http://jayson.tedeh.net",
+  "homepage": "https://jayson.tedeh.net",
   "bugs": "https://github.com/tedeh/jayson/issues",
-  "main": "index",
   "contributors": [
     "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",
     "Daniel Vicory <dvicory@gmail.com> (http://bzfx.net)",
@@ -60,6 +59,7 @@
     }
   },
   "dependencies": {
+    "@types/node": "^10.3.5",
     "JSONStream": "^1.3.1",
     "commander": "^2.12.2",
     "es6-promisify": "^5.0.0",

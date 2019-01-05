@@ -43,7 +43,7 @@
     "docs": "jsdoc -t node_modules/ink-docstrap/template -R README.md -c ./jsdoc.conf.json",
     "docs_clear": "rm -rf ./docs/jayson/*; exit 0",
     "docs_refresh": "npm run docs_clear && npm run docs",
-    "docs_deploy": "rsync --delete -r docs/jayson/* tedeh:/var/www/jayson; exit 0",
+    "docs_deploy": "rsync --delete -r docs/jayson/* tedeh.net:/var/www/jayson.tedeh.net; exit 0",
     "lint": "jshint lib/*.js lib/**/*.js promise/*.js promise/**/*.js; exit 0"
   },
   "config": {

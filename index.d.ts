@@ -190,6 +190,8 @@ declare class HttpsClient extends Client {
   constructor(options?: HttpsClientOptions);
 }
 
+type ClientRequestShouldCall = JSONRPCCallbackType | false;
+
 declare class Client extends events.EventEmitter {
   constructor(server: Server, options?: ClientOptions);
   constructor(options: ClientOptions);
@@ -201,5 +203,7 @@ declare class Client extends events.EventEmitter {
 
   request(method: string, params: RequestParamsLike, id?: string, callback?: JSONRPCCallbackType): JSONRPCRequest;
   request(method: string, params: RequestParamsLike, callback?: JSONRPCCallbackType): JSONRPCRequest;
-  request(method: Array<JSONRPCRequestLike>, callback?: JSONRPCCallbackTypeBatch): Array<JSONRPCRequest>;
+  request(method: string, params: RequestParamsLike, id: string, callback: ClientRequestShouldCall): JSONRPCRequest;
+  request(method: Array<JSONRPCRequestLike>): Promise<JSONRPCResultLike>;
+  request(method: Array<JSONRPCRequestLike>, callback: JSONRPCCallbackTypeBatch): Array<JSONRPCRequest>;
 }

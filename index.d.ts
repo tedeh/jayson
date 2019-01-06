@@ -203,7 +203,7 @@ declare class Client extends events.EventEmitter {
 
   request(method: string, params: RequestParamsLike, id?: string, callback?: JSONRPCCallbackType): JSONRPCRequest;
   request(method: string, params: RequestParamsLike, callback?: JSONRPCCallbackType): JSONRPCRequest;
-  request(method: string, params: RequestParamsLike, id: string, callback: ClientRequestShouldCall): JSONRPCRequest;
-  request(method: Array<JSONRPCRequestLike>): Promise<JSONRPCResultLike>;
+  // request(method: string, params: RequestParamsLike, id: string, callback: ClientRequestShouldCall): JSONRPCRequest;
+  // request(method: Array<JSONRPCRequestLike>): Promise<JSONRPCResultLike>;
   request(method: Array<JSONRPCRequestLike>, callback: JSONRPCCallbackTypeBatch): Array<JSONRPCRequest>;
 }

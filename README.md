@@ -47,7 +47,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Promises](#promises)
   - [Batches](#promise-batches)
 - [FAQ](#faq)
-- [Recommended usage](what-is-the-recommended-way-to-use-jayson)
+- [Recommended usage](#what-is-the-recommended-way-to-use-jayson)
 - [Contributing](#contributing)
 
 ## Features

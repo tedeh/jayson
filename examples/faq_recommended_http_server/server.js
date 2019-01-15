@@ -4,6 +4,7 @@ var jsonParser = require('body-parser').json;
 var express = require('express');
 var app = express();
 
+// create a plain jayson server
 var server = jayson.server({
   add: function(numbers, callback) {
     callback(null, _.reduce(numbers, (sum, val) => sum + val, 0));

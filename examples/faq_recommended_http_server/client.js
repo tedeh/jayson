@@ -3,13 +3,12 @@ var request = require('superagent');
 
 // generate a json-rpc version 2 compatible request (non-notification)
 var requestBody = jayson.Utils.request('add', [1,2,3,4], undefined, {
-  version: 2,
-  // generator: [...] <- function to generate the request id
+  version: 2, // generate a version 2 request
 });
 
 request.post('http://localhost:3001')
   // <- here we can setup timeouts, set headers, cookies, etc
-  //.timeout({response: 5000, deadline: 60000})
+  .timeout({response: 5000, deadline: 60000})
   .send(requestBody)
   .end(function(err, response) {
     if(err) {
@@ -30,14 +29,16 @@ request.post('http://localhost:3001')
 
     const body = response.body;
 
-    // we should check here if we ACTUALLY got a valid response
-    var isValid = function() { return true; };
-    if(!isValid(body)) {
-      // if not, we have a different error
+    // check if we got a valid JSON-RPC 2.0 response
+    if(!jayson.Utils.Response.isValidResponse(body, 2)) {
       console.err(body);
-      return;
     }
 
-    // do something useful with the result
-    console.log(body.result); // 10
+    if(body.error) {
+      // we have a json-rpc error...
+      console.err(body.error); // 10!
+    } else {
+      // do something useful with the result
+      console.log(body.result); // 10!
+    }
   });

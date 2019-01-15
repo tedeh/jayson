@@ -47,6 +47,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Promises](#promises)
   - [Batches](#promise-batches)
 - [FAQ](#faq)
+- [Recommended usage](what-is-the-recommended-way-to-use-jayson)
 - [Contributing](#contributing)
 
 ## Features
@@ -1080,6 +1081,116 @@ app.listen(3001);
 #### I have essentially the same question, but I'm using the jayson http server and not the middleware
 
 Use jayson with the Express/Connect middleware.
+
+### What is the recommended way to use jayson?
+
+Using the provided http, https, tls, tcp and express middleware is fine and works well for most use cases. However, sometimes issues like these crop up (quotes below are not directly from issue posters):
+
+- "The (non-jayson) HTTP server I'm interacting with expect every HTTP calls to terminate with `\r\n` but the jayson HTTP client does not"
+- ["How can my jayson TLS server support requests encoded such and such?"](https://github.com/tedeh/jayson/issues/86)
+- ["How can I make the jayson HTTP middleware accept GET requests?"](https://github.com/tedeh/jayson/issues/70)
+- ["My jayson client interacting with a (non-jayson) TLS server closes the connection after every sent request. I think this is wasteful!"](https://github.com/tedeh/jayson/issues/92)
+
+These are not issues with jayson, but stem from the fact that [JSON-RPC 2.0 specification][jsonrpc-spec] is **transport agnostic** and these kind of behaviours are **not defined** by that specification. The clients provided by jayson for http, https, tls, tcp are made to work and tested with their corresponding jayson server implementation. Any other compatibility with any other server or client is *accidental* when it comes to **details of the transport layer**. With that said, jayson is made to be 100 % compatible with the [JSON-RPC 2.0 specification][jsonrpc-spec] and compatibility with other non-jayson servers or clients when it comes to the *application layer* is pretty much guaranteed.
+
+The library author [tedeh](https://github.com/tedeh) therefore recommends that if you have particular needs when it comes to the transport layer you create an implementation satisfying these details yourself. **Doing this is actually quite simple.**
+
+Example of a http server built with express in [examples/faq_recommended_http_server/server.js](examples/faq_recommended_http_server/server.js):
+
+```javascript
+var _ = require('lodash');
+var jayson = require('jayson');
+var jsonParser = require('body-parser').json;
+var express = require('express');
+var app = express();
+
+// create a plain jayson server
+var server = jayson.server({
+  add: function(numbers, callback) {
+    callback(null, _.reduce(numbers, (sum, val) => sum + val, 0));
+  }
+});
+
+// we could add more middleware for timeout handling, auth token parsing, logging, etc
+app.use(jsonParser()); // <- here we can deal with maximum body sizes and so on
+
+app.use(function(req, res, next) {
+  var request = req.body;
+  
+  // <- here we can check headers, modify the request, do more logging, etc
+  
+  // sending off a request to jayson is as simple as the below call:
+  server.call(request, function(err, response) {
+    if(err) {
+      // if err is an Error, err is NOT a json-rpc error
+      if(err instanceof Error) return next(err);
+      // <- deal with json-rpc errors here, typically caused by the request
+      res.status(400);
+      res.send(err);
+      return;
+    }
+    // <- here we can mutate the response, set response headers, etc
+    if(response) {
+      res.send(response);
+    } else {
+      // empty response (notification)
+      res.status(204);
+      res.send('');
+    }
+  });
+});
+
+app.listen(3001);
+```
+
+Using some of the utilities provided and exported by jayson, creating a client offering the same kind of flexibility is also simple. Example of a compatible http client built with superagent in [examples/faq_recommended_http_server/client.js](examples/faq_recommended_http_server/client.js):
+
+```javascript
+var jayson = require('./../..');
+var request = require('superagent');
+
+// generate a json-rpc version 2 compatible request (non-notification)
+var requestBody = jayson.Utils.request('add', [1,2,3,4], undefined, {
+  version: 2, // generate a version 2 request
+});
+
+request.post('http://localhost:3001')
+  // <- here we can setup timeouts, set headers, cookies, etc
+  .timeout({response: 5000, deadline: 60000})
+  .send(requestBody)
+  .end(function(err, response) {
+    if(err) {
+      // superagent considers 300-499 status codes to be errors
+      // @see http://visionmedia.github.io/superagent/#error-handling
+      if(!err.status) throw err;
+      const body = err.response.body;
+      // body may be a JSON-RPC error, or something completely different
+      // it can be handled here
+      if(body && body.error && jayson.Utils.Response.isValidError(body.error, 2)) {
+        // the error body was a valid JSON-RPC version 2
+        // we may wish to deal with it differently
+        console.err(body.error);
+        return;
+      }
+      throw err; // error was something completely different
+    }
+
+    const body = response.body;
+
+    // check if we got a valid JSON-RPC 2.0 response
+    if(!jayson.Utils.Response.isValidResponse(body, 2)) {
+      console.err(body);
+    }
+
+    if(body.error) {
+      // we have a json-rpc error...
+      console.log(body.error); // 10!
+    } else {
+      // do something useful with the result
+      console.log(body.result); // 10!
+    }
+  });
+```
 
 ## Contributing
 

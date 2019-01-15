@@ -165,7 +165,7 @@ describe('jayson.utils', function() {
 
   });
 
-  describe('stringify', function(done) {
+  describe('JSON.stringify', function(done) {
 
     it('should not throw with circular JSON reference', function(done) {
 
@@ -181,6 +181,154 @@ describe('jayson.utils', function() {
       should(fn).not.throw();
     });
 
+  });
+
+  describe('Response.isValidResponse', function() {
+
+    var specs = [
+      {
+        desc: 'a valid 2 response',
+        response: {jsonrpc: '2.0', result: null, id: 'something'},
+        version: 2,
+        expected: true,
+      },
+      {
+        desc: 'a valid 2 response',
+        response: {jsonrpc: '2.0', result: null, id: null},
+        version: 2,
+        expected: true,
+      },
+      {
+        desc: 'a valid 2 error response with data',
+        response: {jsonrpc: '2.0', id: 'something', error: {code: 123, message: 'something', data: {}}},
+        version: 2,
+        expected: true,
+      },
+      {
+        desc: 'a valid 2 error response without data',
+        response: {jsonrpc: '2.0', id: 'something', error: {code: 123, message: 'something'}},
+        version: 2,
+        expected: true,
+      },
+      {
+        desc: 'an invalid 2 response (both error and result properties)',
+        response: {jsonrpc: '2.0', id: 'something', error: {code: 123, message: 'something'}, result: null},
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 2 error response (no code)',
+        response: {jsonrpc: '2.0', id: 'something', error: {message: 'something'}},
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 2 error response (no message)',
+        response: {jsonrpc: '2.0', id: 'something', error: {code: 123}},
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 2 error response (code not number)',
+        response: {jsonrpc: '2.0', id: 'something', error: {code: '123', message: 'asdf'}},
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 2 error response (code not integer)',
+        response: {jsonrpc: '2.0', id: 'something', error: {code: 123.3, message: 'asdf'}},
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 2 response (invalid error and contains result property)',
+        response: {jsonrpc: '2.0', id: 'something', error: {}, result: {}},
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 2 response (no jsonrpc property)',
+        response: {id: 'something', result: {}},
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 2 response (jsonrpc property not equal to 2.0)',
+        response: {jsonrpc: '3.0', id: 'something', result: {}},
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 2 response (no id property)',
+        response: {jsonrpc: '2.0', result: null},
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 2 response (response not plain object)',
+        response: null,
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'a valid 1 response',
+        response: {id: 'something', result: {}, error: null},
+        version: 1,
+        expected: true,
+      },
+      {
+        desc: 'a valid 1 error response',
+        response: {id: 'something', result: null, error: {}},
+        version: 1,
+        expected: true,
+      },
+      {
+        desc: 'an invalid 1 response (response not plain object)',
+        response: null,
+        version: 1,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 1 response (non-null result and error)',
+        response: {id: 'something', result: {}, error: {}},
+        version: 1,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 1 response (no result or error)',
+        response: {id: 'something'},
+        version: 1,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 1 response (missing id)',
+        response: {result: {}, error: null},
+        version: 1,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 1 response (missing error null)',
+        response: {id: 'something', result: {}},
+        version: 1,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 1 response (missing result null)',
+        response: {id: 'something', error: {}},
+        version: 1,
+        expected: false,
+      },
+    ];
+
+    specs.forEach(function(spec) {
+
+      it(`should handle ${spec.desc}`, function() {
+        var result = utils.Response.isValidResponse(spec.response, spec.version);
+        should(result).equal(spec.expected);
+      });
+
+    });
+  
   });
 
 });

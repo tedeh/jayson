@@ -59,8 +59,13 @@ client.request(program.method, program.params, function(err, response) {
     std.err.noise(colorize('red', '<- %s'), err.stack);
     return process.exit(-1);
   }
+       
+  if(!response) {
+    std.err.noise(colorize('red', '<- %s'), 'empty response');
+    return process.exit(-1);
+  }    
 
-  if(!response || program.json) {
+  if(program.json) {
     std.out.result('%s', JSON.stringify(response).replace("\n", ""));
     return process.exit(0);
   }

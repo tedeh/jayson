@@ -1,7 +1,9 @@
-var jayson = require('./../..');
-var _ = require('lodash');
+'use strict';
 
-var methods = {
+const jayson = require('./../..');
+const _ = require('lodash');
+
+const methods = {
 
   // this function will be wrapped in jayson.Method with options given to the server
   sum: function(args, done) {
@@ -11,7 +13,7 @@ var methods = {
   // this method gets the raw params as first arg to handler
   sumCollect: new jayson.Method({
     handler: function(args, done) {
-      var total = sum(args);
+      const total = sum(args);
       done(null, total);
     },
     collect: true // means "collect all JSON-RPC parameters in one arg"
@@ -19,7 +21,7 @@ var methods = {
 
   // specifies some default values (alternate definition too)
   sumDefault: jayson.Method(function(args, done) {
-    var total = sum(args);
+    const total = sum(args);
     done(null, total);
   }, {
     collect: true,
@@ -29,7 +31,7 @@ var methods = {
   // this method returns true when it gets an array (which it always does)
   isArray: new jayson.Method({
     handler: function(args, done) {
-      var result = _.isArray(args);
+      const result = _.isArray(args);
       done(null, result);
     },
     collect: true,
@@ -38,7 +40,7 @@ var methods = {
 
 };
 
-var server = jayson.server(methods, {
+const server = jayson.server(methods, {
   // Given as options to jayson.Method when adding the method "sum"
   collect: true,
   params: Array

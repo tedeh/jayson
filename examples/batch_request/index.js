@@ -1,14 +1,16 @@
-var jayson = require('./../..');
+'use strict';
 
-var server = jayson.server({
+const jayson = require('./../..');
+
+const server = jayson.server({
   add: function(args, callback) {
     callback(null, args[0] + args[1]);
   }
 });
 
-var client = jayson.client(server);
+const client = jayson.client(server);
 
-var batch = [
+const batch = [
   client.request('does_not_exist', [10, 5]),
   client.request('add', [1, 1]),
   client.request('add', [0, 0], null) // a notification

@@ -1,15 +1,17 @@
-var should = require('should');
-var jayson = require('./../');
-var support = require('./support');
-var suites = require('./support/suites');
-var http = require('http');
-var url = require('url');
+'use strict';
+
+const should = require('should');
+const jayson = require('./../');
+const support = require('./support');
+const suites = require('./support/suites');
+const http = require('http');
+const url = require('url');
 
 describe('jayson.http', function() {
 
-  var server = jayson.server(support.server.methods(), support.server.options());
-  var serverHttp = server.http();
-  var client = jayson.client.http({
+  const server = jayson.server(support.server.methods(), support.server.options());
+  const serverHttp = server.http();
+  const client = jayson.client.http({
     reviver: support.server.options().reviver,
     replacer: support.server.options().replacer,
     host: 'localhost',
@@ -33,16 +35,16 @@ describe('jayson.http', function() {
     describe('common http server tests', suites.getCommonForHttpServer(server, client));
 
     it('should not crash when given invalid JSON', function(done) {
-      var reqOptions = {
+      const reqOptions = {
         hostname: 'localhost',
         port: 3999,
         method: 'POST',
         headers: {'Content-Type': 'application/json'}
       };
-      var req = http.request(reqOptions);
+      const req = http.request(reqOptions);
       req.end('invalid json', 'utf8');
       req.on('response', function(res) {
-        var body = '';
+        let body = '';
         res.on('data', function(chunk) { body += chunk; });
         res.on('end', function() {
           res.statusCode.should.equal(400)
@@ -56,9 +58,9 @@ describe('jayson.http', function() {
   describe('client', function() {
 
     it('should accept a URL string as the first argument', function() {
-      var urlStr = 'http://localhost:3999';
-      var client = jayson.client.http(urlStr);
-      var tokens = url.parse(urlStr);
+      const urlStr = 'http://localhost:3999';
+      const client = jayson.client.http(urlStr);
+      const tokens = url.parse(urlStr);
       client.options.should.containDeep(tokens);
     });
 

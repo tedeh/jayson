@@ -1,7 +1,9 @@
+'use strict';
+
 /*
  * Helper for testing object instantiation/serialization
  */
-var Counter = module.exports = function(value) {
+const Counter = module.exports = function(value) {
   if(typeof(value) !== 'number' || !isFinite(value)) value = 0;
   this.count = value;
 };

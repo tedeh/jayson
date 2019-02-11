@@ -1,10 +1,12 @@
-var _ = require('lodash');
-var jayson = require('./../..');
-var jsonParser = require('body-parser').json;
-var connect = require('connect');
-var app = connect();
+'use strict';
 
-var server = jayson.server({
+const _ = require('lodash');
+const jayson = require('./../..');
+const jsonParser = require('body-parser').json;
+const connect = require('connect');
+const app = connect();
+
+const server = jayson.server({
   getHeaders: function(args, callback) {
     callback(null, args.headers);
   }

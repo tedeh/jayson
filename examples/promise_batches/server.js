@@ -1,11 +1,13 @@
-var jayson = require('../../promise');
-var _ = require('lodash');
+'use strict';
 
-var server = jayson.server({
+const jayson = require('../../promise');
+const _ = require('lodash');
+
+const server = jayson.server({
 
   add: function(args) {
     return new Promise(function(resolve, reject) {
-      var sum = _.reduce(args, function(sum, value) { return sum + value; }, 0);
+      const sum = _.reduce(args, function(sum, value) { return sum + value; }, 0);
       resolve(sum);
     });
   }

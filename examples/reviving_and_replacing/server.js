@@ -1,14 +1,16 @@
-var jayson = require('./../..');
-var shared = require('./shared');
+'use strict';
+
+const jayson = require('./../..');
+const shared = require('./shared');
 
 // Set the reviver/replacer options
-var options = {
+const options = {
   reviver: shared.reviver,
   replacer: shared.replacer
 };
 
 // create a server
-var server = jayson.server({
+const server = jayson.server({
   increment: function(args, callback) {
     args.counter.increment();
     callback(null, args.counter);

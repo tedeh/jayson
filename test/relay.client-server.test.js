@@ -1,14 +1,16 @@
-var should = require('should');
-var jayson = require('./..');
-var support = require('./support');
-var suites = require('./support/suites');
+'use strict';
+
+const should = require('should');
+const jayson = require('./..');
+const support = require('./support');
+const suites = require('./support/suites');
 
 describe('jayson.relay', function() {
 
   describe('server', function() {
 
     it('should be created with a client as a method without throwing', function() {
-      var server = jayson.server(support.methods, support.server.options());
+      const server = jayson.server(support.methods, support.server.options());
       (function () {
         jayson.server({add: jayson.client(server)}, support.server.options());
       }).should.not.throw();
@@ -18,12 +20,12 @@ describe('jayson.relay', function() {
 
   describe('client', function() {
 
-    var options = support.server.options();
+    const options = support.server.options();
 
-    var frontServer = jayson.server({}, options);
-    var backServer = jayson.server(support.server.methods(), options);
-    var relayClient = jayson.client(backServer, options);
-    var frontClient = jayson.client(frontServer, options);
+    const frontServer = jayson.server({}, options);
+    const backServer = jayson.server(support.server.methods(), options);
+    const relayClient = jayson.client(backServer, options);
+    const frontClient = jayson.client(frontServer, options);
 
     // replace all methods in front server with the client
     Object.keys(backServer._methods).forEach(function(name) {

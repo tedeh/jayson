@@ -1,7 +1,9 @@
-var jayson = require('./../..');
+'use strict';
+
+const jayson = require('./../..');
 
 // create a client
-var client = jayson.client.http({
+const client = jayson.client.http({
   port: 3001
 });
 

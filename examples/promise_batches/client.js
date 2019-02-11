@@ -1,10 +1,12 @@
-var jayson = require('../../promise');
+'use strict';
 
-var client = jayson.client.http({
+const jayson = require('../../promise');
+
+const client = jayson.client.http({
   port: 3000
 });
 
-var batch = [
+const batch = [
   client.request('add', [1, 2, 3, 4, 5], undefined, false),
   client.request('add', [5, 6, 7, 8, 9], undefined, false),
 ];

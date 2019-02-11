@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
-var path = require('path');
-var url = require('url');
-var util = require('util');
+const fs = require('fs');
+const path = require('path');
+const url = require('url');
+const util = require('util');
 
-var pkg = require('../package.json');
-var jayson = require('../');
-var program = require('commander');
-var eyes = require('eyes');
-var net = require('net')
+const pkg = require('../package.json');
+const jayson = require('../');
+const program = require('commander');
+const eyes = require('eyes');
+const net = require('net')
 
 // initialize program and define arguments
 program.version(pkg.version)
@@ -22,7 +22,7 @@ program.version(pkg.version)
        .option('-c, --color', 'Color output', Boolean)
        .parse(process.argv);
 
-var inspect = eyes.inspector({
+const inspect = eyes.inspector({
   stream: null,
   styles: program.color ? eyes.defaults.styles : {all: false}
 });
@@ -31,7 +31,7 @@ var inspect = eyes.inspector({
 if(program.json) program.quiet = true;
 
 // wrapper for printing different kinds of output
-var std = {
+const std = {
   out: getPrinter({ fn: console.log }),
   err: getPrinter({ fn: console.error })
 };
@@ -42,7 +42,7 @@ if(!(program.method && (program.url || program.socket))) {
   return process.exit(-1);
 }
 
-var client = (program.socket && program.socket.host)
+const client = (program.socket && program.socket.host)
   ? jayson.client.tcp(program.socket)
   : (program.url && program.url.protocol == 'https:')
     ? jayson.client.https(program.url || program.socket)
@@ -75,7 +75,7 @@ client.request(program.method, program.params, function(err, response) {
 });
 
 function parseSocket(value) {
-  var addr = value.split(":");
+  const addr = value.split(":");
 
   if (addr.length == 2 && (net.isIP(addr[0]) || addr[0].toLowerCase() == "localhost")) {
     return {port: addr[1], host: addr[0]};
@@ -92,7 +92,7 @@ function colorize(color, format) {
 
 function getPrinter(options) {
 
-  var fn = options.fn || console.log;
+  const fn = options.fn || console.log;
 
   return {
 

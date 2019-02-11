@@ -1,10 +1,12 @@
-var Jayson = require('../..');
+'use strict';
+
+const Jayson = require('../..');
 
 /**
  * Namespace available as require('jayson/promise')
  * @namespace JaysonPromise
  */
-var JaysonPromise = module.exports;
+const JaysonPromise = module.exports;
 
 /**
  * @static

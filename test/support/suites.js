@@ -1,8 +1,10 @@
-var should = require('should');
-var support = require('./');
-var jayson = require('./../../');
-var Counter = support.Counter;
-var http = require('http');
+'use strict';
+
+const should = require('should');
+const support = require('./');
+const jayson = require('./../../');
+const Counter = support.Counter;
+const http = require('http');
 
 /**
  * Get a mocha suite for common test cases for a client
@@ -22,7 +24,7 @@ exports.getCommonForClient = function(client, options) {
     }
 
     it('should be able to request a success-method on the server', function(done) {
-      var a = 11, b = 12;
+      const a = 11, b = 12;
       client.request('add', [a, b], function(err, error, result) {
         if(err || error) return done(err || error);
         should.exist(result);
@@ -43,8 +45,8 @@ exports.getCommonForClient = function(client, options) {
     });
 
     it('should support reviving and replacing', function(done) {
-      var a = 2, b = 1;
-      var instance = new Counter(a);
+      const a = 2, b = 1;
+      const instance = new Counter(a);
       client.request('incrementCounterBy', [instance, b], function(err, error, result) {
         should.not.exist(err);
         should.not.exist(error);
@@ -64,7 +66,7 @@ exports.getCommonForClient = function(client, options) {
     });
 
     it('should be able to handle a batch request', function(done) {
-      var batch = [
+      const batch = [
         client.request('add', [4, 9]),
         client.request('add', [10, 22])
       ];
@@ -90,7 +92,7 @@ exports.getCommonForHttpClient = function(client) {
   return function() {
 
     it('should emit an event with the http request', function(done) {
-      var hasFired = false;
+      let hasFired = false;
       client.once('http request', function(req) {
         req.should.be.instanceof(http.ClientRequest);
         hasFired = true;
@@ -104,7 +106,7 @@ exports.getCommonForHttpClient = function(client) {
     });
 
     it('should emit an event with the http response', function(done) {
-      var hasFired = false;
+      let hasFired = false;
       client.once('http response', function(res) {
         res.should.be.instanceof(http.IncomingMessage);
         hasFired = true;
@@ -142,7 +144,7 @@ exports.getCommonForHttpServer = function(server, client) {
   return function() {
 
     it('should emit an event with the http request', function(done) {
-      var hasFired = false;
+      let hasFired = false;
 
       server.once('http request', function(req) {
         hasFired = true;
@@ -157,7 +159,7 @@ exports.getCommonForHttpServer = function(server, client) {
     });
 
     it('should emit an event with the http response', function(done) {
-      var hasFired = false;
+      let hasFired = false;
 
       server.once('http response', function(res, req) {
         hasFired = true;

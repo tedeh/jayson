@@ -1,8 +1,10 @@
-var jaysonBrowserClient = require('./../../lib/client/browser');
-var fetch = require('node-fetch');
+'use strict';
 
-var callServer = function(request, callback) {
-  var options = {
+const jaysonBrowserClient = require('./../../lib/client/browser');
+const fetch = require('node-fetch');
+
+const callServer = function(request, callback) {
+  const options = {
     method: 'POST',
     body: request,
     headers: {
@@ -16,7 +18,7 @@ var callServer = function(request, callback) {
     .catch(function(err) { callback(err); });
 };
 
-var client = jaysonBrowserClient(callServer, {
+const client = jaysonBrowserClient(callServer, {
   // other options go here
 });
 

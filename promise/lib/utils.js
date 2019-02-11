@@ -1,7 +1,9 @@
-var promisify = require('es6-promisify');
+'use strict';
+
+const promisify = require('es6-promisify');
 
 /** * @namespace */
-var PromiseUtils = module.exports;
+const PromiseUtils = module.exports;
 
 /**
  * Wraps the client request method on an instance, making it return a promise in every case except when the fourth argument is explicitly set to false
@@ -9,7 +11,7 @@ var PromiseUtils = module.exports;
  * @return {Function}
  */
 PromiseUtils.wrapClientRequestMethod = function(request) {
-  var promisified = promisify(request);
+  const promisified = promisify(request);
 
   return function(method, params, id, shouldCall) {
     if(shouldCall === false) {

@@ -1,17 +1,18 @@
-var should = require('should');
-var jayson = require('./..');
-var support = require('./support');
-var suites = require('./support/suites');
-var http = require('http');
-var https = require('https');
-var url = require('url');
+'use strict';
+
+const should = require('should');
+const jayson = require('./..');
+const support = require('./support');
+const suites = require('./support/suites');
+const http = require('http');
+const https = require('https');
+const url = require('url');
 
 describe('jayson.https', function() {
 
   describe('server', function() {
 
-    var server = null;
-
+    let server = null;
     after(function() {
       if(server) server.close();
     });
@@ -29,9 +30,9 @@ describe('jayson.https', function() {
 
   describe('client', function() {
     
-    var server = jayson.server(support.server.methods(), support.server.options());
-    var https = server.https(support.server.keys());
-    var client = jayson.client.https({
+    const server = jayson.server(support.server.methods(), support.server.options());
+    const https = server.https(support.server.keys());
+    const client = jayson.client.https({
       reviver: support.server.options().reviver,
       replacer: support.server.options().replacer,
       host: 'localhost',
@@ -48,9 +49,9 @@ describe('jayson.https', function() {
     });
 
     it('should accept a URL string as the first argument', function() {
-      var urlStr = 'https://localhost:3999';
-      var client = jayson.client.https(urlStr);
-      var tokens = url.parse(urlStr);
+      const urlStr = 'https://localhost:3999';
+      const client = jayson.client.https(urlStr);
+      const tokens = url.parse(urlStr);
       client.options.should.containDeep(tokens);
     });
 

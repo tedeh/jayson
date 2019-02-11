@@ -1,10 +1,12 @@
-var should = require('should');
-var jayson = require('./../');
-var support = require('./support');
+'use strict';
+
+const should = require('should');
+const jayson = require('./../');
+const support = require('./support');
 
 describe('jayson.method', function() {
 
-  var Method = jayson.Method;
+  const Method = jayson.Method;
 
   it('should return an instance when called as a function', function() {
     Method(function() {}).should.be.instanceof(Method);
@@ -12,7 +14,7 @@ describe('jayson.method', function() {
 
   describe('instance', function() {
 
-    var method = null;
+    let method = null;
 
     beforeEach(function() {
       method = new Method();
@@ -26,7 +28,7 @@ describe('jayson.method', function() {
 
     describe('getHandler and setHandler', function() {
 
-      var fn = function() {};
+      const fn = function() {};
 
       it('should accept the "handler" argument in the options object in the constructor', function() {
         method = new Method({handler: fn});
@@ -39,7 +41,7 @@ describe('jayson.method', function() {
       });
 
       it('should return the handler function when given in constructor', function() {
-        var method = new Method(fn);
+        const method = new Method(fn);
         method.getHandler().should.equal(fn);
       });
     
@@ -47,15 +49,14 @@ describe('jayson.method', function() {
 
     describe('execute', function() {
 
-      var server = null;
-
+      let server = null;
       beforeEach(function() {
         server = new jayson.Server();
       });
 
       describe('options.params Array', function() {
 
-        var add = function(args, callback) {
+        const add = function(args, callback) {
           args.should.be.instanceof(Array);
           callback(null, args.reduce(function(sum, value) {
             return sum + value;
@@ -88,12 +89,12 @@ describe('jayson.method', function() {
 
       describe('options.params Object', function() {
 
-        var add = function(args, callback) {
+        const add = function(args, callback) {
           args.should.be.instanceof(Object);
           args.should.not.be.instanceof(Array);
 
-          var sum = 0;
-          for(var name in args) {
+          let sum = 0;
+          for(const name in args) {
             sum += args[name];
           }
 
@@ -127,11 +128,11 @@ describe('jayson.method', function() {
 
       describe('options.params list of params', function() {
 
-        var add = function(args, callback) {
+        const add = function(args, callback) {
           args.should.be.instanceof(Object);
           args.should.not.be.instanceof(Array);
           args.should.have.keys('a', 'b', 'c');
-          var sum = (args.a || 0) + (args.b || 0) + (args.c || 0);
+          const sum = (args.a || 0) + (args.b || 0) + (args.c || 0);
           callback(null, sum);
         };
 
@@ -161,7 +162,7 @@ describe('jayson.method', function() {
 
       describe('options.params map of default values', function() {
 
-        var add = function(args, callback) {
+        const add = function(args, callback) {
           args.should.be.instanceof(Object);
           args.should.not.be.instanceof(Array);
 
@@ -169,7 +170,7 @@ describe('jayson.method', function() {
           args.should.have.property('b').and.be.instanceof(Number);
           args.should.have.property('c').and.be.instanceof(Number);
 
-          var sum = args.a + args.b + args.c;
+          const sum = args.a + args.b + args.c;
           callback(null, sum);
         };
 
@@ -199,7 +200,7 @@ describe('jayson.method', function() {
 
       describe('options.params undefined', function() {
 
-        var add = function(args, callback) {
+        const add = function(args, callback) {
 
           if(args instanceof Array) {
 
@@ -211,8 +212,8 @@ describe('jayson.method', function() {
           } else {
 
             // given Object
-            var sum = 0;
-            for(var name in args) {
+            const sum = 0;
+            for(const name in args) {
               sum += args[name];
             }
 
@@ -222,7 +223,7 @@ describe('jayson.method', function() {
         };
 
         it('should pass an array when given an array', function(done) {
-          var fn = function(args, callback) {
+          const fn = function(args, callback) {
             args.should.be.instanceof(Array);
             callback();
           };
@@ -232,7 +233,7 @@ describe('jayson.method', function() {
         });
 
         it('should pass an object when given an object', function(done) {
-          var fn = function(args, callback) {
+          const fn = function(args, callback) {
             args.should.not.be.instanceof(Array);
             args.should.be.instanceof(Object);
             callback();

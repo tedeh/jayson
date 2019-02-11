@@ -1,12 +1,14 @@
-var jayson = require('./../..');
+'use strict';
 
-var server = jayson.server();
+const jayson = require('./../..');
+
+const server = jayson.server();
 
 // "http" will be an instance of require('http').Server
-var http = server.http();
+const http = server.http();
 
 // "https" will be an instance of require('https').Server
-var https = server.https({
+const https = server.https({
   //cert: require('fs').readFileSync('cert.pem'),
   //key require('fs').readFileSync('key.pem')
 });

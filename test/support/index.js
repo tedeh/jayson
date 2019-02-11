@@ -39,7 +39,7 @@ exports.server.methods = () => ({
   },
 
   add_slow: function([a, b, isSlow], callback) {
-    var result = a + b;
+    const result = a + b;
     if(!isSlow) return callback(null, result);
     setTimeout(function() {
       callback(null, result);
@@ -69,8 +69,8 @@ exports.server.options = () => ({
 
   reviver: function(key, value) {
     if(value && value.$class === 'counter') {
-      var obj = new exports.Counter();
-      for(var prop in value.$props) obj[prop] = value.$props[prop];
+      const obj = new exports.Counter();
+      for(const prop in value.$props) obj[prop] = value.$props[prop];
       return obj;
     }
     return value;

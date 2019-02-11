@@ -1,18 +1,20 @@
-var should = require('should');
-var jayson = require('./../');
-var support = require('./support');
-var suites = require('./support/suites');
+'use strict';
+
+const should = require('should');
+const jayson = require('./../');
+const support = require('./support');
+const suites = require('./support/suites');
 
 describe('jayson.client', function() {
 
   it('should return an instance without using "new"', function() {
-    var client = jayson.client(jayson.server());
+    const client = jayson.client(jayson.server());
     client.should.be.instanceof(jayson.client);
   });
 
   it('should return a raw request if not passed a server', function() {
-    var client = new jayson.Client();
-    var request = client.request('add', [11, 9]);
+    const client = new jayson.Client();
+    const request = client.request('add', [11, 9]);
     should.exist(request);
     request.should.have.property('method', 'add');
     request.should.have.property('id');
@@ -21,16 +23,16 @@ describe('jayson.client', function() {
   });
 
   it('should return a raw request without a version 2 jsonrpc field if client is version 1', function() {
-    var client = new jayson.Client({version: 1});
-    var request = client.request('add', [11, 9]);
+    const client = new jayson.Client({version: 1});
+    const request = client.request('add', [11, 9]);
     should.exist(request);
     request.should.not.have.property('jsonrpc');
   });
 
   describe('instance', function() {
     
-    var server = jayson.Server(support.server.methods(), support.server.options());
-    var client = jayson.client(server, support.server.options());
+    const server = jayson.Server(support.server.methods(), support.server.options());
+    const client = jayson.client(server, support.server.options());
 
     describe('common tests', suites.getCommonForClient(client));
 
@@ -78,7 +80,7 @@ describe('jayson.client', function() {
     describe('_parseResponse', function() {
 
       it('should correctly split an ambiguous error response', function(done) {
-        var response = {
+        const response = {
           error: null, // should not be here
           result: 5
         };
@@ -91,7 +93,7 @@ describe('jayson.client', function() {
       });
 
       it('should send both error and response as is if ambiguous', function(done) {
-        var response = {
+        const response = {
           error: {code: 10000}, // missing message
           result: 2 // should not be here
         };
@@ -107,7 +109,7 @@ describe('jayson.client', function() {
 
     it('should support specifying a request id generator', function(done) {
 
-      var ordinal = 0;
+      let ordinal = 0;
       client.options.generator = function(request) { return ordinal++; };
 
       client.request('add', [9, 2], function(err, response) {
@@ -124,7 +126,7 @@ describe('jayson.client', function() {
     });
 
     it('should emit "request" when a request is dispatched', function(done) {
-      var hasFired = false;
+      let hasFired = false;
 
       client.once('request', function(request) {
         hasFired = true;
@@ -139,7 +141,7 @@ describe('jayson.client', function() {
     });
 
     it('should emit "response" when a response is received', function(done) {
-      var hasFired = false;
+      let hasFired = false;
 
       client.once('response', function(request, response) {
         hasFired = true;
@@ -176,7 +178,7 @@ describe('jayson.client', function() {
 
       it('should execute a simple batch', function(done) {
 
-        var batch = [
+        const batch = [
           client.request('add', [1, 1]),
           client.request('add', [-1, -1]),
           client.request('add', [16, 4]),
@@ -188,7 +190,7 @@ describe('jayson.client', function() {
           responses.should.be.instanceof(Array).and.have.length(3);
 
           responses.forEach(function(response, index) {
-            var params = batch[index].params;
+            const params = batch[index].params;
             should.exist(response.result);
             response.result.should.equal(params[0] + params[1]);
           });
@@ -199,7 +201,7 @@ describe('jayson.client', function() {
 
       it('should propagate errors', function(done) {
 
-        var batch = [
+        const batch = [
           client.request('add', [5, 10]),
           client.request('add', [6, 2], null), // notification
           client.request('does_not_exist', [])
@@ -224,7 +226,7 @@ describe('jayson.client', function() {
 
       it('should split errors and responses when given a length 3 callback', function(done) {
 
-        var batch = [
+        const batch = [
           client.request('add', [12, 13]),
           client.request('add', [6, 2], null), // notification
           client.request('does_not_exist', [])
@@ -250,7 +252,7 @@ describe('jayson.client', function() {
 
       it('should not callback anything when given only notifications', function(done) {
 
-        var batch = [
+        const batch = [
           client.request('add', [5, 2], null),
           client.request('add', [7, 6], null)
         ];

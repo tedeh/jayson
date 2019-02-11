@@ -1,10 +1,12 @@
-var jayson = require('./../..');
-var fs = require('fs');
-var path = require('path');
+'use strict';
+
+const jayson = require('./../..');
+const fs = require('fs');
+const path = require('path');
 
 // Read node's tls documentation for more information about these options:
 // https://nodejs.org/api/tls.html#tls_tls_connect_options_callback
-var options = {
+const options = {
   key: fs.readFileSync(path.resolve('./../../../test/fixtures/keys/agent1-key.pem')),
   cert: fs.readFileSync(path.resolve('./../../../test/fixtures/keys/agent1-cert.pem')),
 
@@ -15,7 +17,7 @@ var options = {
 };
 
 // create a client
-var client = jayson.client.tls(options);
+const client = jayson.client.tls(options);
 
 // invoke "add"
 client.request('add', [1, 1], function(err, response) {

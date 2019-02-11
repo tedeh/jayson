@@ -1,6 +1,8 @@
-var jayson = require('./../..');
+'use strict';
 
-var server = jayson.server({
+const jayson = require('./../..');
+
+const server = jayson.server({
   add: function(a, b, callback) {
     callback(null, a + b);
   }

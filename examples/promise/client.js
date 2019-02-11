@@ -1,10 +1,12 @@
-var jayson = require('../../promise');
+'use strict';
 
-var client = jayson.client.http({
+const jayson = require('../../promise');
+
+const client = jayson.client.http({
   port: 3000
 });
 
-var reqs = [
+const reqs = [
   client.request('add', [1, 2, 3, 4, 5]),
   client.request('rejection', [])
 ];

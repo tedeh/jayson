@@ -1,5 +1,7 @@
-var jayson = require('../../');
-var _ = require('lodash');
+'use strict';
+
+const jayson = require('../../');
+const _ = require('lodash');
 
 /**
  * Constructor for a Jayson Promise Method
@@ -8,7 +10,7 @@ var _ = require('lodash');
  * @extends Method
  * @return {PromiseMethod}
  */
-var PromiseMethod = module.exports = function(handler, options) {
+const PromiseMethod = module.exports = function(handler, options) {
   if(!(this instanceof PromiseMethod)) {
     return new PromiseMethod(handler, options);
   }
@@ -26,14 +28,14 @@ module.exports = PromiseMethod;
  * @return {Promise}
  */
 PromiseMethod.prototype.execute = function(server, requestParams, context, outerCallback) {
-  var wasPromised = false;
+  let wasPromised = false;
 
   if(typeof(context) === 'function') {
     outerCallback = context;
     context = {};
   }
 
-  var promise = jayson.Method.prototype.execute.call(this, server, requestParams, context, function() {
+  const promise = jayson.Method.prototype.execute.call(this, server, requestParams, context, function() {
     if(wasPromised) {
       return; // ignore any invocations of the callback if a promise was returned
     }

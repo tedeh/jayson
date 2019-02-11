@@ -1,8 +1,10 @@
-var jayson = require('./../..');
-var request = require('superagent');
+'use strict';
+
+const jayson = require('./../..');
+const request = require('superagent');
 
 // generate a json-rpc version 2 compatible request (non-notification)
-var requestBody = jayson.Utils.request('add', [1,2,3,4], undefined, {
+const requestBody = jayson.Utils.request('add', [1,2,3,4], undefined, {
   version: 2, // generate a version 2 request
 });
 

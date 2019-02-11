@@ -10,17 +10,17 @@ describe('jayson/promise', function() {
 
   describe('server', function() {
 
-    var Server = jaysonPromise.Server;
+    const Server = jaysonPromise.Server;
 
     it('should return a correct instance without using "new"', function() {
-      var instance = Server(function() {});
+      const instance = Server(function() {});
       instance.should.be.instanceof(Server);
       instance.should.be.instanceof(jayson.Server);
     });
 
     describe('instance', function() {
 
-      var server = null;
+      let server = null;
       beforeEach(function() {
         server = new Server(support.server.methods(), support.server.options());
       });
@@ -37,7 +37,7 @@ describe('jayson/promise', function() {
   describe('client', function() {
 
     // auto-generated test-suite
-    var suites = {
+    const suites = {
       'regular': {
         server: function(done) {
           done();
@@ -49,8 +49,8 @@ describe('jayson/promise', function() {
       },
       'http': {
         server: function(done) {
-          var server = jaysonPromise.Server(support.server.methods(), support.server.options());
-          var http = server.http();
+          const server = jaysonPromise.Server(support.server.methods(), support.server.options());
+          const http = server.http();
           http.listen(3999, 'localhost', done);
           return http;
         },
@@ -68,8 +68,8 @@ describe('jayson/promise', function() {
       },
       'https': {
         server: function(done) {
-          var server = jaysonPromise.Server(support.server.methods(), support.server.options());
-          var https = server.https(support.server.keys());
+          const server = jaysonPromise.Server(support.server.methods(), support.server.options());
+          const https = server.https(support.server.keys());
           https.listen(3999, 'localhost', done);
           return https;
         },
@@ -88,8 +88,8 @@ describe('jayson/promise', function() {
       },
       'tcp': {
         server: function(done) {
-          var server = jaysonPromise.Server(support.server.methods(), support.server.options());
-          var tcp = server.tcp();
+          const server = jaysonPromise.Server(support.server.methods(), support.server.options());
+          const tcp = server.tcp();
           tcp.listen(3999, 'localhost', done);
           return tcp;
         },
@@ -108,8 +108,8 @@ describe('jayson/promise', function() {
       },
       'tls': {
         server: function(done) {
-          var server = jaysonPromise.Server(support.server.methods(), support.server.options());
-          var tls = server.tls(support.server.keys());
+          const server = jaysonPromise.Server(support.server.methods(), support.server.options());
+          const tls = server.tls(support.server.keys());
           tls.listen(3999, 'localhost', done);
           return tls;
         },
@@ -132,12 +132,12 @@ describe('jayson/promise', function() {
 
       describe(name, function() {
 
-        var server = null
+        let server = null
         before(function(done) {
           server = suite.server(done);
         });
 
-        var client = null;
+        let client = null;
         beforeEach(function() {
           client = suite.client(server);
         });
@@ -191,7 +191,7 @@ describe('jayson/promise', function() {
 
   describe('method', function() {
 
-    var Method = jaysonPromise.Method;
+    const Method = jaysonPromise.Method;
 
     it('should return an instance without using "new"', function() {
       Method(function() {}).should.be.instanceof(Method);
@@ -199,30 +199,30 @@ describe('jayson/promise', function() {
 
     describe('instance', function() {
 
-      var method = null, server = new jaysonPromise.Server();
+      let method = null, server = new jaysonPromise.Server();
       beforeEach(function() {
         method = new Method({collect: true});
       });
 
       describe('execute', function() {
 
-        var handlers = {
+        const handlers = {
           sum: function(args) {
             return new Promise(function(resolve, reject) {
-              var sum = _.reduce(args, function(sum, arg) { return sum + arg; }, 0);
+              const sum = _.reduce(args, function(sum, arg) { return sum + arg; }, 0);
               resolve(sum);
             });
           },
           error: function(args) {
             return new Promise(function(resolve, reject) {
-              var code = args.code || -1;
+              const code = args.code || -1;
               reject({code: code});
             })
           },
           // returns a "Promise-like" object
           thenable: function(args) {
             return {then: function(resolve, reject) {
-              var sum = _.reduce(args, function(sum, arg) { return sum + arg; }, 0);
+              const sum = _.reduce(args, function(sum, arg) { return sum + arg; }, 0);
               resolve(sum);
             }};
           }

@@ -1,12 +1,14 @@
-var should = require('should');
-var fs = require('fs');
-var jayson = require('./..');
-var support = require('./support');
-var suites = require('./support/suites');
-var JSONStream = require('JSONStream');
-var tls = require('tls');
+'use strict';
 
-var serverOptions = {
+const should = require('should');
+const fs = require('fs');
+const jayson = require('./..');
+const support = require('./support');
+const suites = require('./support/suites');
+const JSONStream = require('JSONStream');
+const tls = require('tls');
+
+const serverOptions = {
   ca: [fs.readFileSync(__dirname + '/fixtures/keys/ca1-cert.pem')],
   key: fs.readFileSync(__dirname + '/fixtures/keys/agent1-key.pem'),
   cert: fs.readFileSync(__dirname + '/fixtures/keys/agent1-cert.pem'),
@@ -14,7 +16,7 @@ var serverOptions = {
   secureProtocol: 'TLSv1_2_method'
 };
 
-var clientOptions = {
+const clientOptions = {
   ca: serverOptions.ca,
   secureProtocol: serverOptions.secureProtocol,
   key: serverOptions.key,
@@ -29,7 +31,7 @@ describe('jayson.tls', function() {
 
   describe('server', function() {
 
-    var server = null;
+    let server = null;
 
     after(function() {
       server.close();
@@ -48,9 +50,9 @@ describe('jayson.tls', function() {
 
   describe('client', function() {
     
-    var server = jayson.server(support.server.methods(), support.server.options());
-    var server_tls = server.tls(serverOptions);
-    var client = jayson.client.tls(clientOptions);
+    const server = jayson.server(support.server.methods(), support.server.options());
+    const server_tls = server.tls(serverOptions);
+    const client = jayson.client.tls(clientOptions);
 
     before(function(done) {
       server_tls.listen(3999, 'localhost', done);
@@ -63,8 +65,8 @@ describe('jayson.tls', function() {
     describe('common tests', suites.getCommonForClient(client));
 
     it('should send a parse error for invalid JSON data', function(done) {
-      var socket = tls.connect(3999, 'localhost', serverOptions, function() {
-        var response = JSONStream.parse();
+      const socket = tls.connect(3999, 'localhost', serverOptions, function() {
+        const response = JSONStream.parse();
 
         response.on('data', function(data) {
           data.should.containDeep({

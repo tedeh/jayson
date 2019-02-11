@@ -1,22 +1,24 @@
-var should = require('should');
-var support = require('./support');
-var suites = require('./support/suites');
-var http = require('http');
-var jayson = require('./..');
-var connect = require('connect');
-var bodyParser = require('body-parser');
+'use strict';
+
+const should = require('should');
+const support = require('./support');
+const suites = require('./support/suites');
+const http = require('http');
+const jayson = require('./..');
+const connect = require('connect');
+const bodyParser = require('body-parser');
 
 describe('jayson.middleware', function() {
 
-  var app = connect();
-  var server = null; // set in before()
-  var client = jayson.client.http({
+  const app = connect();
+  const client = jayson.client.http({
     reviver: support.server.options().reviver,
     replacer: support.server.options().replacer,
     host: 'localhost',
     port: 3999
   });
 
+  let server = null;
   before(function(done) {
     app.use(bodyParser.json({reviver: support.server.options().reviver}));
     app.use(jayson.server(support.server.methods(), support.server.options()).middleware());
@@ -39,7 +41,7 @@ describe('jayson.middleware', function() {
     });
 
     it('should support passing to the next middleware', function(done) {
-      var invocations = 0;
+      let invocations = 0;
       app.use(function(req, res, next) {
         invocations++;
         res.end();

@@ -1,5 +1,7 @@
-var Method = require('./method');
-var jayson = require('../../');
+'use strict';
+
+const Method = require('./method');
+const jayson = require('../../');
 
 /**
  * Constructor for a Jayson Promise Server
@@ -8,7 +10,7 @@ var jayson = require('../../');
  * @extends Server
  * @return {PromiseServer}
  */
-var PromiseServer = function(methods, options) {
+const PromiseServer = function(methods, options) {
   if(!(this instanceof PromiseServer)) {
     return new PromiseServer(methods, options);
   }

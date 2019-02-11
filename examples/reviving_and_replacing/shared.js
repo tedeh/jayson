@@ -1,4 +1,6 @@
-var Counter = exports.Counter = function(value) {
+'use strict';
+
+const Counter = exports.Counter = function(value) {
   this.count = value || 0;
 };
 
@@ -15,8 +17,8 @@ exports.replacer = function(key, value) {
 
 exports.reviver = function(key, value) {
   if(value && value.$class === 'counter') {
-    var obj = new Counter();
-    for(var prop in value.$props) obj[prop] = value.$props[prop];
+    const obj = new Counter();
+    for(const prop in value.$props) obj[prop] = value.$props[prop];
     return obj;
   }
   return value;

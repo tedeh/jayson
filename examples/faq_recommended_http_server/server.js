@@ -1,11 +1,13 @@
-var _ = require('lodash');
-var jayson = require('./../..');
-var jsonParser = require('body-parser').json;
-var express = require('express');
-var app = express();
+'use strict';
+
+const _ = require('lodash');
+const jayson = require('./../..');
+const jsonParser = require('body-parser').json;
+const express = require('express');
+const app = express();
 
 // create a plain jayson server
-var server = jayson.server({
+const server = jayson.server({
   add: function(numbers, callback) {
     callback(null, _.reduce(numbers, (sum, val) => sum + val, 0));
   }
@@ -13,7 +15,7 @@ var server = jayson.server({
 
 app.use(jsonParser()); // <- here we can deal with maximum body sizes, etc
 app.use(function(req, res, next) {
-  var request = req.body;
+  const request = req.body;
   // <- here we can check headers, modify the request, do logging, etc
   server.call(request, function(err, response) {
     if(err) {

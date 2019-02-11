@@ -1,18 +1,17 @@
-var should = require('should');
-var _ = require('lodash');
-var jayson = require('./../');
-var support = require('./support');
-var suites = require('./support/suites');
-var net = require('net');
-var url = require('url');
-var JSONStream = require('JSONStream');
+const should = require('should');
+const _ = require('lodash');
+const jayson = require('./../');
+const support = require('./support');
+const suites = require('./support/suites');
+const net = require('net');
+const url = require('url');
+const JSONStream = require('JSONStream');
 
 describe('jayson.tcp', function() {
 
   describe('server', function() {
 
-    var server = null;
-
+    let server = null;
     before(function() {
       server = jayson.server(support.server.methods(), support.server.options()).tcp();
     });
@@ -33,8 +32,8 @@ describe('jayson.tcp', function() {
 
     context('connected socket', function() {
 
-      var socket = null;
-      var responses = null;
+      let socket = null;
+      let responses = null;
 
       before(function(done) {
         server.listen(3999, 'localhost', done);
@@ -65,7 +64,7 @@ describe('jayson.tcp', function() {
       });
 
       it('should send more than one reply on the same socket', function(done) {
-        var replies = [];
+        const replies = [];
         responses.on('data', function(data) {
           replies.push(data);
         });
@@ -88,9 +87,9 @@ describe('jayson.tcp', function() {
 
   describe('client', function() {
 
-    var server = jayson.server(support.server.methods(), support.server.options());
-    var server_tcp = server.tcp();
-    var client = jayson.client.tcp({
+    const server = jayson.server(support.server.methods(), support.server.options());
+    const server_tcp = server.tcp();
+    const client = jayson.client.tcp({
       reviver: support.server.options().reviver,
       replacer: support.server.options().replacer,
       host: 'localhost',

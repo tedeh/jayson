@@ -1,6 +1,8 @@
-var promisify = require('es6-promisify');
-var jayson = require('../../../');
-var promiseUtils = require('../utils');
+'use strict';
+
+const promisify = require('es6-promisify');
+const jayson = require('../../../');
+const promiseUtils = require('../utils');
 
 /**
  * Constructor for a Jayson Promise Client Http
@@ -9,7 +11,7 @@ var promiseUtils = require('../utils');
  * @extends ClientHttps
  * @return {PromiseClientHttps}
  */
-var PromiseClientHttps = function(options) {
+const PromiseClientHttps = function(options) {
   if(!(this instanceof PromiseClientHttps)) {
     return new PromiseClientHttps(options);
   }

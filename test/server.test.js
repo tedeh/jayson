@@ -41,7 +41,7 @@ describe('jayson.server', function() {
     });
     
     it('should pass options.methodConstructor and make new methods an instanceof it', function() {
-      var ctor = function() {};
+      const ctor = function() {};
       server.options.methodConstructor = ctor;
       server.method('add', function(args, done) { done(); });
       server.getMethod('add').should.be.instanceof(ctor);
@@ -78,7 +78,7 @@ describe('jayson.server', function() {
 
     // change server instance error message, request erroring method, assert error message changed
     it('should allow standard error messages to be changed', function(done) {
-      var newMsg = server.errorMessages[Server.errors.PARSE_ERROR] = 'Parse Error!';
+      const newMsg = server.errorMessages[Server.errors.PARSE_ERROR] = 'Parse Error!';
       server.call('invalid request', function(err) {
         err.should.containDeep({error: { code: Server.errors.PARSE_ERROR, message: newMsg }});
         done();
@@ -88,13 +88,13 @@ describe('jayson.server', function() {
     describe('error', function() {
 
       it('should not make an error out of an invalid code', function() {
-        var error = server.error('invalid_code');
+        const error = server.error('invalid_code');
         error.should.have.property('code', Server.errors.INTERNAL_ERROR);
       });
 
       it('should fill in the error message if not passed one', function() {
-        var code = Server.errors.INVALID_PARAMS;
-        var error = server.error(code);
+        const code = Server.errors.INVALID_PARAMS;
+        const error = server.error(code);
         server.error(code).should.containDeep({
           code: code,
           message: Server.errorMessages[code]
@@ -102,9 +102,9 @@ describe('jayson.server', function() {
       });
 
       it('should add a data member if specified', function() {
-        var data = {member: 1};
-        var code = Server.errors.INVALID_PARAMS;
-        var error = server.error(code, null, data);
+        const data = {member: 1};
+        const code = Server.errors.INVALID_PARAMS;
+        const error = server.error(code, null, data);
         error.should.have.property('data', data);
       });
 
@@ -118,7 +118,7 @@ describe('jayson.server', function() {
           server.method('errorMethod', function(args, callback) {
             callback('an error');
           });
-          var request = utils.request('errorMethod', []);
+          const request = utils.request('errorMethod', []);
           server.call(request, function(err, response) {
             err.error.should.eql('an error');
           });
@@ -143,7 +143,7 @@ describe('jayson.server', function() {
       });
 
       it('should call a method by router completion', function(done) {
-        var request = utils.request('add_2', [2]);
+        const request = utils.request('add_2', [2]);
         server.call(request, function(err, response) {
           if(err) return done(err);
           response.should.have.property('result', 4);
@@ -152,7 +152,7 @@ describe('jayson.server', function() {
       });
 
       it('should "method not found" for a non-existing method', function(done) {
-        var request = utils.request('add_4', [2]);
+        const request = utils.request('add_4', [2]);
         server.call(request, function(err, response) {
           err.should.containDeep({error: {code: ServerErrors.METHOD_NOT_FOUND}});
           done();
@@ -162,8 +162,8 @@ describe('jayson.server', function() {
     });
 
     describe('jayson.Client router', function() {
-      var client = null;
 
+      let client = null;
       beforeEach(function() {
         client = jayson.client(server, support.server.options());
         server.options.router = function(method) {
@@ -172,7 +172,7 @@ describe('jayson.server', function() {
       });
 
       it('should forward id', function(done) {
-        var request = utils.request('method', [], 'test_event_id');
+        const request = utils.request('method', [], 'test_event_id');
 
         client._request = function(request, cb) {
           request.id.should.eql('test_event_id');
@@ -189,7 +189,7 @@ describe('jayson.server', function() {
 
       (function() {
 
-        var request = utils.request('add', [9, 2], 'test_request_event_id');
+        const request = utils.request('add', [9, 2], 'test_request_event_id');
         it('should emit "request" upon a request', reqShouldEmit(request, 'request', function(req) {
           should.exist(req);
           req.id.should.equal(request.id);
@@ -199,7 +199,7 @@ describe('jayson.server', function() {
 
       (function() {
 
-        var request = utils.request('add', [5, 2], 'test_response_event_id');
+        const request = utils.request('add', [5, 2], 'test_response_event_id');
         it('should emit "response" upon a response', reqShouldEmit(request, 'response', function(req, res) {
           should.exist(req);
           should.exist(res);
@@ -211,7 +211,7 @@ describe('jayson.server', function() {
 
       (function() {
 
-        var request = [utils.request('add', [5, 2], 'test_batch_event_id')];
+        const request = [utils.request('add', [5, 2], 'test_batch_event_id')];
         it('should emit "batch" upon a batch request', reqShouldEmit(request, 'batch', function(batch) {
           should.exist(batch);
           batch.should.be.instanceof(Array).and.have.length(1);
@@ -223,7 +223,7 @@ describe('jayson.server', function() {
       // add event handler, exec request, assert event handler ran
       function reqShouldEmit(request, name, handler) {
         return function(done) {
-          var fired = false;
+          let fired = false;
 
           server.once(name, function() {
             handler.apply(null, arguments);
@@ -244,7 +244,7 @@ describe('jayson.server', function() {
     describe('invalid request with wrong format', function() {
 
       it('should callback a "Parse Error"', function(done) {
-        var request = 'I am a completely invalid request';
+        const request = 'I am a completely invalid request';
         server.call(request, function(err) {
           err.should.containDeep({error: {code: ServerErrors.PARSE_ERROR}});
           done();
@@ -256,7 +256,7 @@ describe('jayson.server', function() {
     describe('invalid request with an erroneous "jsonrpc"-property', function() {
 
       it('should callback a "Request Error" by having a wrong value', function(done) {
-        var request = utils.request('add', []);
+        const request = utils.request('add', []);
         request.jsonrpc = '1.0';
         server.call(request, function(err) {
           err.should.containDeep({error: {code: ServerErrors.INVALID_REQUEST}});
@@ -265,7 +265,7 @@ describe('jayson.server', function() {
       });
 
       it('should callback a "Request Error" by being non-existent', function(done) {
-        var request = utils.request('add', []);
+        const request = utils.request('add', []);
         delete request.jsonrpc;
         server.call(request, function(err) {
           err.should.containDeep({error: {code: ServerErrors.INVALID_REQUEST}});
@@ -278,7 +278,7 @@ describe('jayson.server', function() {
     describe('invalid request with an erroneous "method"-property', function() {
 
       it('should callback with a "Request Error" if it is of the wrong type', function(done) {
-        var request = utils.request('add', []);
+        const request = utils.request('add', []);
         request.method = true;
         server.call(request, function(err) {
           err.should.containDeep({error: {code: ServerErrors.INVALID_REQUEST}});
@@ -287,7 +287,7 @@ describe('jayson.server', function() {
       });
 
       it('should callback with a "Method Not Found" if it refers to a non-existing method', function(done) {
-        var request = utils.request('add', []);
+        const request = utils.request('add', []);
         request.method = 'subtract';
         server.call(request, function(err) {
           err.should.containDeep({error: {code: ServerErrors.METHOD_NOT_FOUND}});
@@ -300,7 +300,7 @@ describe('jayson.server', function() {
     describe('invalid request with an erroneous "id"-property', function() {
 
       it('should callback with a "Request Error" if it is of the wrong type', function(done) {
-        var request = utils.request('add', []);
+        const request = utils.request('add', []);
         request.id = true;
         server.call(request, function(err) {
           err.should.containDeep({error: {code: ServerErrors.INVALID_REQUEST}});
@@ -309,7 +309,7 @@ describe('jayson.server', function() {
       });
 
       it('should callback with the "id"-property set to null if it is non-interpretable', function(done) {
-        var request = utils.request('add', []);
+        let request = utils.request('add', []);
         delete request.id;
         request = JSON.stringify(request).slice(0, request.length - 5);
         server.call(request, function(err) {
@@ -319,7 +319,7 @@ describe('jayson.server', function() {
       });
 
       it('should callback empty if the request is interpretable', function(done) {
-        var request = utils.request('add', [1, 2]);
+        const request = utils.request('add', [1, 2]);
         delete request.id;
         server.call(request, function(err, response) {
           if(err) return done(err);
@@ -333,7 +333,7 @@ describe('jayson.server', function() {
     describe('invalid request with wrong "params"', function() {
 
       it('should callback with a "Request Error" if it is of the wrong type', function(done) {
-        var request = utils.request('add', []);
+        const request = utils.request('add', []);
         request.params = '1';
         server.call(request, function(err) {
           err.should.containDeep({error: {code: ServerErrors.INVALID_REQUEST}});
@@ -346,7 +346,7 @@ describe('jayson.server', function() {
     describe('request', function() {
 
       it('should return the expected result', function(done) {
-        var request = utils.request('add', [3, 9]);
+        const request = utils.request('add', [3, 9]);
         server.call(request, function(err, response) {
           if(err) return done(err);
           response.should.have.property('result', 3 + 9);
@@ -355,7 +355,7 @@ describe('jayson.server', function() {
       });
 
       it('should "Internal Error" when the method returns an invalid error', function(done) {
-        var request = utils.request('invalidError', ['hello']);
+        const request = utils.request('invalidError', ['hello']);
         server.call(request, function(err, response) {
           should(response).not.exist;
           err.should.containDeep({error: {code: ServerErrors.INTERNAL_ERROR}});
@@ -368,7 +368,7 @@ describe('jayson.server', function() {
     describe('request to a method that does not callback anything', function() {
 
       it('should return a result regardless', function(done) {
-        var request = utils.request('empty', [true]);
+        const request = utils.request('empty', [true]);
         server.call(request, function(err, response) {
           if(err) return done(err);
           response.should.have.property('result');
@@ -381,7 +381,7 @@ describe('jayson.server', function() {
     describe('notification requests', function() {
 
       it('should handle a valid notification request', function(done) {
-        var request = utils.request('add', [3, -3], null);
+        const request = utils.request('add', [3, -3], null);
         server.call(request, function(err, response) {
           if(err) return done(err);
           should.not.exist(response);
@@ -390,7 +390,7 @@ describe('jayson.server', function() {
       });
 
       it('should handle an erroneous notification request', function(done) {
-        var request = utils.request('subtract', [3, -3], null);
+        const request = utils.request('subtract', [3, -3], null);
         server.call(request, function(err, response) {
           if(err) return done(err);
           should.not.exist(response);
@@ -407,7 +407,7 @@ describe('jayson.server', function() {
         const request = utils.request('incrementCounterBy', {counter, value: 5});
         server.call(request, function(err, response) {
           if(err) return done(err);
-          var result = response.result;
+          const result = response.result;
           result.should.be.an.instanceof(support.Counter);
           result.count.should.equal(5 + 5);
           done();
@@ -426,7 +426,7 @@ describe('jayson.server', function() {
 
         it('should error when version is 1.0', function(done) {
 
-          var request = [
+          const request = [
             utils.request('add', [1, 1]),
             utils.request('add', [2, 2])
           ];
@@ -450,7 +450,7 @@ describe('jayson.server', function() {
       });
 
       it('should handle a batch with only invalid requests', function(done) {
-        var requests = [1, 'a', true];
+        const requests = [1, 'a', true];
         server.call(requests, function(err, response) {
           if(err) return done(err);
 
@@ -464,7 +464,7 @@ describe('jayson.server', function() {
 
       it('should handle a batch with only notifications', function(done) {
 
-        var request = [
+        const request = [
           utils.request('add', [3, 4], null),
           utils.request('add', [4, 5], null)
         ];
@@ -479,7 +479,7 @@ describe('jayson.server', function() {
 
       it('should handle mixed requests', function(done) {
 
-        var request = [
+        const request = [
           utils.request('add', [1, 1], null),
           'invalid request',
           utils.request('add', [2, 2])
@@ -499,7 +499,7 @@ describe('jayson.server', function() {
 
       it('should be able return method invocations in correct order', function(done) {
 
-        var request = [ 
+        const request = [ 
           utils.request('add_slow', [1, 1, true]),
           utils.request('add_slow', [1, 2, false])
         ];

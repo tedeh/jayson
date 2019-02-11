@@ -1,18 +1,20 @@
-var should = require('should');
-var jayson = require('./../');
-var support = require('./support');
-var suites = require('./support/suites');
-var fetch = require('node-fetch');
-var http = require('http');
-var url = require('url');
+'use strict';
+
+const should = require('should');
+const jayson = require('./../');
+const support = require('./support');
+const suites = require('./support/suites');
+const fetch = require('node-fetch');
+const http = require('http');
+const url = require('url');
 
 describe('jayson.client.browser', function() {
 
-  var server = jayson.server(support.server.methods(), support.server.options());
-  var serverHttp = server.http();
+  const server = jayson.server(support.server.methods(), support.server.options());
+  const serverHttp = server.http();
 
-  var callServer = function(request, callback) {
-    var options = {
+  const callServer = function(request, callback) {
+    const options = {
       method: 'POST',
       body: request,
       headers: {
@@ -26,7 +28,7 @@ describe('jayson.client.browser', function() {
       .catch(function(err) { callback(err); });
   };
 
-  var client = jayson.client.browser(callServer, {
+  const client = jayson.client.browser(callServer, {
     reviver: support.server.options().reviver,
     replacer: support.server.options().replacer,
   });

@@ -27,7 +27,7 @@ describe('jayson.utils', function() {
     });
 
     it('should omit the params argument when not given', function() {
-      var request = utils.request('a_method', null);
+      const request = utils.request('a_method', null);
       request.should.have.property('method', 'a_method');
       request.should.not.have.property('params');
     });
@@ -36,7 +36,7 @@ describe('jayson.utils', function() {
 
   describe('getParameterNames', function() {
 
-    var specs = [
+    const specs = [
       {
         desc: 'no parameters',
         fn: function() { return true; },
@@ -97,7 +97,7 @@ describe('jayson.utils', function() {
       {
         desc: 'class function no params',
         fn: (function() {
-          var obj = {a() {}};
+          const obj = {a() {}};
           return obj.a;
         })(),
         expected: [],
@@ -105,7 +105,7 @@ describe('jayson.utils', function() {
       {
         desc: 'class function',
         fn: (function() {
-          var obj = {a(a, b, c) {}};
+          const obj = {a(a, b, c) {}};
           return obj.a;
         })(),
         expected: ['a', 'b', 'c'],
@@ -115,7 +115,7 @@ describe('jayson.utils', function() {
     specs.forEach(function(spec) {
 
       it('should handle ' + spec.desc, function() {
-        var result = utils.getParameterNames(spec.fn);
+        const result = utils.getParameterNames(spec.fn);
         should.exist(result);
         result.should.eql(spec.expected);
       });
@@ -126,11 +126,11 @@ describe('jayson.utils', function() {
 
   describe('parseBody', function() {
 
-    var parseBody = utils.parseBody;
+    const parseBody = utils.parseBody;
 
     it('should parse a valid json object', function(done) {
-      var stream = new PassStream();
-      var obj = {asdf: true, complex: {value: 2, a: 3}};
+      const stream = new PassStream();
+      const obj = {asdf: true, complex: {value: 2, a: 3}};
 
       parseBody(stream, {}, function(err, result) {
         if(err) return done(err);
@@ -142,8 +142,8 @@ describe('jayson.utils', function() {
     });
 
     it('should parse a valid json array', function(done) {
-      var stream = new PassStream();
-      var arr = [{first: true}, {asdf: true, complex: {value: 2, a: 3}}];
+      const stream = new PassStream();
+      const arr = [{first: true}, {asdf: true, complex: {value: 2, a: 3}}];
 
       parseBody(stream, {}, function(err, result) {
         if(err) return done(err);
@@ -155,7 +155,7 @@ describe('jayson.utils', function() {
     });
 
     it('should return an error on bad input', function(done) {
-      var stream = new PassStream();
+      const stream = new PassStream();
 
       parseBody(stream, {}, function(err, result) {
         should(err).be.instanceof(Error);
@@ -171,11 +171,11 @@ describe('jayson.utils', function() {
 
     it('should not throw with circular JSON reference', function(done) {
 
-      var foo = {};
-      var bar = { foo: foo };
+      const foo = {};
+      const bar = { foo: foo };
       foo.bar = bar;
 
-      var fn = utils.JSON.stringify(bar, {}, function(err, str) {
+      const fn = utils.JSON.stringify(bar, {}, function(err, str) {
         should(err).not.exist;
         done();
       });
@@ -187,7 +187,7 @@ describe('jayson.utils', function() {
 
   describe('Response.isValidResponse', function() {
 
-    var specs = [
+    const specs = [
       {
         desc: 'a valid 2 response',
         response: {jsonrpc: '2.0', result: null, id: 'something'},
@@ -325,7 +325,7 @@ describe('jayson.utils', function() {
     specs.forEach(function(spec) {
 
       it(`should handle ${spec.desc}`, function() {
-        var result = utils.Response.isValidResponse(spec.response, spec.version);
+        const result = utils.Response.isValidResponse(spec.response, spec.version);
         should(result).equal(spec.expected);
       });
 

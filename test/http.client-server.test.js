@@ -7,11 +7,11 @@ var url = require('url');
 
 describe('jayson.http', function() {
 
-  var server = jayson.server(support.server.methods, support.server.options);
+  var server = jayson.server(support.server.methods(), support.server.options());
   var serverHttp = server.http();
   var client = jayson.client.http({
-    reviver: support.server.options.reviver,
-    replacer: support.server.options.replacer,
+    reviver: support.server.options().reviver,
+    replacer: support.server.options().replacer,
     host: 'localhost',
     port: 3999
   });

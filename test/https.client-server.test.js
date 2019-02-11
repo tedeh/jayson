@@ -17,7 +17,7 @@ describe('jayson.https', function() {
     });
 
     it('should listen to a local port', function(done) {
-        server = jayson.server(support.methods, support.options).https(support.server.keys);
+        server = jayson.server(support.methods, support.options).https(support.server.keys());
         server.listen(3999, 'localhost', done);
     });
 
@@ -29,14 +29,14 @@ describe('jayson.https', function() {
 
   describe('client', function() {
     
-    var server = jayson.server(support.server.methods, support.server.options);
-    var https = server.https(support.server.keys);
+    var server = jayson.server(support.server.methods(), support.server.options());
+    var https = server.https(support.server.keys());
     var client = jayson.client.https({
-      reviver: support.server.options.reviver,
-      replacer: support.server.options.replacer,
+      reviver: support.server.options().reviver,
+      replacer: support.server.options().replacer,
       host: 'localhost',
       port: 3999,
-      ca: support.server.keys.ca
+      ca: support.server.keys().ca
     });
 
     before(function(done) {

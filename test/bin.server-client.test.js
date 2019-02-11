@@ -8,7 +8,7 @@ var bin = __dirname + '/../bin/jayson.js';
 
 describe('jayson.bin', function() {
 
-  var server = jayson.server(support.server.methods, support.server.options);;
+  var server = jayson.server(support.server.methods(), support.server.options());
 
   describe('port-listening http server', function() {
 

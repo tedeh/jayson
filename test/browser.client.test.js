@@ -8,7 +8,7 @@ var url = require('url');
 
 describe('jayson.client.browser', function() {
 
-  var server = jayson.server(support.server.methods, support.server.options);
+  var server = jayson.server(support.server.methods(), support.server.options());
   var serverHttp = server.http();
 
   var callServer = function(request, callback) {
@@ -27,8 +27,8 @@ describe('jayson.client.browser', function() {
   };
 
   var client = jayson.client.browser(callServer, {
-    reviver: support.server.options.reviver,
-    replacer: support.server.options.replacer,
+    reviver: support.server.options().reviver,
+    replacer: support.server.options().replacer,
   });
 
   before(function(done) {

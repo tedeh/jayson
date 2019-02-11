@@ -14,7 +14,7 @@ describe('jayson.tcp', function() {
     var server = null;
 
     before(function() {
-      server = jayson.server(support.server.methods, support.server.options).tcp();
+      server = jayson.server(support.server.methods(), support.server.options()).tcp();
     });
 
     after(function() {
@@ -88,11 +88,11 @@ describe('jayson.tcp', function() {
 
   describe('client', function() {
 
-    var server = jayson.server(support.server.methods, support.server.options);
+    var server = jayson.server(support.server.methods(), support.server.options());
     var server_tcp = server.tcp();
     var client = jayson.client.tcp({
-      reviver: support.server.options.reviver,
-      replacer: support.server.options.replacer,
+      reviver: support.server.options().reviver,
+      replacer: support.server.options().replacer,
       host: 'localhost',
       port: 3999
     });

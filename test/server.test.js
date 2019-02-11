@@ -1,12 +1,14 @@
-var should = require('should');
-var jayson = require('./../');
-var support = require('./support');
-var utils = jayson.utils;
+'use strict';
+
+const should = require('should');
+const jayson = require('./../');
+const support = require('./support');
+const utils = jayson.utils;
 
 describe('jayson.server', function() {
 
-  var Server = jayson.Server;
-  var ServerErrors = Server.errors;
+  const Server = jayson.Server;
+  const ServerErrors = Server.errors;
 
   it('should have an object of errors', function() {
     Server.should.have.property('errors');
@@ -18,15 +20,14 @@ describe('jayson.server', function() {
 
   describe('instance', function() {
 
-    var server = null;
-
+    let server;
     beforeEach(function() {
-      server = Server(support.server.methods, support.server.options);
+      server = Server(support.server.methods(), support.server.options());
     });
 
     it('should have some default options', function() {
       new Server().options.should.containDeep({
-        collect: true
+        useContext: false
       });
     });
 
@@ -39,21 +40,21 @@ describe('jayson.server', function() {
       server.hasMethod('subtract').should.be.false;
     });
     
-    it('should pass options methodConstructor and make new methods an instanceof it', function() {
+    it('should pass options.methodConstructor and make new methods an instanceof it', function() {
       var ctor = function() {};
       server.options.methodConstructor = ctor;
       server.method('add', function(args, done) { done(); });
       server.getMethod('add').should.be.instanceof(ctor);
     });
 
-    it('should pass options collect and params as defaults to jayson.Method', function() {
-      server.options.collect = true;
+    it('should pass options.useContext and options.params as defaults to jayson.Method', function() {
       server.options.params = Object;
-      server.method('add', function(args, done) {
+      server.options.useContext = true;
+      server.method('add', function(args, context, done) {
         done();
       });
       server.getMethod('add').should.containDeep({
-        options: {collect: true, params: Object}
+        options: {params: Object, useContext: true}
       });
     });
 
@@ -114,7 +115,7 @@ describe('jayson.server', function() {
         });
 
         it('should consider a string a valid error', function() {
-          server.method('errorMethod', function(callback) {
+          server.method('errorMethod', function(args, callback) {
             callback('an error');
           });
           var request = utils.request('errorMethod', []);
@@ -133,8 +134,10 @@ describe('jayson.server', function() {
             return this._methods[method];
           }
           if(method === 'add_2') {
-            var fn = server.getMethod('add').getHandler();
-            return new jayson.Method(fn.bind(null, 2), {collect: false});
+            const fn = server.getMethod('add').getHandler();
+            return new jayson.Method(function(args, callback) {
+              fn.call(this, args.concat(2), callback);
+            });
           }
         };
       });
@@ -162,7 +165,7 @@ describe('jayson.server', function() {
       var client = null;
 
       beforeEach(function() {
-        client = jayson.client(server, support.server.options);
+        client = jayson.client(server, support.server.options());
         server.options.router = function(method) {
           return client;
         };
@@ -375,28 +378,6 @@ describe('jayson.server', function() {
 
     });
 
-    describe('named parameters', function() {
-
-      it('should return as expected', function(done) {
-        var request = utils.request('add', {b: 2, a: 9});
-        server.call(request, function(err, response) {
-          if(err) return done(err);
-          response.should.containDeep({result: 2 + 9});
-          done();
-        });
-      });
-
-      it('should not fail when not given sufficient arguments', function(done) {
-        var request = utils.request('add', {});
-        server.call(request, function(err, response) {
-          if(err) return done(err);
-          isNaN(response.result).should.equal(true);
-          done();
-        });
-      });
-
-    });
-
     describe('notification requests', function() {
 
       it('should handle a valid notification request', function(done) {
@@ -422,8 +403,8 @@ describe('jayson.server', function() {
     describe('reviving and replacing', function() {
 
       it('should be able to return the expected result', function(done) {
-        var counter = new support.Counter(5);
-        var request = utils.request('incrementCounterBy', [counter, 5]);
+        const counter = new support.Counter(5);
+        const request = utils.request('incrementCounterBy', {counter, value: 5});
         server.call(request, function(err, response) {
           if(err) return done(err);
           var result = response.result;
@@ -533,6 +514,41 @@ describe('jayson.server', function() {
       
       });
 
+    });
+
+    describe('call context', function() {
+
+      beforeEach(function() {
+        server.method('testContext', jayson.Method(function(params, context, callback) {
+          callback(null, context);
+        }, {useContext: true}));
+      });
+
+      it('should pass on context for a normal request', function(done) {
+        const context = {hello: false};
+        const request = utils.request('testContext', []);
+        server.call(request, context, function(err, response) {
+          if(err) return done(err);
+          should(response).have.property('result').eql(context);
+          done();
+        });
+      });
+
+      it('should pass on context for a batch request', function(done) {
+        const context = {hello: true};
+        const request = [ 
+          utils.request('testContext', []),
+          utils.request('testContext', [])
+        ];
+        server.call(request, context, function(err, responses) {
+          if(err) return done(err);
+          responses.should.be.instanceof(Array).and.have.length(2);
+          should(responses[0]).have.property('result').eql(context);
+          should(responses[1]).have.property('result').eql(context);
+          done();
+        });
+      });
+    
     });
 
   });

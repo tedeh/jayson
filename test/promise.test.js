@@ -1,8 +1,10 @@
-var _ = require('lodash');
-var should = require('should');
-var jayson = require('./../promise');
-var jaysonPromise = require('./../promise');
-var support = require('./support');
+'use strict';
+
+const _ = require('lodash');
+const should = require('should');
+const jayson = require('./../promise');
+const jaysonPromise = require('./../promise');
+const support = require('./support');
 
 describe('jayson/promise', function() {
 
@@ -20,7 +22,7 @@ describe('jayson/promise', function() {
 
       var server = null;
       beforeEach(function() {
-        server = new Server(support.server.methods, support.server.options);
+        server = new Server(support.server.methods(), support.server.options());
       });
 
       it('should make methods instance of Method', function() {
@@ -39,23 +41,23 @@ describe('jayson/promise', function() {
       'regular': {
         server: function(done) {
           done();
-          return new jaysonPromise.Server(support.server.methods, support.server.options);
+          return new jaysonPromise.Server(support.server.methods(), support.server.options());
         },
         client: function(server) {
-          return jaysonPromise.Client(server, support.server.options);
+          return jaysonPromise.Client(server, support.server.options());
         }
       },
       'http': {
         server: function(done) {
-          var server = jaysonPromise.Server(support.server.methods, support.server.options);
+          var server = jaysonPromise.Server(support.server.methods(), support.server.options());
           var http = server.http();
           http.listen(3999, 'localhost', done);
           return http;
         },
         client: function(server) {
           return jaysonPromise.Client.http({
-            reviver: support.server.options.reviver,
-            replacer: support.server.options.replacer,
+            reviver: support.server.options().reviver,
+            replacer: support.server.options().replacer,
             host: 'localhost',
             port: 3999
           })
@@ -66,18 +68,18 @@ describe('jayson/promise', function() {
       },
       'https': {
         server: function(done) {
-          var server = jaysonPromise.Server(support.server.methods, support.server.options);
-          var https = server.https(support.server.keys);
+          var server = jaysonPromise.Server(support.server.methods(), support.server.options());
+          var https = server.https(support.server.keys());
           https.listen(3999, 'localhost', done);
           return https;
         },
         client: function(server) {
           return jaysonPromise.Client.https({
-            reviver: support.server.options.reviver,
-            replacer: support.server.options.replacer,
+            reviver: support.server.options().reviver,
+            replacer: support.server.options().replacer,
             host: 'localhost',
             port: 3999,
-            ca: support.server.keys.ca
+            ca: support.server.keys().ca
           })
         },
         closeServer: function(https, done) {
@@ -86,18 +88,18 @@ describe('jayson/promise', function() {
       },
       'tcp': {
         server: function(done) {
-          var server = jaysonPromise.Server(support.server.methods, support.server.options);
+          var server = jaysonPromise.Server(support.server.methods(), support.server.options());
           var tcp = server.tcp();
           tcp.listen(3999, 'localhost', done);
           return tcp;
         },
         client: function(server) {
           return jaysonPromise.Client.tcp({
-            reviver: support.server.options.reviver,
-            replacer: support.server.options.replacer,
+            reviver: support.server.options().reviver,
+            replacer: support.server.options().replacer,
             host: 'localhost',
             port: 3999,
-            ca: support.server.keys.ca
+            ca: support.server.keys().ca
           })
         },
         closeServer: function(tcp, done) {
@@ -106,18 +108,18 @@ describe('jayson/promise', function() {
       },
       'tls': {
         server: function(done) {
-          var server = jaysonPromise.Server(support.server.methods, support.server.options);
-          var tls = server.tls(support.server.keys);
+          var server = jaysonPromise.Server(support.server.methods(), support.server.options());
+          var tls = server.tls(support.server.keys());
           tls.listen(3999, 'localhost', done);
           return tls;
         },
         client: function(server) {
           return jaysonPromise.Client.tls({
-            reviver: support.server.options.reviver,
-            replacer: support.server.options.replacer,
+            reviver: support.server.options().reviver,
+            replacer: support.server.options().replacer,
             host: 'localhost',
             port: 3999,
-            ca: support.server.keys.ca
+            ca: support.server.keys().ca
           })
         },
         closeServer: function(tls, done) {

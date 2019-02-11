@@ -19,8 +19,8 @@ var clientOptions = {
   secureProtocol: serverOptions.secureProtocol,
   key: serverOptions.key,
   cert: serverOptions.cert,
-  reviver: support.server.options.reviver,
-  replacer: support.server.options.replacer,
+  reviver: support.server.options().reviver,
+  replacer: support.server.options().replacer,
   host: 'localhost',
   port: 3999
 }
@@ -48,7 +48,7 @@ describe('jayson.tls', function() {
 
   describe('client', function() {
     
-    var server = jayson.server(support.server.methods, support.server.options);
+    var server = jayson.server(support.server.methods(), support.server.options());
     var server_tls = server.tls(serverOptions);
     var client = jayson.client.tls(clientOptions);
 

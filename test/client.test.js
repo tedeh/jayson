@@ -29,8 +29,8 @@ describe('jayson.client', function() {
 
   describe('instance', function() {
     
-    var server = jayson.Server(support.server.methods, support.server.options);
-    var client = jayson.client(server, support.server.options);
+    var server = jayson.Server(support.server.methods(), support.server.options());
+    var client = jayson.client(server, support.server.options());
 
     describe('common tests', suites.getCommonForClient(client));
 

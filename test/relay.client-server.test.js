@@ -8,9 +8,9 @@ describe('jayson.relay', function() {
   describe('server', function() {
 
     it('should be created with a client as a method without throwing', function() {
-      var server = jayson.server(support.methods, support.server.options);
+      var server = jayson.server(support.methods, support.server.options());
       (function () {
-        jayson.server({add: jayson.client(server)}, support.server.options);
+        jayson.server({add: jayson.client(server)}, support.server.options());
       }).should.not.throw();
     });
 
@@ -18,10 +18,10 @@ describe('jayson.relay', function() {
 
   describe('client', function() {
 
-    var options = support.server.options;
+    var options = support.server.options();
 
     var frontServer = jayson.server({}, options);
-    var backServer = jayson.server(support.server.methods, options);
+    var backServer = jayson.server(support.server.methods(), options);
     var relayClient = jayson.client(backServer, options);
     var frontClient = jayson.client(frontServer, options);
 

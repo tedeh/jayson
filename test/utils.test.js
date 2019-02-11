@@ -1,7 +1,9 @@
-var should = require('should');
-var PassStream = require('pass-stream');
-var jayson = require('./..');
-var utils = jayson.utils;
+'use strict';
+
+const should = require('should');
+const PassStream = require('pass-stream');
+const jayson = require('./..');
+const utils = jayson.utils;
 
 describe('jayson.utils', function() {
 

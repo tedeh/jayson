@@ -11,15 +11,15 @@ describe('jayson.middleware', function() {
   var app = connect();
   var server = null; // set in before()
   var client = jayson.client.http({
-    reviver: support.server.options.reviver,
-    replacer: support.server.options.replacer,
+    reviver: support.server.options().reviver,
+    replacer: support.server.options().replacer,
     host: 'localhost',
     port: 3999
   });
 
   before(function(done) {
-    app.use(bodyParser.json({reviver: support.server.options.reviver}));
-    app.use(jayson.server(support.server.methods, support.server.options).middleware());
+    app.use(bodyParser.json({reviver: support.server.options().reviver}));
+    app.use(jayson.server(support.server.methods(), support.server.options()).middleware());
     server = http.createServer(app).listen(3999, done);
   });
 
@@ -33,7 +33,7 @@ describe('jayson.middleware', function() {
 
     before(function() {
       // change last connect stack handle to one with new options
-      app.stack[app.stack.length - 1].handle = jayson.server(support.server.methods, support.server.options).middleware({
+      app.stack[app.stack.length - 1].handle = jayson.server(support.server.methods(), support.server.options()).middleware({
         end: false
       });
     });

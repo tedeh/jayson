@@ -104,6 +104,9 @@ Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm)
 
 ## Changelog (only notable milestones)
 
+- *3.0.0*
+  - Can pass a context object to handlers
+  - _Breaking_: `collect` option removed from `jayson.Server/Method`. JSON-RPC params to handlers are now **always** in the first argument.
 - *2.1.0*
   - Experimental typescript support
 - *2.0.6*

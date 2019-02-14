@@ -1,3 +1,5 @@
+'use strict';
+
 const jayson = require('./../..');
 const jsonParser = require('body-parser').json;
 const connect = require('connect');

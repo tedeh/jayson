@@ -6,14 +6,14 @@ const client = jayson.client.http({
   port: 3000
 });
 
-// invoke "sumCollect" with array
-client.request('sumCollect', [3, 5, 9, 11], function(err, response) {
+// invoke "sum" with array
+client.request('sum', [3, 5, 9, 11], function(err, response) {
   if(err) throw err;
   console.log(response.result); // 28
 });
 
-// invoke "sumCollect" with object
-client.request('sumCollect', {a: 2, b: 3, c: 4}, function(err, response) {
+// invoke "sum" with an object
+client.request('sum', {a: 2, b: 3, c: 4}, function(err, response) {
   if(err) throw err;
   console.log(response.result); // 9
 });
@@ -30,7 +30,8 @@ client.request('isArray', {a: 5, b: 2, c: 9}, function(err, response) {
   console.log(response.result); // true
 });
 
-client.request('sum', [1, 2, 3], function(err, response) {
+// invoke "context"
+client.request('context', {hello: 'world'}, function(err, response) {
   if(err) throw err;
-  console.log(response.result); // 6
+  console.log(response.result); // {} - just an empty object
 });

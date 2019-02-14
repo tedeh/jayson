@@ -69,7 +69,7 @@ declare type MethodOptionsParamsLike = Array<any> | Object | object;
 
 interface MethodOptions {
   handler?: MethodHandlerType;
-  collect?: boolean;
+  useContext?: boolean;
   params?: MethodOptionsParamsLike;
 }
 
@@ -87,7 +87,7 @@ declare type MethodLike = Function | Method | Client
 declare type ServerRouterFunction = (method: string, params: RequestParamsLike) => MethodLike;
 
 interface ServerOptions {
-  collect?: boolean;
+  useContext?: boolean;
   params?: MethodOptionsParamsLike;
   version?: number;
   reviver?: JSONParseReviver;

@@ -10,21 +10,17 @@ const methods = {
     done(null, sum(args));
   },
 
-  // this method gets the raw params as first arg to handler
-  sumCollect: new jayson.Method({
-    handler: function(args, done) {
-      const total = sum(args);
-      done(null, total);
-    },
-    collect: true // means "collect all JSON-RPC parameters in one arg"
-  }),
+  // this function always receives a context object as second arg
+  // it can be overriden on the server level
+  context: jayson.Method(function(args, context, done) {
+    done(null, context);
+  }, {useContext: true}),
 
   // specifies some default values (alternate definition too)
   sumDefault: jayson.Method(function(args, done) {
     const total = sum(args);
     done(null, total);
   }, {
-    collect: true,
     params: {a: 2, b: 5} // map of defaults
   }),
 
@@ -34,21 +30,21 @@ const methods = {
       const result = _.isArray(args);
       done(null, result);
     },
-    collect: true,
     params: Array // could also be "Object"
   })
 
 };
 
 const server = jayson.server(methods, {
-  // Given as options to jayson.Method when adding the method "sum"
-  collect: true,
+  // these options are given as options to jayson.Method when adding the method "sum".
+  // this is because it is not wrapped in jayson.Method like the others.
+  useContext: false,
   params: Array
 });
 
 server.http().listen(3000);
 
-// sums all numbers in an array
+// sums all numbers in an array or object
 function sum(list) {
   return _.reduce(list, function(sum, val) {
     return sum + val;

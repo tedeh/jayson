@@ -1188,33 +1188,30 @@ The library author [tedeh](https://github.com/tedeh) therefore recommends that i
 Example of a http server built with express in [examples/faq_recommended_http_server/server.js](examples/faq_recommended_http_server/server.js):
 
 ```javascript
-var _ = require('lodash');
-var jayson = require('jayson');
-var jsonParser = require('body-parser').json;
-var express = require('express');
-var app = express();
+'use strict';
+
+const _ = require('lodash');
+const jayson = require('./../..');
+const jsonParser = require('body-parser').json;
+const express = require('express');
+const app = express();
 
 // create a plain jayson server
-var server = jayson.server({
+const server = jayson.server({
   add: function(numbers, callback) {
     callback(null, _.reduce(numbers, (sum, val) => sum + val, 0));
   }
 });
 
-// we could add more middleware for timeout handling, auth token parsing, logging, etc
-app.use(jsonParser()); // <- here we can deal with maximum body sizes and so on
-
+app.use(jsonParser()); // <- here we can deal with maximum body sizes, etc
 app.use(function(req, res, next) {
-  var request = req.body;
-  
-  // <- here we can check headers, modify the request, do more logging, etc
-  
-  // sending off a request to jayson is as simple as the below call:
+  const request = req.body;
+  // <- here we can check headers, modify the request, do logging, etc
   server.call(request, function(err, response) {
     if(err) {
       // if err is an Error, err is NOT a json-rpc error
       if(err instanceof Error) return next(err);
-      // <- deal with json-rpc errors here, typically caused by the request
+      // <- deal with json-rpc errors here, typically caused by the user
       res.status(400);
       res.send(err);
       return;
@@ -1223,7 +1220,7 @@ app.use(function(req, res, next) {
     if(response) {
       res.send(response);
     } else {
-      // empty response (notification)
+      // empty response (could be a notification)
       res.status(204);
       res.send('');
     }
@@ -1236,11 +1233,13 @@ app.listen(3001);
 Using some of the utilities provided and exported by jayson, creating a client offering the same kind of flexibility is also simple. Example of a compatible http client built with superagent in [examples/faq_recommended_http_server/client.js](examples/faq_recommended_http_server/client.js):
 
 ```javascript
-var jayson = require('./../..');
-var request = require('superagent');
+'use strict';
+
+const jayson = require('./../..');
+const request = require('superagent');
 
 // generate a json-rpc version 2 compatible request (non-notification)
-var requestBody = jayson.Utils.request('add', [1,2,3,4], undefined, {
+const requestBody = jayson.Utils.request('add', [1,2,3,4], undefined, {
   version: 2, // generate a version 2 request
 });
 
@@ -1274,7 +1273,7 @@ request.post('http://localhost:3001')
 
     if(body.error) {
       // we have a json-rpc error...
-      console.log(body.error); // 10!
+      console.err(body.error); // 10!
     } else {
       // do something useful with the result
       console.log(body.result); // 10!

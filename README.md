@@ -847,11 +847,9 @@ app.listen(3000);
 
 *Since version 3.0.0*
 
-You can provide an optional context object to JSON-RPC method handlers. This can be used to give extra data/information that can be used by the handlers such as request headers, authentication tokens, and so on.
+You can provide an optional context object to JSON-RPC method handlers. This can be used to give extra data to a handler  such as request headers, authentication tokens, and so on.
 
-`jayson.Method` accepts a boolean option called `useContext` that defaults to `false` for backwards compatibility. When it is set to `true` the method handler will *always* receive a context object as the second argument. The object can be passed along when calling a method on `jayson.Server`.
-
-`jayson.Server` also accepts `useContext` as an option, and passes the value on to the `jayson.Method` constructor. This "server-global" option can be overriden on a per-method basis as shown below.
+This feature is unlocked by having `jayson.Method` accepts a boolean option called `useContext`. It always defaults to `false` for backwards compatibility. When it is set to `true` the method handler that `jayson.Method` wraps will **always** receive a context object as the second argument. The object can be given as the third argument to `jayson.Server.prototype.call`.
 
 Server example in [examples/context/server.js](examples/context/server.js):
 
@@ -916,6 +914,11 @@ client.request('getHeaders', {}, function(err, response) {
 ```
 
 ##### Notes
+
+- `jayson.Server` also accepts `useContext` as an option, and passes the value on to the `jayson.Method` constructor. This option can be overriden on a per-method basis as shown above.
+- Individual requests in a JSON-RPC batch will all receive the exact same context object in their handler - take care not to mutate it
+- If a falsy context value is given to `jayson.Server.prototype.call`, an empty object will be created
+- None of the current jayson server transports (http, https, tls, tcp, middleware) can make use of the context object. You will need to rig your own transport implementation, like the one above based on an `express` http server. See the [FAQ](#faq) for more info about this.
 
 ### Revivers and Replacers
 
@@ -1168,34 +1171,6 @@ client.request(batch).then(function(responses) {
 *Support for method context added in version 3.0.0*
 
 See [Server context](#server-context) section.
-
-Example in [examples/faq_request_context/server.js](examples/faq_request_context/server.js):
-
-```javascript
-var _ = require('lodash');
-var jayson = require('./../..');
-var jsonParser = require('body-parser').json;
-var connect = require('connect');
-var app = connect();
-
-var server = jayson.server({
-  getHeaders: function(args, callback) {
-    callback(null, args.headers);
-  }
-}, {
-  params: Object, // all method args are always objects (never arrays)
-});
-
-app.use(jsonParser());
-app.use(function(req, res, next) {
-  // decorate the request with header params or whatever other contextual values are desired
-  _.set(req.body, 'params.headers', req.headers);
-  next();
-});
-app.use(server.middleware());
-
-app.listen(3001);
-```
 
 ### What is the recommended way to use jayson?
 

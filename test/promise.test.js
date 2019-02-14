@@ -201,7 +201,7 @@ describe('jayson/promise', function() {
 
       let method = null, server = new jaysonPromise.Server();
       beforeEach(function() {
-        method = new Method({collect: true});
+        method = new Method({});
       });
 
       describe('execute', function() {
@@ -252,6 +252,21 @@ describe('jayson/promise', function() {
             response.should.equal(12);
             done();
           });
+        });
+
+        it('should pass on a provided context object', function(done) {
+          method.options.useContext = true;
+          method.setHandler(function(args, context) {
+            return new Promise(function(resolve) {
+              resolve(context);
+            });
+          });
+          method.execute(server, [1, 2, 3], {hello: true}, function(err, response) {
+            if(err) return done(err);
+            response.should.eql({hello: true});
+            done();
+          });
+        
         });
 
       });

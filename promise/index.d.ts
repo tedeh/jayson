@@ -201,9 +201,6 @@ declare class Client extends events.EventEmitter {
   static tcp(options?: TcpClientOptions): TcpClient;
   static tls(options?: TlsClientOptions): TlsClient;
 
-  request(method: string, params: RequestParamsLike, id?: string, callback?: JSONRPCCallbackType): JSONRPCRequest;
-  request(method: string, params: RequestParamsLike, callback?: JSONRPCCallbackType): JSONRPCRequest;
-  request(method: string, params: RequestParamsLike, id: string, callback: ClientRequestShouldCall): JSONRPCRequest;
-  request(method: Array<JSONRPCRequestLike>): Promise<JSONRPCResultLike>;
-  request(method: Array<JSONRPCRequestLike>, callback: JSONRPCCallbackTypeBatch): Array<JSONRPCRequest>;
+  request(method: string, params: RequestParamsLike, id?: string): Promise<JSONRPCRequest>;
+  request(method: Array<JSONRPCRequestLike>): Promise<JSONRPCResultLike[]>;
 }

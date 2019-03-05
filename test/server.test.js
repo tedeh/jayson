@@ -66,6 +66,15 @@ describe('jayson.server', function() {
       server.hasMethod('rpc.test').should.be.false;
     });
 
+    it('should allow an rpc.discover method with a reserved name to be added', function() {
+      (function () {
+        server.method('rpc.discover', function (a, b, callback) {
+          callback(null, a - b);
+        });
+      }).should.not.throw();
+      server.hasMethod('rpc.discover').should.be.true;
+    });
+
     it('should not allow a method with an invalid name to be added', function() {
       (function() {
         server.method('', function(a, b, callback) {

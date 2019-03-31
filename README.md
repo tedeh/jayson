@@ -105,12 +105,12 @@ client.request('add', [1, 1], function(err, response) {
 
 ## Installation
 
-Install the latest version of _jayson_ from [npm](https://github.com/isaacs/npm) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want the `jayson` client CLI in your PATH.
+Install the latest version of _jayson_ from [npm](https://www.npmjs.com) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want the `jayson` client CLI in your PATH.
 
 ## Changelog (only notable milestones)
 
 - *3.0.0*
-  - Can pass a context object to handlers
+  - Can pass a [context object](#server-context) to handlers
   - _Breaking_: `collect` option removed from `jayson.Server/Method`. JSON-RPC params to handlers are now **always** in the first argument.
 - *2.1.0*
   - Experimental typescript support
@@ -1174,9 +1174,9 @@ See [Server context](#server-context) section.
 
 ### What is the recommended way to use jayson?
 
-Using the provided http, https, tls, tcp and express middleware is fine and works well for most use cases. However, sometimes issues like these crop up (quotes below are not directly from issue posters):
+Using the provided clients and servers for http, https, tls, tcp and the express middleware is fine and works well for most use cases. However, sometimes issues like these crop up (quotes below are not directly from issue posters):
 
-- "The (non-jayson) HTTP server I'm interacting with expect every HTTP calls to terminate with `\r\n` but the jayson HTTP client does not"
+- "The (non-jayson) HTTP/TCP server I'm interacting with expects every call to terminate with `\r\n` but the jayson client does not"
 - ["How can my jayson TLS server support requests encoded such and such?"](https://github.com/tedeh/jayson/issues/86)
 - ["How can I make the jayson HTTP middleware accept GET requests?"](https://github.com/tedeh/jayson/issues/70)
 - ["My jayson client interacting with a (non-jayson) TLS server closes the connection after every sent request. I think this is wasteful!"](https://github.com/tedeh/jayson/issues/92)

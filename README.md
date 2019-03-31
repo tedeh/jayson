@@ -1,3 +1,6 @@
+# DEPRECATED - no longer actively maintained
+---
+
 # Jayson
 
 Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant server and client written in JavaScript for [node.js][node.js] that aims to be as simple as possible to use.

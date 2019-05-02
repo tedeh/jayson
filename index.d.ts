@@ -3,77 +3,132 @@ import tls = require('tls');
 import https = require('https');
 import http = require('http');
 import events = require('events');
+import Stream = require('stream');
 
-export as namespace jayson;
-
-interface Utils {
+interface UtilsJSONParseOptions {
+  reviver: Function;
 }
 
-declare type RequestParamsLike = Array<any> | object;
+interface UtilsJSONStringifyOptions {
+  replacer: Function;
+}
 
-interface JSONRPCError {
+interface UtilsParseStreamOptions extends UtilsJSONParseOptions {
+}
+
+export declare class Utils {
+
+  static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version?: number): JSONRPCVersionTwoRequest;
+  static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version:2): JSONRPCVersionTwoRequest;
+  static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version:1): JSONRPCVersionOneRequest;
+
+  static generateId(): string;
+
+  static merge(...objs: object[]): object;
+
+  static parseStream(stream:Stream, options:UtilsParseStreamOptions, onRequest: (err?:Error, data?:any) => void): void;
+
+  static parseBody(stream:Stream, options:UtilsJSONParseOptions, callback: (err?:Error, obj?:any) => void): void;
+
+  static getHttpListener(self:http.Server, server:Server): Function;
+
+  static isContentType(request:http.IncomingMessage, typ:string): boolean;
+
+  static isMethod(request:http.IncomingMessage, method:string): boolean;
+
+  static walk(obj:object, key:string, fn: (key:string, value:any) => any): object;
+
+  static JSON: UtilsJSON;
+
+  static Request: UtilsRequest;
+
+  static Response: UtilsResponse;
+
+}
+
+type UtilsJSON = {
+  parse(str:string, options:UtilsJSONParseOptions, callback: (err?:Error, obj?:object) => void):void;
+  stringify(obj:object, options:UtilsJSONStringifyOptions, callback: (err?:Error, str?:string) => void):void;
+}
+
+type UtilsRequest = {
+  isBatch(request:any): boolean;
+  isNotification(request:any): boolean;
+  isValidVersionTwoRequest(request:any): boolean;
+  isValidVersionOneRequest(request:any): boolean;
+  isValidRequest(request:any, version:number): boolean;
+}
+
+type UtilsResponse = {
+  isValidError(error:any, version:number): boolean;
+  isValidResponse(response:any, version:number): boolean;
+}
+
+export type RequestParamsLike = Array<any> | object;
+
+export interface JSONRPCError {
   code: number;
   message: string;
   data?: object;
 }
 
-declare type JSONRPCErrorLike = Error | JSONRPCError;
+export type JSONRPCErrorLike = Error | JSONRPCError;
 
-interface JSONRPCVersionOneRequest {
+export interface JSONRPCVersionOneRequest {
   method: string;
   params: Array<any>;
   id: JSONRPCIDLike;
 }
 
-interface JSONRPCVersionTwoRequest {
+export interface JSONRPCVersionTwoRequest {
   jsonrpc: number;
   method: string;
   params: RequestParamsLike;
   id?: JSONRPCIDLike | null;
 }
 
-declare type JSONRPCIDLike = number | string;
+export type JSONRPCIDLike = number | string;
 
-declare type JSONRPCRequest = JSONRPCVersionOneRequest | JSONRPCVersionTwoRequest;
+export type JSONRPCRequest = JSONRPCVersionOneRequest | JSONRPCVersionTwoRequest;
 
-declare type JSONRPCRequestLike = JSONRPCRequest | string;
+export type JSONRPCRequestLike = JSONRPCRequest | string;
 
-declare type JSONRPCResultLike = any;
+export type JSONRPCResultLike = any;
 
-interface JSONRPCCallbackTypePlain {
+export interface JSONRPCCallbackTypePlain {
   (err: JSONRPCErrorLike, result?: JSONRPCResultLike): void
 }
 
-interface JSONRPCCallbackTypeSugared {
+export interface JSONRPCCallbackTypeSugared {
   (err: Error, error?: JSONRPCErrorLike, result?: JSONRPCResultLike): void
 }
 
 type JSONRPCCallbackType = JSONRPCCallbackTypePlain | JSONRPCCallbackTypeSugared;
 
-interface JSONRPCCallbackTypeBatchPlain {
+export interface JSONRPCCallbackTypeBatchPlain {
   (err: JSONRPCErrorLike, results?: Array<JSONRPCResultLike>): void
 }
 
-interface JSONRPCCallbackTypeBatchSugared {
+export interface JSONRPCCallbackTypeBatchSugared {
   (err: Error, errors?: Array<JSONRPCErrorLike>, results?: Array<JSONRPCResultLike>): void
 }
 
 type JSONRPCCallbackTypeBatch = JSONRPCCallbackTypeBatchPlain | JSONRPCCallbackTypeBatchSugared;
 
-interface MethodHandlerType {
+export interface MethodHandlerType {
   (args: RequestParamsLike, callback: JSONRPCCallbackType): void;
   (...args: any[]): void; // callback still expected to be last
 }
 
-declare type MethodOptionsParamsLike = Array<any> | Object | object;
+export type MethodOptionsParamsLike = Array<any> | Object | object;
 
-interface MethodOptions {
+export interface MethodOptions {
   handler?: MethodHandlerType;
   useContext?: boolean;
   params?: MethodOptionsParamsLike;
 }
 
-declare class Method {
+export declare class Method {
   constructor(handler?: MethodHandlerType, options?: MethodOptions);
   constructor(options: MethodOptions);
 
@@ -82,11 +137,11 @@ declare class Method {
   execute(server: Server, requestParams: RequestParamsLike, callback: JSONRPCCallbackType): any | Promise<any>;
 }
 
-declare type MethodLike = Function | Method | Client
+export type MethodLike = Function | Method | Client
 
-declare type ServerRouterFunction = (method: string, params: RequestParamsLike) => MethodLike;
+export type ServerRouterFunction = (this: Server, method: string, params: RequestParamsLike) => MethodLike;
 
-interface ServerOptions {
+export interface ServerOptions {
   useContext?: boolean;
   params?: MethodOptionsParamsLike;
   version?: number;
@@ -97,12 +152,16 @@ interface ServerOptions {
   methodConstructor?: Function;
 }
 
-declare class Server {
+export interface MethodMap { [methodName:string]: Method }
+
+export declare class Server {
   constructor(methods?: {[methodName: string]: MethodLike}, options?: object);
 
   static errors: {[errorName: string]: number};
   static errorMessages: {[errorMessage: string]: string};
   static interfaces: {[interfaces: string]: Function};
+
+  public _methods: MethodMap;
 
   http(options?: HttpServerOptions): HttpServer;
   https(options?: HttpsServerOptions): HttpsServer;
@@ -119,71 +178,71 @@ declare class Server {
   call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: JSONRPCCallbackType): void;
 }
 
-interface MiddlewareServerOptions extends ServerOptions {
+export interface MiddlewareServerOptions extends ServerOptions {
 }
 
-interface HttpServerOptions extends ServerOptions {
+export interface HttpServerOptions extends ServerOptions {
 }
 
 declare class HttpServer extends http.Server {
   constructor(server: Server, options?: HttpServerOptions);
 }
 
-interface HttpsServerOptions extends ServerOptions, https.ServerOptions {
+export interface HttpsServerOptions extends ServerOptions, https.ServerOptions {
 }
 
 declare class HttpsServer extends https.Server {
   constructor(server: Server, options?: HttpsServerOptions);
 }
 
-interface TcpServerOptions extends ServerOptions {
+export interface TcpServerOptions extends ServerOptions {
 }
 
 declare class TcpServer extends net.Server {
   constructor(server: Server, options?: TcpServerOptions);
 }
 
-interface TlsServerOptions extends tls.TlsOptions {
+export interface TlsServerOptions extends tls.TlsOptions {
 }
 
 declare class TlsServer extends tls.Server {
   constructor(server: Server, options?: TlsServerOptions);
 }
 
-declare type JSONParseReviver = (key: string, value: any) => any;
-declare type JSONStringifyReplacer = (key: string, value: any) => any;
+type JSONParseReviver = (key: string, value: any) => any;
+type JSONStringifyReplacer = (key: string, value: any) => any;
 
-declare type IDGenerator = () => string;
+type IDGenerator = () => string;
 
-interface ClientOptions {
+export interface ClientOptions {
   version?: number;
   reviver?: JSONParseReviver;
   replacer?: JSONStringifyReplacer;
   generator?: IDGenerator;
 }
 
-interface HttpClientOptions extends ClientOptions, http.RequestOptions {
+export interface HttpClientOptions extends ClientOptions, http.RequestOptions {
 }
 
 declare class HttpClient extends Client {
   constructor(options?: HttpClientOptions);
 }
 
-interface TlsClientOptions extends ClientOptions, tls.ConnectionOptions {
+export interface TlsClientOptions extends ClientOptions, tls.ConnectionOptions {
 }
 
 declare class TlsClient extends Client {
   constructor(options?: TlsClientOptions);
 }
 
-interface TcpClientOptions extends ClientOptions, net.TcpSocketConnectOpts {
+export interface TcpClientOptions extends ClientOptions, net.TcpSocketConnectOpts {
 }
 
 declare class TcpClient extends Client {
   constructor(options?: TcpClientOptions);
 }
 
-interface HttpsClientOptions extends ClientOptions, https.RequestOptions {
+export interface HttpsClientOptions extends ClientOptions, https.RequestOptions {
 }
 
 declare class HttpsClient extends Client {
@@ -192,7 +251,7 @@ declare class HttpsClient extends Client {
 
 type ClientRequestShouldCall = JSONRPCCallbackType | false;
 
-declare class Client extends events.EventEmitter {
+export declare class Client extends events.EventEmitter {
   constructor(server: Server, options?: ClientOptions);
   constructor(options: ClientOptions);
 
@@ -201,9 +260,7 @@ declare class Client extends events.EventEmitter {
   static tcp(options?: TcpClientOptions): TcpClient;
   static tls(options?: TlsClientOptions): TlsClient;
 
-  request(method: string, params: RequestParamsLike, id?: string, callback?: JSONRPCCallbackType): JSONRPCRequest;
+  request(method: string, params: RequestParamsLike, id?: string | null, callback?: JSONRPCCallbackType): JSONRPCRequest;
   request(method: string, params: RequestParamsLike, callback?: JSONRPCCallbackType): JSONRPCRequest;
-  // request(method: string, params: RequestParamsLike, id: string, callback: ClientRequestShouldCall): JSONRPCRequest;
-  // request(method: Array<JSONRPCRequestLike>): Promise<JSONRPCResultLike>;
   request(method: Array<JSONRPCRequestLike>, callback: JSONRPCCallbackTypeBatch): Array<JSONRPCRequest>;
 }

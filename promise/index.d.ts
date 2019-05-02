@@ -84,7 +84,7 @@ declare class Method {
 
 declare type MethodLike = Function | Method | Client
 
-declare type ServerRouterFunction = (method: string, params: RequestParamsLike) => MethodLike;
+declare type ServerRouterFunction = (this: Server, method: string, params: RequestParamsLike) => MethodLike;
 
 interface ServerOptions {
   useContext?: boolean;
@@ -97,12 +97,16 @@ interface ServerOptions {
   methodConstructor?: Function;
 }
 
+interface MethodMap { [methodName:string]: Method }
+
 declare class Server {
   constructor(methods?: {[methodName: string]: MethodLike}, options?: object);
 
   static errors: {[errorName: string]: number};
   static errorMessages: {[errorMessage: string]: string};
   static interfaces: {[interfaces: string]: Function};
+
+  public _methods: MethodMap;
 
   http(options?: HttpServerOptions): HttpServer;
   https(options?: HttpsServerOptions): HttpsServer;
@@ -201,9 +205,7 @@ declare class Client extends events.EventEmitter {
   static tcp(options?: TcpClientOptions): TcpClient;
   static tls(options?: TlsClientOptions): TlsClient;
 
-  request(method: string, params: RequestParamsLike, id?: string, callback?: JSONRPCCallbackType): JSONRPCRequest;
-  request(method: string, params: RequestParamsLike, callback?: JSONRPCCallbackType): JSONRPCRequest;
-  request(method: string, params: RequestParamsLike, id: string, callback: ClientRequestShouldCall): JSONRPCRequest;
+  request(method:string, params:RequestParamsLike, id:JSONRPCIDLike | undefined, shouldCall:false): JSONRPCRequest;
+  request(method:string, params:RequestParamsLike, id?:JSONRPCIDLike): Promise<JSONRPCResultLike>;
   request(method: Array<JSONRPCRequestLike>): Promise<JSONRPCResultLike>;
-  request(method: Array<JSONRPCRequestLike>, callback: JSONRPCCallbackTypeBatch): Array<JSONRPCRequest>;
 }

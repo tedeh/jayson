@@ -5,15 +5,12 @@ import http = require('http');
 import events = require('events');
 import Stream = require('stream');
 
-interface UtilsJSONParseOptions {
-  reviver: Function;
+export interface UtilsJSONParseOptions {
+  reviver?: Function;
 }
 
-interface UtilsJSONStringifyOptions {
-  replacer: Function;
-}
-
-interface UtilsParseStreamOptions extends UtilsJSONParseOptions {
+export interface UtilsJSONStringifyOptions {
+  replacer?: Function;
 }
 
 export declare class Utils {
@@ -26,7 +23,7 @@ export declare class Utils {
 
   static merge(...objs: object[]): object;
 
-  static parseStream(stream:Stream, options:UtilsParseStreamOptions, onRequest: (err?:Error, data?:any) => void): void;
+  static parseStream(stream:Stream, options:UtilsJSONParseOptions, onRequest: (err?:Error, data?:any) => void): void;
 
   static parseBody(stream:Stream, options:UtilsJSONParseOptions, callback: (err?:Error, obj?:any) => void): void;
 
@@ -47,8 +44,8 @@ export declare class Utils {
 }
 
 type UtilsJSON = {
-  parse(str:string, options:UtilsJSONParseOptions, callback: (err?:Error, obj?:object) => void):void;
-  stringify(obj:object, options:UtilsJSONStringifyOptions, callback: (err?:Error, str?:string) => void):void;
+  parse(str:string, options:UtilsJSONParseOptions | null | undefined, callback: (err?:Error, obj?:object) => void):void;
+  stringify(obj:object, options:UtilsJSONStringifyOptions | null | undefined, callback: (err?:Error, str?:string) => void):void;
 }
 
 type UtilsRequest = {
@@ -56,12 +53,12 @@ type UtilsRequest = {
   isNotification(request:any): boolean;
   isValidVersionTwoRequest(request:any): boolean;
   isValidVersionOneRequest(request:any): boolean;
-  isValidRequest(request:any, version:number): boolean;
+  isValidRequest(request:any, version?:number): boolean;
 }
 
 type UtilsResponse = {
-  isValidError(error:any, version:number): boolean;
-  isValidResponse(response:any, version:number): boolean;
+  isValidError(error:any, version?:number): boolean;
+  isValidResponse(response:any, version?:number): boolean;
 }
 
 export type RequestParamsLike = Array<any> | object;
@@ -96,11 +93,11 @@ export type JSONRPCRequestLike = JSONRPCRequest | string;
 export type JSONRPCResultLike = any;
 
 export interface JSONRPCCallbackTypePlain {
-  (err: JSONRPCErrorLike, result?: JSONRPCResultLike): void
+  (err?: JSONRPCErrorLike | null, result?: JSONRPCResultLike): void
 }
 
 export interface JSONRPCCallbackTypeSugared {
-  (err: Error, error?: JSONRPCErrorLike, result?: JSONRPCResultLike): void
+  (err?: Error | null, error?: JSONRPCErrorLike, result?: JSONRPCResultLike): void
 }
 
 type JSONRPCCallbackType = JSONRPCCallbackTypePlain | JSONRPCCallbackTypeSugared;
@@ -115,11 +112,15 @@ export interface JSONRPCCallbackTypeBatchSugared {
 
 type JSONRPCCallbackTypeBatch = JSONRPCCallbackTypeBatchPlain | JSONRPCCallbackTypeBatchSugared;
 
-export interface MethodHandlerType {
-  (args: RequestParamsLike, callback: JSONRPCCallbackType): void;
-  (...args: any[]): void; // callback still expected to be last
+export interface MethodHandler {
+  (this:Server, args:RequestParamsLike, callback:JSONRPCCallbackTypePlain): void;
 }
 
+export interface MethodHandlerContext {
+  (this:Server, args:RequestParamsLike, context:object, callback:JSONRPCCallbackTypePlain): void;
+}
+
+export type MethodHandlerType = MethodHandlerContext | MethodHandler;
 export type MethodOptionsParamsLike = Array<any> | Object | object;
 
 export interface MethodOptions {
@@ -129,8 +130,8 @@ export interface MethodOptions {
 }
 
 export declare class Method {
-  constructor(handler?: MethodHandlerType, options?: MethodOptions);
   constructor(options: MethodOptions);
+  constructor(handler?: MethodHandlerType, options?: MethodOptions);
 
   getHandler(): MethodHandlerType;
   setHandler(handler: MethodHandlerType): void;

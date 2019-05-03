@@ -39,7 +39,7 @@
   "scripts": {
     "test": "mocha",
     "test-ci": "mocha -w -R min",
-    "test-tsc": "tsc --strict --lib es6 --watch typescript/test.ts",
+    "test-tsc": "tsc --strict --lib es6 typescript/test.ts",
     "coverage": "nyc mocha",
     "docs": "jsdoc -t node_modules/ink-docstrap/template -R README.md -c ./jsdoc.conf.json",
     "docs_clear": "rm -rf ./docs/jayson/*; exit 0",

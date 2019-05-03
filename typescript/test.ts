@@ -1,7 +1,12 @@
 import * as jayson from './..';
 import * as jaysonPromise from './../promise';
 
-export function test_1() {
+/**
+ * This file contains tests for the typescript type definitions.
+ * Most of them are based on the examples files.
+ */
+
+export function test_example_1() {
   var jsonParser = require('body-parser').json;
   var connect = require('connect');
   var app = connect();
@@ -19,7 +24,7 @@ export function test_1() {
   app.listen(3000);
 }
 
-export function test_2() {
+export function test_example_2() {
 
   var server = new jayson.Server({
     add: function(args:any, callback:any) {
@@ -47,7 +52,7 @@ export function test_2() {
   });
 }
 
-export function test_3() {
+export function test_example_3() {
 
   var client = jayson.Client.https({
     port: 3000
@@ -59,7 +64,7 @@ export function test_3() {
   });
 }
 
-export function test_4() {
+export function test_example_4() {
 
   var server = new jayson.Server({
     multiply: function(args:any, callback:any) {
@@ -72,7 +77,7 @@ export function test_4() {
   });
 }
 
-export function test_5() {
+export function test_example_5() {
   var fs = require('fs');
   var path = require('path');
 
@@ -91,7 +96,7 @@ export function test_5() {
   });
 }
 
-export function test_6() {
+export function test_example_6() {
   var fs = require('fs');
   var path = require('path');
 
@@ -109,7 +114,7 @@ export function test_6() {
   server.tcp(options).listen(3000);
 }
 
-export function test_7() {
+export function test_example_7() {
 
   var client = jayson.Client.http({
     port: 3000
@@ -121,7 +126,7 @@ export function test_7() {
   });
 }
 
-export function test_8() {
+export function test_example_8() {
 
   var server = new jayson.Server({
     multiply: function(args:any, callback:any) {
@@ -134,7 +139,7 @@ export function test_8() {
   });
 }
 
-export function test_9() {
+export function test_example_9() {
 
   var client = jaysonPromise.Client.http({
     port: 3000
@@ -151,7 +156,7 @@ export function test_9() {
   });
 }
 
-export function test_10() {
+export function test_example_10() {
   var _ = require('lodash');
 
   var server = new jayson.Server({
@@ -168,7 +173,7 @@ export function test_10() {
   server.http().listen(3000);
 }
 
-export function test_11() {
+export function test_example_11() {
 
   var server = new jayson.Server();
 
@@ -190,7 +195,7 @@ export function test_11() {
   });
 }
 
-export function test_12() {
+export function test_example_12() {
 
   var client = jayson.Client.http({
     port: 3000
@@ -202,7 +207,7 @@ export function test_12() {
   });
 }
 
-export function test_13() {
+export function test_example_13() {
 
   var server = new jayson.Server({
     add: function(a:any, b:any, callback:any) {
@@ -214,7 +219,7 @@ export function test_13() {
   server.http().listen(3000);
 }
 
-export function test_14() {
+export function test_example_14() {
 
   // create a client
   var client = jayson.Client.http({
@@ -228,7 +233,7 @@ export function test_14() {
   });
 }
 
-export function test_15() {
+export function test_example_15() {
 
   // create a server
   var server = new jayson.Server({
@@ -240,7 +245,7 @@ export function test_15() {
   server.http().listen(3000);
 }
 
-export function test_16() {
+export function test_example_16() {
 
   var client = jayson.Client.http({
     port: 3000
@@ -276,7 +281,7 @@ export function test_16() {
   });
 }
 
-export function test_17() {
+export function test_example_17() {
   var _ = require('lodash');
 
   var methods = {
@@ -328,7 +333,7 @@ export function test_17() {
   }
 }
 
-export function test_18() {
+export function test_example_18() {
 
   var client = jayson.Client.http({
     port: 3000
@@ -340,7 +345,7 @@ export function test_18() {
   });
 }
 
-export function test_19() {  
+export function test_example_19() {  
 
   var cors = require('cors');
   var connect = require('connect');
@@ -360,7 +365,7 @@ export function test_19() {
   app.listen(3000);
 }
 
-export function test_20() {
+export function test_example_20() {
 
   var client = jaysonPromise.Client.http({
     port: 3000
@@ -377,7 +382,7 @@ export function test_20() {
   });
 }
 
-export function test_21() {
+export function test_example_21() {
   var _ = require('lodash');
 
   var server = new jayson.Server({
@@ -402,7 +407,7 @@ export function test_21() {
   server.http().listen(3000);
 }
 
-export function test_22() {
+export function test_example_22() {
 
   var server = new jayson.Server({
     add: function(args:any, callback:any) {
@@ -414,7 +419,7 @@ export function test_22() {
   server.http().listen(3001);
 }
 
-export function test_23() {
+export function test_example_23() {
 
   var client = jayson.Client.http({
     port: 3000 // the port of the frontend server
@@ -426,7 +431,7 @@ export function test_23() {
   });
 }
 
-export function test_24() {
+export function test_example_24() {
 
   // create a server where "add" will relay a localhost-only server
   var server = new jayson.Server({
@@ -439,7 +444,7 @@ export function test_24() {
   server.http().listen(3000);
 }
 
-export function test_25() {
+export function test_example_25() {
   var fs = require('fs');
   var path = require('path');
 
@@ -465,7 +470,7 @@ export function test_25() {
   });
 }
 
-export function test_26() {
+export function test_example_26() {
   var fs = require('fs');
   var path = require('path');
 
@@ -514,7 +519,7 @@ export function test_26() {
   };
 }
 
-export function test_27() {
+export function test_example_27() {
   var shared = require('./shared');
 
   var client = jayson.Client.http({
@@ -540,7 +545,7 @@ export function test_27() {
   });
 }
 
-export function test_28() {
+export function test_example_28() {
   var shared = require('./shared');
 
   // Set the reviver/replacer options
@@ -560,7 +565,7 @@ export function test_28() {
   server.http().listen(3000);
 }
 
-export function test_29() {  
+export function test_example_29() {  
 
   var client = jayson.Client.http({
     port: 3000
@@ -573,7 +578,7 @@ export function test_29() {
   });
 }
 
-export function test_30() {
+export function test_example_30() {
 
   var server = new jayson.Server({
     ping: function(args:any, callback:any) {
@@ -585,7 +590,7 @@ export function test_30() {
   server.http().listen(3000);
 }
 
-export function test_31() {
+export function test_example_31() {
 
   // create a client
   var client = jayson.Client.http({
@@ -599,7 +604,7 @@ export function test_31() {
   });
 }
 
-export function test_32() {
+export function test_example_32() {
   var methods = {
     add: function(args:any, callback:any) {
       callback(null, args[0] + args[1]);
@@ -611,16 +616,46 @@ export function test_32() {
       // regular by-name routing first
       if(typeof(this._methods[method]) === 'function') return this._methods[method];
       if(method === 'add_2') {
-        var fn = (server.getMethod('add') as jayson.Method).getHandler();
+        var fn = (server.getMethod('add') as jayson.Method).getHandler() as jayson.MethodHandler;
         return new jayson.Method(function(args:any, done:any) {
           args.unshift(2);
-          fn(args, done);
+          fn.call(server, args, done);
         });
       }
     }
   });
 
   server.http().listen(3000);
+}
+
+export function test_MethodPromise() {
+
+  const fn1:jaysonPromise.MethodHandlerType = async function(args:jaysonPromise.RequestParamsLike, context:object, callback:jaysonPromise.JSONRPCCallbackTypePlain):Promise<jaysonPromise.JSONRPCResultLike> {
+    return {};
+  };
+
+  const fn2:jaysonPromise.MethodHandlerType = function(args:jaysonPromise.RequestParamsLike, callback:jaysonPromise.JSONRPCCallbackTypePlain) {
+    callback(null, {});
+  };
+
+  new jaysonPromise.Method(fn1, {useContext: true});
+  new jaysonPromise.Method(fn2);
+
+}
+
+export function test_Method() {
+
+  const fn1:jayson.MethodHandlerType = function(args:jayson.RequestParamsLike, context:object, callback:jayson.JSONRPCCallbackTypePlain) {
+    callback(this.error(-32602));
+  };
+
+  const fn2:jayson.MethodHandlerType = function(args:jayson.RequestParamsLike, callback:jayson.JSONRPCCallbackTypePlain) {
+    callback(null, {});
+  };
+
+  new jayson.Method(fn1, {useContext: true});
+  new jayson.Method(fn2);
+
 }
 
 export function test_Utils() {
@@ -633,6 +668,18 @@ export function test_Utils() {
 
   jayson.Utils.merge({a: true}, {a: false, b: true});
 
-  jayson.Utils.Response.isValidResponse({asdf: false}, 2);
+  jayson.Utils.Response.isValidResponse({}, 2);
+  jayson.Utils.Response.isValidResponse({});
+  jayson.Utils.Response.isValidError({}, 1);
+  jayson.Utils.Response.isValidError({});
+  jayson.Utils.Request.isValidRequest({}, 1);
+  jayson.Utils.Request.isNotification({});
+  jayson.Utils.Request.isBatch([]);
+  jayson.Utils.Request.isValidRequest({});
+
+  jayson.Utils.JSON.stringify({}, null, function(err?:Error, str?:string) {});
+  jayson.Utils.JSON.stringify({}, {}, function(err?:Error, str?:string) {});
+  jayson.Utils.JSON.parse('', null, function(err?:Error, data?:object) {});
+  jayson.Utils.JSON.parse('', {}, function(err?:Error, data?:object) {});
 
 }

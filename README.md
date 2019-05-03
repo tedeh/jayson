@@ -152,9 +152,9 @@ In addition to this document, a comprehensive class documentation made with [jsd
 
 ## Typescript
 
-Since `v2.1.0` there is experimental typescript support available with jayson. Anyone that would like to improve on the type definitions is most welcome to provide a pull request.
+Since `v2.1.0` there is experimental typescript support available with jayson.
 
-If you would just like to report an issue with the type definitions that you can't solve by yourself, please read the previous discussion here first: https://github.com/tedeh/jayson/issues/99
+If you have a problem with the type definitions, see the [Contributing](#contributing) section.
 
 ## Usage
 
@@ -1287,3 +1287,7 @@ Highlighting [issues](https://github.com/tedeh/jayson/issues) or submitting pull
 requests on [Github](https://github.com/tedeh/jayson) is most welcome.
 
 Please make sure to follow the style of the project, and lint your code with `npm run lint` before submitting a patch.
+
+### Submitting issues with the Typescript type definitions
+
+You are required to provide an easily reproducible code sample of any errors with the Typescript type definitions so that they can be added to the typescript test file in [typescript/test.ts](typescript/test.ts). Better yet, issue a pull request adding a test there yourself that shows up when running the `package.json` script `test-tsc`.

@@ -7,9 +7,9 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 [node.js]: http://nodejs.org/
 [jayson-npm]: https://www.npmjs.com/package/jayson
 [jayson-travis]: https://travis-ci.org/tedeh/jayson
-[badge-travis]: https://img.shields.io/travis/tedeh/jayson/master.svg?style=flat-square
-[badge-npm]: https://img.shields.io/npm/v/jayson.svg?style=flat-square
-[badge-downloads-month]: https://img.shields.io/npm/dm/jayson.svg?style=flat-square
+[badge-travis]: https://img.shields.io/travis/tedeh/jayson/master.svg
+[badge-npm]: https://img.shields.io/npm/v/jayson.svg
+[badge-downloads-month]: https://img.shields.io/npm/dm/jayson.svg
 [badge-downloads-total]: https://badgen.net/npm/dt/jayson
 
 [![travis build status][badge-travis]][jayson-travis] 

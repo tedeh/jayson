@@ -93,7 +93,8 @@ describe('jayson.tcp', function() {
       reviver: support.server.options().reviver,
       replacer: support.server.options().replacer,
       host: 'localhost',
-      port: 3999
+      port: 3999,
+      delimiter: '\r\n'
     });
 
     before(function(done) {

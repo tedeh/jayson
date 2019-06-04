@@ -1,6 +1,6 @@
 'use strict';
 
-const promisify = require('es6-promisify');
+const { promisify } = require("es6-promisify");
 
 /** * @namespace */
 const PromiseUtils = module.exports;

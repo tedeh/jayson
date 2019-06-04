@@ -4,6 +4,7 @@ import https = require('https');
 import http = require('http');
 import events = require('events');
 import Stream = require('stream');
+import { HandleFunction } from 'connect';
 
 export interface UtilsJSONParseOptions {
   reviver?: Function;
@@ -168,7 +169,7 @@ export declare class Server {
   https(options?: HttpsServerOptions): HttpsServer;
   tcp(options?: TcpServerOptions): TcpServer;
   tls(options?: TlsServerOptions): TlsServer;
-  middleware(options?: MiddlewareServerOptions): Function;
+  middleware(options?: MiddlewareServerOptions): HandleFunction;
 
   method(name: string, definition: MethodLike): void;
   methods(methods: {[methodName: string]: MethodLike}): void;

@@ -1,6 +1,6 @@
 'use strict';
 
-const promisify = require('es6-promisify');
+const { promisify } = require("es6-promisify");
 const jayson = require('../../../');
 const promiseUtils = require('../utils');
 

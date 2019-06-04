@@ -1,5 +1,9 @@
+// @ts-check
+
 import * as jayson from './..';
 import * as jaysonPromise from './../promise';
+import core from 'express-serve-static-core';
+import createServer from 'connect';
 
 /**
  * This file contains tests for the typescript type definitions.
@@ -8,11 +12,10 @@ import * as jaysonPromise from './../promise';
 
 export function test_example_1() {
   var jsonParser = require('body-parser').json;
-  var connect = require('connect');
-  var app = connect();
+  var app = require('connect') as createServer.Server;
 
   var server = new jayson.Server({
-    add: function(args:any, callback:any) {
+    add: function (args: any, callback: any) {
       callback(null, args[0] + args[1]);
     }
   });
@@ -27,7 +30,7 @@ export function test_example_1() {
 export function test_example_2() {
 
   var server = new jayson.Server({
-    add: function(args:any, callback:any) {
+    add: function (args: any, callback: any) {
       callback(null, args[0] + args[1]);
     }
   });
@@ -40,14 +43,14 @@ export function test_example_2() {
     client.request('add', [0, 0], null) // a notification
   ];
 
-  client.request(batch, function(err:any, errors:any, successes:any) {
-    if(err) throw err;
+  client.request(batch, function (err: any, errors: any, successes: any) {
+    if (err) throw err;
     console.log('errors', errors); // array of requests that errored
     console.log('successes', successes); // array of requests that succeeded
   });
 
-  client.request(batch, function(err:any, responses:any) {
-    if(err) throw err;
+  client.request(batch, function (err: any, responses: any) {
+    if (err) throw err;
     console.log('responses', responses); // all responses together
   });
 }
@@ -58,8 +61,8 @@ export function test_example_3() {
     port: 3000
   });
 
-  client.request('multiply', [5, 5], function(err, error, result) {
-    if(err) throw err;
+  client.request('multiply', [5, 5], function (err, error, result) {
+    if (err) throw err;
     console.log(result); // 25
   });
 }
@@ -67,12 +70,12 @@ export function test_example_3() {
 export function test_example_4() {
 
   var server = new jayson.Server({
-    multiply: function(args:any, callback:any) {
+    multiply: function (args: any, callback: any) {
       callback(null, args[0] * args[1]);
     }
   });
 
-  server.https().listen(3000, function() {
+  server.https().listen(3000, function () {
     console.log('Server listening on http://localhost:3000');
   });
 }
@@ -90,8 +93,8 @@ export function test_example_5() {
   var client = jayson.Client.tcp(options);
 
   // invoke "add"
-  client.request('add', [1, 1], function(err:any, response:any) {
-    if(err) throw err;
+  client.request('add', [1, 1], function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // 2
   });
 }
@@ -105,7 +108,7 @@ export function test_example_6() {
 
   // create a server
   var server = new jayson.Server({
-    add: function(args:any, callback:any) {
+    add: function (args: any, callback: any) {
       callback(null, args[0] + args[1]);
     }
   });
@@ -120,8 +123,8 @@ export function test_example_7() {
     port: 3000
   });
 
-  client.request('multiply', [5, 5], function(err:any, error:any, result:any) {
-    if(err) throw err;
+  client.request('multiply', [5, 5], function (err: any, error: any, result: any) {
+    if (err) throw err;
     console.log(result); // 25
   });
 }
@@ -129,12 +132,12 @@ export function test_example_7() {
 export function test_example_8() {
 
   var server = new jayson.Server({
-    multiply: function(args:any, callback:any) {
+    multiply: function (args: any, callback: any) {
       callback(null, args[0] * args[1]);
     }
   });
 
-  server.http().listen(3000, function() {
+  server.http().listen(3000, function () {
     console.log('Server listening on http://localhost:3000');
   });
 }
@@ -150,7 +153,7 @@ export function test_example_9() {
     client.request('add', [5, 6, 7, 8, 9], undefined, false),
   ];
 
-  client.request(batch).then(function(responses) {
+  client.request(batch).then(function (responses) {
     console.log(responses[0].result); // 15
     console.log(responses[1].result); // 35
   });
@@ -161,9 +164,9 @@ export function test_example_10() {
 
   var server = new jayson.Server({
 
-    add: function(args:any) {
-      return new Promise(function(resolve, reject) {
-        var sum = _.reduce(args, function(sum:number, value:number) { return sum + value; }, 0);
+    add: function (args: any) {
+      return new Promise(function (resolve, reject) {
+        var sum = _.reduce(args, function (sum: number, value: number) { return sum + value; }, 0);
         resolve(sum);
       });
     }
@@ -186,11 +189,11 @@ export function test_example_11() {
     //key require('fs').readFileSync('key.pem')
   });
 
-  http.listen(80, function() {
+  http.listen(80, function () {
     console.log('Listening on *:80');
   });
 
-  https.listen(443, function() {
+  https.listen(443, function () {
     console.log('Listening on *:443');
   });
 }
@@ -201,8 +204,8 @@ export function test_example_12() {
     port: 3000
   });
 
-  client.request('add', {b: 1, a: 2}, function(err:any, response:any) {
-    if(err) throw err;
+  client.request('add', { b: 1, a: 2 }, function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // 3!
   });
 }
@@ -210,11 +213,11 @@ export function test_example_12() {
 export function test_example_13() {
 
   var server = new jayson.Server({
-    add: function(a:any, b:any, callback:any) {
+    add: function (a: any, b: any, callback: any) {
       callback(null, a + b);
     }
   }, {
-  });
+    });
 
   server.http().listen(3000);
 }
@@ -227,8 +230,8 @@ export function test_example_14() {
   });
 
   // invoke "add"
-  client.request('add', [1, 1], function(err:any, response:any) {
-    if(err) throw err;
+  client.request('add', [1, 1], function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // 2
   });
 }
@@ -237,7 +240,7 @@ export function test_example_15() {
 
   // create a server
   var server = new jayson.Server({
-    add: function(args:any, callback:any) {
+    add: function (args: any, callback: any) {
       callback(null, args[0] + args[1]);
     }
   });
@@ -252,31 +255,31 @@ export function test_example_16() {
   });
 
   // invoke "sumCollect" with array
-  client.request('sumCollect', [3, 5, 9, 11], function(err:any, response:any) {
-    if(err) throw err;
+  client.request('sumCollect', [3, 5, 9, 11], function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // 28
   });
 
   // invoke "sumCollect" with object
-  client.request('sumCollect', {a: 2, b: 3, c: 4}, function(err:any, response:any) {
-    if(err) throw err;
+  client.request('sumCollect', { a: 2, b: 3, c: 4 }, function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // 9
   });
 
   // invoke "sumDefault" with object missing some defined members
-  client.request('sumDefault', {b: 10}, function(err:any, response:any) {
-    if(err) throw err;
+  client.request('sumDefault', { b: 10 }, function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // 12
   });
 
   // invoke "isArray" with an Object
-  client.request('isArray', {a: 5, b: 2, c: 9}, function(err:any, response:any) {
-    if(err) throw err;
+  client.request('isArray', { a: 5, b: 2, c: 9 }, function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // true
   });
 
-  client.request('sum', [1, 2, 3], function(err:any, response:any) {
-    if(err) throw err;
+  client.request('sum', [1, 2, 3], function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // 6
   });
 }
@@ -287,29 +290,29 @@ export function test_example_17() {
   var methods = {
 
     // this function will be wrapped in jayson.Method with options given to the server
-    sum: function(args:any, done:any) {
+    sum: function (args: any, done: any) {
       done(null, sum(args));
     },
 
     // this method gets the raw params as first arg to handler
     sumCollect: new jayson.Method({
-      handler: function(args:any, done:any) {
+      handler: function (args: any, done: any) {
         var total = sum(args);
         done(null, total);
       },
     }),
 
     // specifies some default values (alternate definition too)
-    sumDefault: new jayson.Method(function(args:any, done:any) {
+    sumDefault: new jayson.Method(function (args: any, done: any) {
       var total = sum(args);
       done(null, total);
     }, {
-      params: {a: 2, b: 5} // map of defaults
-    }),
+        params: { a: 2, b: 5 } // map of defaults
+      }),
 
     // this method returns true when it gets an array (which it always does)
     isArray: new jayson.Method({
-      handler: function(args:any, done:any) {
+      handler: function (args: any, done: any) {
         var result = _.isArray(args);
         done(null, result);
       },
@@ -326,8 +329,8 @@ export function test_example_17() {
   server.http().listen(3000);
 
   // sums all numbers in an array
-  function sum(list:any) {
-    return _.reduce(list, function(sum:any, val:any) {
+  function sum(list: any) {
+    return _.reduce(list, function (sum: any, val: any) {
       return sum + val;
     }, 0);
   }
@@ -339,13 +342,13 @@ export function test_example_18() {
     port: 3000
   });
 
-  client.request('myNameIs', {name: 'Mr. Creosote'}, function(err:any, error:any, result:any) {
-    if(err) throw err;
+  client.request('myNameIs', { name: 'Mr. Creosote' }, function (err: any, error: any, result: any) {
+    if (err) throw err;
     console.log(result); // 'Your name is: Mr. Creosote'
   });
 }
 
-export function test_example_19() {  
+export function test_example_19() {
 
   var cors = require('cors');
   var connect = require('connect');
@@ -353,12 +356,12 @@ export function test_example_19() {
   var app = connect();
 
   var server = new jayson.Server({
-    myNameIs: function(args:any, callback:any) {
+    myNameIs: function (args: any, callback: any) {
       callback(null, 'Your name is: ' + args.name);
     }
   });
 
-  app.use(cors({methods: ['POST']}));
+  app.use(cors({ methods: ['POST'] }));
   app.use(jsonParser());
   app.use(server.middleware());
 
@@ -376,7 +379,7 @@ export function test_example_20() {
     client.request('rejection', [])
   ];
 
-  Promise.all(reqs).then(function(responses:any) {
+  Promise.all(reqs).then(function (responses: any) {
     console.log(responses[0].result);
     console.log(responses[1].error);
   });
@@ -387,16 +390,16 @@ export function test_example_21() {
 
   var server = new jayson.Server({
 
-    add: function(args:any) {
-      return new Promise(function(resolve, reject) {
-        var sum = _.reduce(args, function(sum:any, value:any) { return sum + value; }, 0);
+    add: function (args: any) {
+      return new Promise(function (resolve, reject) {
+        var sum = _.reduce(args, function (sum: any, value: any) { return sum + value; }, 0);
         resolve(sum);
       });
     },
 
     // example on how to reject
-    rejection: function(args:any) {
-      return new Promise(function(resolve, reject) {
+    rejection: function (args: any) {
+      return new Promise(function (resolve, reject) {
         // server.error just returns {code: 501, message: 'not implemented'}
         reject(server.error(501, 'not implemented'));
       });
@@ -410,7 +413,7 @@ export function test_example_21() {
 export function test_example_22() {
 
   var server = new jayson.Server({
-    add: function(args:any, callback:any) {
+    add: function (args: any, callback: any) {
       callback(null, args[0] + args[1]);
     }
   });
@@ -425,8 +428,8 @@ export function test_example_23() {
     port: 3000 // the port of the frontend server
   });
 
-  client.request('add', [5, 9], function(err:any, response:any) {
-    if(err) throw err;
+  client.request('add', [5, 9], function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // 14
   });
 }
@@ -455,7 +458,7 @@ export function test_example_25() {
     cert: fs.readFileSync(path.resolve('./../../../test/fixtures/keys/agent1-cert.pem')),
 
     // This is necessary only if the client uses the self-signed certificate.
-    ca: [ fs.readFileSync(path.resolve('./../../../test/fixtures/keys/ca1-cert.pem')) ],
+    ca: [fs.readFileSync(path.resolve('./../../../test/fixtures/keys/ca1-cert.pem'))],
     port: 3000,
     host: 'localhost'
   };
@@ -464,8 +467,8 @@ export function test_example_25() {
   var client = jayson.Client.tls(options);
 
   // invoke "add"
-  client.request('add', [1, 1], function(err:any, response:any) {
-    if(err) throw err;
+  client.request('add', [1, 1], function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // 2
   });
 }
@@ -481,12 +484,12 @@ export function test_example_26() {
     cert: fs.readFileSync(path.resolve('./../../../test/fixtures/keys/agent1-cert.pem')),
     requestCert: true,
     // This is necessary only if the client uses the self-signed certificate.
-    ca: [ fs.readFileSync(path.resolve('./../../../test/fixtures/keys/ca1-cert.pem')) ],
+    ca: [fs.readFileSync(path.resolve('./../../../test/fixtures/keys/ca1-cert.pem'))],
   };
 
   // create a server
   var server = new jayson.Server({
-    add: function(args:any, callback:any) {
+    add: function (args: any, callback: any) {
       callback(null, args[0] + args[1]);
     }
   });
@@ -494,8 +497,8 @@ export function test_example_26() {
   // Bind a http interface to the server and let it listen to localhost:3000
   server.tls(options).listen(3000);
   class Counter {
-    count:number;
-    constructor(value?:number) {
+    count: number;
+    constructor(value?: number) {
       this.count = value || 0;
     }
     increment() {
@@ -503,15 +506,15 @@ export function test_example_26() {
     }
   }
 
-  exports.replacer = function(key:any, value:any) {
-    if(value instanceof Counter) {
-      return {$class: 'counter', $props: {count: value.count}};
+  exports.replacer = function (key: any, value: any) {
+    if (value instanceof Counter) {
+      return { $class: 'counter', $props: { count: value.count } };
     }
     return value;
   };
 
-  exports.reviver = function(key:any, value:any) {
-    if(value && value.$class === 'counter') {
+  exports.reviver = function (key: any, value: any) {
+    if (value && value.$class === 'counter') {
       var obj = new Counter(value.$props.count);
       return obj;
     }
@@ -534,8 +537,8 @@ export function test_example_27() {
   };
 
   // invoke "increment"
-  client.request('increment', params, function(err:any, response:any) {
-    if(err) throw err;
+  client.request('increment', params, function (err: any, response: any) {
+    if (err) throw err;
     var result = response.result;
     console.log(
       result instanceof shared.Counter, // true
@@ -556,7 +559,7 @@ export function test_example_28() {
 
   // create a server
   var server = new jayson.Server({
-    increment: function(args:any, callback:any) {
+    increment: function (args: any, callback: any) {
       args.counter.increment();
       callback(null, args.counter);
     }
@@ -565,15 +568,15 @@ export function test_example_28() {
   server.http().listen(3000);
 }
 
-export function test_example_29() {  
+export function test_example_29() {
 
   var client = jayson.Client.http({
     port: 3000
   });
 
   // the third parameter is set to "null" to indicate a notification
-  client.request('ping', [], null, function(err:any) {
-    if(err) throw err;
+  client.request('ping', [], null, function (err: any) {
+    if (err) throw err;
     console.log('ok'); // request was received successfully
   });
 }
@@ -581,7 +584,7 @@ export function test_example_29() {
 export function test_example_30() {
 
   var server = new jayson.Server({
-    ping: function(args:any, callback:any) {
+    ping: function (args: any, callback: any) {
       // do something, do nothing
       callback();
     }
@@ -598,26 +601,26 @@ export function test_example_31() {
   });
 
   // invoke "add_2"
-  client.request('add_2', [3], function(err:any, response:any) {
-    if(err) throw err;
+  client.request('add_2', [3], function (err: any, response: any) {
+    if (err) throw err;
     console.log(response.result); // 5!
   });
 }
 
 export function test_example_32() {
   var methods = {
-    add: function(args:any, callback:any) {
+    add: function (args: any, callback: any) {
       callback(null, args[0] + args[1]);
     }
   };
 
   var server = new jayson.Server(methods, {
-    router: <jayson.ServerRouterFunction>function(method:any, params:any) {
+    router: <jayson.ServerRouterFunction>function (method: any, params: any) {
       // regular by-name routing first
-      if(typeof(this._methods[method]) === 'function') return this._methods[method];
-      if(method === 'add_2') {
+      if (typeof (this._methods[method]) === 'function') return this._methods[method];
+      if (method === 'add_2') {
         var fn = (server.getMethod('add') as jayson.Method).getHandler() as jayson.MethodHandler;
-        return new jayson.Method(function(args:any, done:any) {
+        return new jayson.Method(function (args: any, done: any) {
           args.unshift(2);
           fn.call(server, args, done);
         });
@@ -628,32 +631,49 @@ export function test_example_32() {
   server.http().listen(3000);
 }
 
+export function test_example_33() {
+  var app = require('express') as core.Express;
+
+  var server = new jayson.Server({
+    add: function (args: any, callback: any) {
+      callback(null, args[0] + args[1]);
+    }
+  });
+
+  var jsonParser = require('body-parser').json;
+  // parse request body before the jayson middleware
+  app.use(jsonParser());
+  app.use(server.middleware());
+
+  app.listen(3000);
+}
+
 export function test_MethodPromise() {
 
-  const fn1:jaysonPromise.MethodHandlerType = async function(args:jaysonPromise.RequestParamsLike, context:object, callback:jaysonPromise.JSONRPCCallbackTypePlain):Promise<jaysonPromise.JSONRPCResultLike> {
+  const fn1: jaysonPromise.MethodHandlerType = async function (args: jaysonPromise.RequestParamsLike, context: object, callback: jaysonPromise.JSONRPCCallbackTypePlain): Promise<jaysonPromise.JSONRPCResultLike> {
     return {};
   };
 
-  const fn2:jaysonPromise.MethodHandlerType = function(args:jaysonPromise.RequestParamsLike, callback:jaysonPromise.JSONRPCCallbackTypePlain) {
+  const fn2: jaysonPromise.MethodHandlerType = function (args: jaysonPromise.RequestParamsLike, callback: jaysonPromise.JSONRPCCallbackTypePlain) {
     callback(null, {});
   };
 
-  new jaysonPromise.Method(fn1, {useContext: true});
+  new jaysonPromise.Method(fn1, { useContext: true });
   new jaysonPromise.Method(fn2);
 
 }
 
 export function test_Method() {
 
-  const fn1:jayson.MethodHandlerType = function(args:jayson.RequestParamsLike, context:object, callback:jayson.JSONRPCCallbackTypePlain) {
+  const fn1: jayson.MethodHandlerType = function (args: jayson.RequestParamsLike, context: object, callback: jayson.JSONRPCCallbackTypePlain) {
     callback(this.error(-32602));
   };
 
-  const fn2:jayson.MethodHandlerType = function(args:jayson.RequestParamsLike, callback:jayson.JSONRPCCallbackTypePlain) {
+  const fn2: jayson.MethodHandlerType = function (args: jayson.RequestParamsLike, callback: jayson.JSONRPCCallbackTypePlain) {
     callback(null, {});
   };
 
-  new jayson.Method(fn1, {useContext: true});
+  new jayson.Method(fn1, { useContext: true });
   new jayson.Method(fn2);
 
 }
@@ -661,12 +681,12 @@ export function test_Method() {
 export function test_Utils() {
 
   jayson.Utils.response(null, {}, null, 2);
-  jayson.Utils.response({code: 1234, message: 'hello', data: {test: true}}, {}, null, 2);
-  jayson.Utils.response({code: 1234, message: 'hello', data: {test: true}}, {}, null, 1);
+  jayson.Utils.response({ code: 1234, message: 'hello', data: { test: true } }, {}, null, 2);
+  jayson.Utils.response({ code: 1234, message: 'hello', data: { test: true } }, {}, null, 1);
 
   jayson.Utils.generateId();
 
-  jayson.Utils.merge({a: true}, {a: false, b: true});
+  jayson.Utils.merge({ a: true }, { a: false, b: true });
 
   jayson.Utils.Response.isValidResponse({}, 2);
   jayson.Utils.Response.isValidResponse({});
@@ -677,9 +697,10 @@ export function test_Utils() {
   jayson.Utils.Request.isBatch([]);
   jayson.Utils.Request.isValidRequest({});
 
-  jayson.Utils.JSON.stringify({}, null, function(err?:Error, str?:string) {});
-  jayson.Utils.JSON.stringify({}, {}, function(err?:Error, str?:string) {});
-  jayson.Utils.JSON.parse('', null, function(err?:Error, data?:object) {});
-  jayson.Utils.JSON.parse('', {}, function(err?:Error, data?:object) {});
+  jayson.Utils.JSON.stringify({}, null, function (err?: Error, str?: string) { });
+  jayson.Utils.JSON.stringify({}, {}, function (err?: Error, str?: string) { });
+  jayson.Utils.JSON.parse('', null, function (err?: Error, data?: object) { });
+  jayson.Utils.JSON.parse('', {}, function (err?: Error, data?: object) { });
 
 }
+

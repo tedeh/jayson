@@ -4,6 +4,7 @@ import https = require('https');
 import http = require('http');
 import events = require('events');
 import Stream = require('stream');
+import * as connect from 'connect';
 
 export interface UtilsJSONParseOptions {
   reviver?: Function;
@@ -156,19 +157,21 @@ export interface ServerOptions {
 export interface MethodMap { [methodName:string]: Method }
 
 export declare class Server {
-  constructor(methods?: {[methodName: string]: MethodLike}, options?: object);
+  constructor(methods?: {[methodName: string]: MethodLike}, options?: ServerOptions);
 
   static errors: {[errorName: string]: number};
   static errorMessages: {[errorMessage: string]: string};
   static interfaces: {[interfaces: string]: Function};
 
   public _methods: MethodMap;
+  public options: ServerOptions;
+  public errorMessages: {[errorMessage: string]: string};
 
   http(options?: HttpServerOptions): HttpServer;
   https(options?: HttpsServerOptions): HttpsServer;
   tcp(options?: TcpServerOptions): TcpServer;
   tls(options?: TlsServerOptions): TlsServer;
-  middleware(options?: MiddlewareServerOptions): Function;
+  middleware(options?: MiddlewareServerOptions): connect.HandleFunction;
 
   method(name: string, definition: MethodLike): void;
   methods(methods: {[methodName: string]: MethodLike}): void;
@@ -180,6 +183,7 @@ export declare class Server {
 }
 
 export interface MiddlewareServerOptions extends ServerOptions {
+  end?: boolean;
 }
 
 export interface HttpServerOptions extends ServerOptions {

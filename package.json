@@ -39,7 +39,7 @@
   "scripts": {
     "test": "mocha",
     "test-ci": "mocha -w -R min",
-    "test-tsc": "tsc --strict --lib es6 typescript/test.ts",
+    "test-tsc": "tsc --strict --lib es6 --esModuleInterop typescript/test.ts",
     "coverage": "nyc mocha",
     "docs": "jsdoc -t node_modules/ink-docstrap/template -R README.md -c ./jsdoc.conf.json",
     "docs_clear": "rm -rf ./docs/jayson/*; exit 0",
@@ -60,7 +60,6 @@
     }
   },
   "dependencies": {
-    "@types/node": "^10.3.5",
     "JSONStream": "^1.3.1",
     "commander": "^2.12.2",
     "es6-promisify": "^5.0.0",
@@ -70,6 +69,9 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
+    "@types/connect": "^3.4.32",
+    "@types/express-serve-static-core": "^4.16.7",
+    "@types/node": "^12.0.7",
     "body-parser": "^1.18.2",
     "connect": "^3.6.5",
     "es6-promise": "^4.1.1",

@@ -1,5 +1,6 @@
 import * as jayson from './..';
 import * as jaysonPromise from './../promise';
+import { Express } from 'express-serve-static-core';
 
 /**
  * This file contains tests for the typescript type definitions.
@@ -626,6 +627,32 @@ export function test_example_32() {
   });
 
   server.http().listen(3000);
+}
+
+export function test_Middleware() {
+  var app = require('express') as Express;
+
+  var server = new jayson.Server({
+    add: function (args:any, callback:any) {
+      callback(null, args[0] + args[1]);
+    }
+  });
+
+  var jsonParser = require('body-parser').json;
+  // parse request body before the jayson middleware
+  app.use(jsonParser());
+  app.use(server.middleware());
+
+  app.listen(3000);
+}
+
+export function test_ServerOptions() {
+  const server = new jayson.Server({}, {
+    useContext: true,
+  });
+
+  server.options.useContext = false;
+  server.errorMessages[jayson.Server.errors.PARSE_ERROR] = 'This is a parse error';
 }
 
 export function test_MethodPromise() {

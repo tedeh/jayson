@@ -180,6 +180,9 @@ export declare class Server {
   getMethod(name: string): MethodLike;
   error(code?: number, message?: string, data?: object): JSONRPCError;
   call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: JSONRPCCallbackType): void;
+  
+  on(event: string, listener: (...args: any[]) => void): this;
+  
 }
 
 export interface MiddlewareServerOptions extends ServerOptions {

@@ -1,5 +1,6 @@
 import * as jayson from './..';
 import * as jaysonPromise from './../promise';
+import { reduce, isArray } from 'lodash';
 import { Express } from 'express-serve-static-core';
 
 /**
@@ -158,13 +159,12 @@ export function test_example_9() {
 }
 
 export function test_example_10() {
-  var _ = require('lodash');
 
   var server = new jayson.Server({
 
     add: function(args:any) {
       return new Promise(function(resolve, reject) {
-        var sum = _.reduce(args, function(sum:number, value:number) { return sum + value; }, 0);
+        var sum = reduce(args, function(sum:number, value:number) { return sum + value; }, 0);
         resolve(sum);
       });
     }
@@ -283,8 +283,6 @@ export function test_example_16() {
 }
 
 export function test_example_17() {
-  var _ = require('lodash');
-
   var methods = {
 
     // this function will be wrapped in jayson.Method with options given to the server
@@ -311,7 +309,7 @@ export function test_example_17() {
     // this method returns true when it gets an array (which it always does)
     isArray: new jayson.Method({
       handler: function(args:any, done:any) {
-        var result = _.isArray(args);
+        var result = isArray(args);
         done(null, result);
       },
       params: Array // could also be "Object"
@@ -328,7 +326,7 @@ export function test_example_17() {
 
   // sums all numbers in an array
   function sum(list:any) {
-    return _.reduce(list, function(sum:any, val:any) {
+    return reduce(list, function(sum:any, val:any) {
       return sum + val;
     }, 0);
   }
@@ -384,13 +382,12 @@ export function test_example_20() {
 }
 
 export function test_example_21() {
-  var _ = require('lodash');
 
   var server = new jayson.Server({
 
     add: function(args:any) {
       return new Promise(function(resolve, reject) {
-        var sum = _.reduce(args, function(sum:any, value:any) { return sum + value; }, 0);
+        var sum = reduce(args, function(sum:any, value:any) { return sum + value; }, 0);
         resolve(sum);
       });
     },

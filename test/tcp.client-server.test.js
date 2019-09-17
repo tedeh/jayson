@@ -1,5 +1,6 @@
+'use strict';
+
 const should = require('should');
-const _ = require('lodash');
 const jayson = require('./../');
 const support = require('./support');
 const suites = require('./support/suites');

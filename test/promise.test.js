@@ -1,6 +1,7 @@
 'use strict';
 
-const _ = require('lodash');
+const reduce = require('lodash/reduce');
+const forEach = require('lodash/forEach');
 const should = require('should');
 const jayson = require('./../promise');
 const jaysonPromise = require('./../promise');
@@ -128,7 +129,7 @@ describe('jayson/promise', function() {
       }
     };
 
-    _.forEach(suites, function(suite, name) {
+    forEach(suites, function(suite, name) {
 
       describe(name, function() {
 
@@ -209,7 +210,7 @@ describe('jayson/promise', function() {
         const handlers = {
           sum: function(args) {
             return new Promise(function(resolve, reject) {
-              const sum = _.reduce(args, function(sum, arg) { return sum + arg; }, 0);
+              const sum = reduce(args, function(sum, arg) { return sum + arg; }, 0);
               resolve(sum);
             });
           },
@@ -222,7 +223,7 @@ describe('jayson/promise', function() {
           // returns a "Promise-like" object
           thenable: function(args) {
             return {then: function(resolve, reject) {
-              const sum = _.reduce(args, function(sum, arg) { return sum + arg; }, 0);
+              const sum = reduce(args, function(sum, arg) { return sum + arg; }, 0);
               resolve(sum);
             }};
           }

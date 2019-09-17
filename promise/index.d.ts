@@ -157,7 +157,7 @@ export interface ServerOptions {
 
 export interface MethodMap { [methodName:string]: Method }
 
-export declare class Server {
+export declare class Server extends events.EventEmitter {
   constructor(methods?: {[methodName: string]: MethodLike}, options?: ServerOptions);
 
   static errors: {[errorName: string]: number};

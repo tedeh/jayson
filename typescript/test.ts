@@ -707,3 +707,15 @@ export function test_Utils() {
   jayson.Utils.JSON.parse('', {}, function(err?:Error, data?:object) {});
 
 }
+
+export function test_ServerEventEmitter() {
+  const server = new jayson.Server({}, {
+    useContext: true,
+  });
+
+  server.on('request', function(request:jayson.JSONRPCRequestLike) {
+  });
+
+  server.on('response', function(request:jayson.JSONRPCRequestLike, response:jayson.JSONRPCRequestLike) {
+  });
+}

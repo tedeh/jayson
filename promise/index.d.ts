@@ -181,6 +181,7 @@ export declare class Server extends events.EventEmitter {
   getMethod(name: string): MethodLike;
   error(code?: number, message?: string, data?: object): JSONRPCError;
   call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: JSONRPCCallbackType): void;
+  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, context: object, originalCallback?: JSONRPCCallbackType): void;
 }
 
 export interface MiddlewareServerOptions extends ServerOptions {

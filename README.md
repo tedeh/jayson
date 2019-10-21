@@ -763,22 +763,22 @@ client.request('context', {hello: 'world'}, function(err, response) {
 
 In addition to events that are specific to certain interfaces, all servers will emit the following events:
 
-| Event      	| When                                     	| Arguments                            	| Notes                          	|
-|------------	|------------------------------------------	|--------------------------------------	|--------------------------------	|
-| `request`  	| Interpretable non-batch request received 	| 1: Request object                    	|                                	|
-| `response` 	| Returning a response                     	| 1: Request object 2: Response object 	|                                	|
-| `batch`    	| Interpretable batch request received     	| 1. Array of requests                 	| Emits `request` for every part 	|
+| Event      	| When                                     	| Arguments                            	                            | Notes                          	|
+|------------	|------------------------------------------	|------------------------------------------------------------------ |--------------------------------	|
+| `request`  	| Interpretable non-batch request received 	| 1: Request object <br/>2: Context object                          |                                	|
+| `response` 	| Returning a response                     	| 1: Request object <br/>2: Response object <br/>3: Context object  |                                	|
+| `batch`    	| Interpretable batch request received     	| 1. Array of requests  <br/>2: Context object                	    | Emits `request` for every part 	|
 
 #### Server Errors
 
 If you should like to return an error from an method request to indicate a failure, remember that the [JSON-RPC 2.0][jsonrpc-spec] specification requires the error to be an `Object` with a `code (Integer/Number)` to be regarded as valid. You can also provide a `message (String)` and a `data (Object)` with additional information. Example: 
 
 ```javascript
-var jayson = require('jayson');
+const jayson = require('jayson');
 
-var server = jayson.server({
+const server = jayson.server({
   i_cant_find_anything: function(args, callback) {
-    var error = {code: 404, message: 'Cannot find ' + args.id};
+    const error = {code: 404, message: 'Cannot find ' + args.id};
     callback(error); // will return the error object as given
   },
   i_cant_return_a_valid_error: function(callback) {
@@ -794,11 +794,11 @@ It is also possible to cause a method to return one of the predefined [JSON-RPC 
 [jsonrpc-spec#error_object]: http://jsonrpc.org/spec.html#error_object
 
 ```javascript
-var jayson = require('jayson');
+const jayson = require('jayson');
 
-var server = jayson.server({
+const server = jayson.server({
   invalid_params: function(args, callback) {
-    var error = this.error(-32602); // returns an error with the default properties set
+    const error = this.error(-32602); // returns an error with the default properties set
     callback(error);
   }
 });
@@ -807,9 +807,9 @@ var server = jayson.server({
 You can even override the default messages:
 
 ```javascript
-var jayson = require('jayson');
+const jayson = require('jayson');
 
-var server = jayson.server({
+const server = jayson.server({
   error_giver_of_doom: function(callback) {
     callback(true) // invalid error format, which causes an Internal Error to be returned instead
   }

@@ -1,8 +1,8 @@
-node_modules
+/node_modules
 .*
 !.gitignore
 !.travis.yml
 !.jshintrc
-sandbox
-coverage
-yarn-error.log
+!.npmignore
+/coverage
+/yarn-error.log

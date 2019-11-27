@@ -1,0 +1,9 @@
+/node_modules
+.*
+!.gitignore
+/coverage
+/test
+/examples
+/typescript
+/docs
+/jsdoc.conf.json

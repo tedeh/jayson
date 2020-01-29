@@ -62,7 +62,7 @@ type UtilsResponse = {
   isValidResponse(response:any, version?:number): boolean;
 }
 
-export type RequestParamsLike = Array<any> | object;
+export type RequestParamsLike = Array<any> | object | undefined;
 
 export interface JSONRPCError {
   code: number;

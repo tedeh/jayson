@@ -10,12 +10,10 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 [badge-travis]: https://img.shields.io/travis/tedeh/jayson/master.svg
 [badge-npm]: https://img.shields.io/npm/v/jayson.svg
 [badge-downloads-month]: https://img.shields.io/npm/dm/jayson.svg
-[badge-downloads-total]: https://badgen.net/npm/dt/jayson
 
 [![travis build status][badge-travis]][jayson-travis] 
 [![npm version][badge-npm]][jayson-npm]
 [![npm][badge-downloads-month]][jayson-npm]
-[![npm][badge-downloads-total]][jayson-npm]
 [![Known Vulnerabilities](https://snyk.io/test/npm/jayson/badge.svg)](https://snyk.io/test/npm/jayson)
 
 ## Table of contents

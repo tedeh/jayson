@@ -656,7 +656,7 @@ The method class is available as the `Method` or `method` property of  `require(
 |-----------	|--------------------------------	|---------------------	|------------------------------------------------------------------------	|
 | `handler` 	|                                	| `Function`          	| The actual function that will handle a JSON-RPC request to this method 	|
 | `useContext` 	| false 	| `Boolean`           	| When true, the handler will receive a context object as the second argument
-| `params`  	| null                           	| `Array|Object|null` 	| Force JSON-RPC parameters to be of a certain type                      	|
+| `params`  	| null                           	| `Array\|Object\|null` 	| Force JSON-RPC parameters to be of a certain type                      	|
 
 Server example showcasing most features and options in [examples/method_definitions/server.js](examples/method_definitions/server.js):
 

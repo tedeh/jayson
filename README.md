@@ -15,6 +15,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 [![Coverage Status](https://coveralls.io/repos/github/tedeh/jayson/badge.svg?branch=master)](https://coveralls.io/github/tedeh/jayson?branch=master)
 ![GitHub issues](https://img.shields.io/github/issues/tedeh/jayson)
 ![Dependents (via libraries.io)](https://img.shields.io/librariesio/dependents/npm/jayson)
+![node-current](https://img.shields.io/node/v/jayson)
 ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/jayson)
 [![npm version][badge-npm]][jayson-npm]
 [![npm][badge-downloads-month]][jayson-npm]

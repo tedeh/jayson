@@ -12,6 +12,5 @@ notifications:
  email:
    - notify+mail@tedeh.net
 
-script:
-  - npm test
-  - npm run coveralls
+after_success:
+  - nyc npm test && nyc report --reporter=text-lcov | coveralls

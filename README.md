@@ -12,6 +12,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 [badge-downloads-month]: https://img.shields.io/npm/dm/jayson.svg
 
 [![travis build status][badge-travis]][jayson-travis] 
+[![Coverage Status](https://coveralls.io/repos/github/tedeh/jayson/badge.svg?branch=master)](https://coveralls.io/github/tedeh/jayson?branch=master)
 [![npm version][badge-npm]][jayson-npm]
 [![npm][badge-downloads-month]][jayson-npm]
 [![Known Vulnerabilities](https://snyk.io/test/npm/jayson/badge.svg)](https://snyk.io/test/npm/jayson)

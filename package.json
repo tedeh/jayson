@@ -1,6 +1,6 @@
 {
   "name": "jayson",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "JSON-RPC 1.0/2.0 compliant server and client",
   "license": "MIT",
   "keywords": [
@@ -71,7 +71,7 @@
     "jsdoc": "^3.6.3",
     "jshint": "^2.10.1",
     "marked": "^0.7.0",
-    "mocha": "^4.0.1",
+    "mocha": "^7.1.1",
     "node-fetch": "^2.1.2",
     "nyc": "^14.1.1",
     "pass-stream": "^1.0.0",

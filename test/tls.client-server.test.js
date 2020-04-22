@@ -51,15 +51,15 @@ describe('jayson.tls', function() {
   describe('client', function() {
     
     const server = jayson.server(support.server.methods(), support.server.options());
-    const server_tls = server.tls(serverOptions);
+    const serverTls = server.tls(serverOptions);
     const client = jayson.client.tls(clientOptions);
 
     before(function(done) {
-      server_tls.listen(3999, 'localhost', done);
+      serverTls.listen(3999, 'localhost', done);
     });
 
     after(function() {
-      server_tls.close();
+      serverTls.close();
     });
 
     describe('common tests', suites.getCommonForClient(client));
@@ -82,6 +82,29 @@ describe('jayson.tls', function() {
         // obviously invalid
         socket.write('abc');
       });
+    });
+
+    describe('options', function() {
+
+      const serverIcp = server.tls(serverOptions);
+      before(function(done) {
+        serverIcp.listen('/tmp/test.sock', done);
+      });
+
+      after(function() {
+        serverIcp.close();
+      });
+
+      it('should accept a string as the frist option for an IPC connection', function(done) {
+        const client = jayson.client.tls('/tmp/test.sock');
+        client.options.secureContext = tls.createSecureContext(clientOptions);
+        client.request('add', [1, 2], function(err, error, result) {
+          if(err || error) return done(err || error);
+          should(result).equal(3);
+          done();
+        });
+      });
+
     });
 
   });

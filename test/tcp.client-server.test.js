@@ -89,7 +89,7 @@ describe('jayson.tcp', function() {
   describe('client', function() {
 
     const server = jayson.server(support.server.methods(), support.server.options());
-    const server_tcp = server.tcp();
+    const serverTcp = server.tcp();
     const client = jayson.client.tcp({
       reviver: support.server.options().reviver,
       replacer: support.server.options().replacer,
@@ -99,14 +99,36 @@ describe('jayson.tcp', function() {
     });
 
     before(function(done) {
-      server_tcp.listen(3999, 'localhost', done);
+      serverTcp.listen(3999, 'localhost', done);
     });
 
     after(function() {
-      server_tcp.close();
+      serverTcp.close();
     });
 
     describe('common tests', suites.getCommonForClient(client));
+
+    describe('options', function() {
+
+      const serverIcp = server.tcp();
+      before(function(done) {
+        serverIcp.listen('/tmp/test.sock', done);
+      });
+
+      after(function() {
+        serverIcp.close();
+      });
+
+      it('should accept a string as the first option for an IPC connection', function(done) {
+        const client = jayson.client.tcp('/tmp/test.sock');
+        client.request('add', [1, 2], function(err, error, result) {
+          if(err || error) return done(err || error);
+          should(result).equal(3);
+          done();
+        });
+      });
+
+    });
 
   });
 

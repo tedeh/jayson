@@ -64,8 +64,8 @@ describe('jayson.bin', function() {
 
     let tcp = null;
     const hostname = 'localhost';
-    const port = "35000";
-    const socket = hostname + ":" + port;
+    const port = '35000';
+    const socket = hostname + ':' + port;
 
     before(function(done) {
       tcp = server.tcp();

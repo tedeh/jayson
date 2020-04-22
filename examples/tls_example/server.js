@@ -21,5 +21,5 @@ const server = jayson.server({
   }
 });
 
-// Bind a http interface to the server and let it listen to localhost:3000
+// Bind a tls interface to the server and let it listen to localhost:3000
 server.tls(options).listen(3000);

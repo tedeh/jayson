@@ -117,6 +117,8 @@ Install the latest version of _jayson_ from [npm](https://www.npmjs.com) by exec
 
 ## Changelog (only notable milestones)
 
+- *3.3.0*
+  - Remove URL parsing when passing a string option to the TLS and TCP client, string options are instead treated as an IPC path
 - *3.0.0*
   - Can pass a [context object](#server-context) to handlers
   - _Breaking_: `collect` option removed from `jayson.Server/Method`. JSON-RPC params to handlers are now **always** in the first argument.

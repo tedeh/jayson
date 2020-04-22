@@ -234,19 +234,19 @@ Will emit the [same custom events](#clienthttp-events) as `Client.http`.
 
 ##### Client.tcp
 
-Uses the same options as [net.connect][nodejs_docs_net_connect] in addition _to the same options as `Client.http`_.
+Uses the same options as [net.connect][nodejs_docs_net_connect].
 
 [nodejs_docs_net_connect]: https://nodejs.org/api/net.html#net_net_connect
 
 ##### Client.tls
 
-Uses the same options as [tls.connect][nodejs_docs_tls_connect] in addition _to the same options as `Client.http`_.
+Uses the same options as [tls.connect][nodejs_docs_tls_connect].
 
 [nodejs_docs_tls_connect]: https://nodejs.org/api/tls.html#tls_tls_connect_options_callback
 
 ##### Client.browser
 
-The browser client is a simplified version of the regular client for use browser-side. It does not have any dependencies on node.js core libraries (but does depend on the `uuid` and `lodash`) and also does not know how to "send" a request to a server like the other clients.
+The browser client is a simplified version of the regular client for use browser-side. It does not have any dependencies on node.js core libraries, but does depend on `uuid` and parts of the `lodash` package. It also does not know how to "send" a request to a server like the other clients.
 
 Because it does not depend on any core libraries, the browser client is **not** an instance of `JaysonClient` or `EventEmitter` and therefore does **not** emit any of the normal request events that the other clients do.
 

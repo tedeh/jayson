@@ -1,5 +1,6 @@
 import * as jayson from './..';
 import * as jaysonPromise from './../promise';
+import jaysonBrowserClient from './../lib/client/browser';
 import { reduce, isArray } from 'lodash';
 import { Express } from 'express-serve-static-core';
 
@@ -679,11 +680,9 @@ export function test_Method() {
 
   new jayson.Method(fn1, {useContext: true});
   new jayson.Method(fn2);
-
 }
 
 export function test_Utils() {
-
   jayson.Utils.response(null, {}, null, 2);
   jayson.Utils.response({code: 1234, message: 'hello', data: {test: true}}, {}, null, 2);
   jayson.Utils.response({code: 1234, message: 'hello', data: {test: true}}, {}, null, 1);
@@ -717,5 +716,25 @@ export function test_ServerEventEmitter() {
   });
 
   server.on('response', function(request:jayson.JSONRPCRequestLike, response:jayson.JSONRPCRequestLike) {
+  });
+}
+
+export function test_clientBrowser () {
+  const shared = require('./shared');
+
+  const callServer = function(request:jayson.JSONRPCRequestLike, callback:jayson.JSONRPCCallbackType) {
+    callback(null, {code: -1, message: 'we have an error'});
+  };
+
+  const client = new jaysonBrowserClient(callServer, {
+    reviver: shared.reviver,
+    replacer: shared.replacer,
+    generator: () => String(Math.round(Math.random() * 10000)),
+    version: 2,
+  });
+
+  client.request('multiply', [5, 5], function(err?: Error | null, error?: jayson.JSONRPCErrorLike, result?: jayson.JSONRPCResultLike) {
+    if(err) throw err;
+    console.log(result); // 25
   });
 }

@@ -248,7 +248,7 @@ Uses the same options as [tls.connect][nodejs_docs_tls_connect].
 
 ##### Client.browser
 
-The browser client is a simplified version of the regular client for use browser-side. It does not have any dependencies on node.js core libraries, but does depend on `uuid` and parts of the `lodash` package. It also does not know how to "send" a request to a server like the other clients.
+The browser client is a simplified version of the regular client for use browser-side. It does not have any dependencies on node.js core libraries, but does depend on the `uuid` package for generating request ids. It also does not know how to "send" a request to a server like the other clients.
 
 Because it does not depend on any core libraries, the browser client is **not** an instance of `JaysonClient` or `EventEmitter` and therefore does **not** emit any of the normal request events that the other clients do.
 
@@ -257,6 +257,8 @@ To use the browser client, `require('jayson/lib/client/browser')` and pass a cal
 The reason for dealing with strings is to support the `reviver` and `replacer` options like the other clients.
 
 This client example in [examples/browser_client/client.js](examples/browser_client/client.js) below uses [node-fetch](https://github.com/bitinn/node-fetch) in the transport function, but a dropin replacement for use in an *actual* browser could instead use [whatwg-fetch](https://github.com/github/fetch/issues/184).
+
+The browser client has a separate TypeScript type declaration available in `jayson/lib/client/browser/index.d.ts` which depends on the main Jayson type declaration.
 
 ```javascript
 'use strict';

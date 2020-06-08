@@ -55,6 +55,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Named parameters](#named-parameters)
 - [Promises](#promises)
   - [Batches](#promise-batches)
+  - [Browser client](#promise-browser-client)
 - [FAQ](#faq)
 - [Recommended usage](#what-is-the-recommended-way-to-use-jayson)
 - [Contributing](#contributing)
@@ -263,7 +264,7 @@ The browser client has a separate TypeScript type declaration available in `jays
 ```javascript
 'use strict';
 
-const jaysonBrowserClient = require('./../../lib/client/browser');
+const jaysonBrowserClient = require('jayson/lib/client/browser');
 const fetch = require('node-fetch');
 
 const callServer = function(request, callback) {
@@ -1175,6 +1176,39 @@ client.request(batch).then(function(responses) {
 ##### Notes
 
 * The third parameter to `PromiseClient.prototype.request` above is explicitly set to `undefined` - this parameter would normally represent the desired ID of the call. Remember that `null` would mean a notification (which does not return a response) and other falsy values may actually be used as ids. Setting `undefined` ensures that the id is generated automatically.
+
+#### Promise Browser Client
+
+A browser client that has no dependencies on node.js core libraries is available too. It works similar to how the regular callback-style [Browser Client](#clientbrowser) works. Here is an example:
+
+```javascript
+'use strict';
+
+const jaysonPromiseBrowserClient = require('jayson/promise/lib/client/browser');
+const fetch = require('node-fetch');
+
+const callServer = function(request) {
+  const options = {
+    method: 'POST',
+    body: request,
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  };
+  return fetch('http://localhost:3000', options).then(res => res.text());
+};
+
+const client = jaysonPromiseBrowserClient(callServer, {
+  // other options go here
+});
+
+client.request('multiply', [5, 5]).then(function(err, result) {
+  if(err) throw err;
+  console.log(result);
+});
+```
+
+Please refer to the [regular browser client](#clientbrowser) section of the README for more information.
 
 ## FAQ
 

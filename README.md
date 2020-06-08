@@ -55,6 +55,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Named parameters](#named-parameters)
 - [Promises](#promises)
   - [Batches](#promise-batches)
+  - [Browser client](#promise-browser-client)
 - [FAQ](#faq)
 - [Recommended usage](#what-is-the-recommended-way-to-use-jayson)
 - [Contributing](#contributing)
@@ -117,6 +118,10 @@ Install the latest version of _jayson_ from [npm](https://www.npmjs.com) by exec
 
 ## Changelog (only notable milestones)
 
+- *3.3.3*
+  - Promise support for browser client
+  - TypeScript declaration for promise browser client
+  - TypeScript declaration for browser client
 - *3.3.0*
   - Remove URL parsing when passing a string option to the TLS and TCP client, string options are instead treated as an IPC path
 - *3.0.0*
@@ -263,7 +268,7 @@ The browser client has a separate TypeScript type declaration available in `jays
 ```javascript
 'use strict';
 
-const jaysonBrowserClient = require('./../../lib/client/browser');
+const jaysonBrowserClient = require('jayson/lib/client/browser');
 const fetch = require('node-fetch');
 
 const callServer = function(request, callback) {
@@ -300,7 +305,7 @@ Client example in [examples/notifications/client.js](examples/notifications/clie
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 const client = jayson.client.http({
   port: 3000
@@ -346,7 +351,7 @@ Combined server/client example in [examples/batch_request/index.js](examples/bat
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 const server = jayson.server({
   add: function(args, callback) {
@@ -473,7 +478,7 @@ Middleware example in [examples/middleware/server.js](examples/middleware/server
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const jsonParser = require('body-parser').json;
 const connect = require('connect');
 const app = connect();
@@ -500,7 +505,7 @@ Server example in [examples/many_interfaces/server.js](examples/many_interfaces/
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 const server = jayson.server();
 
@@ -531,7 +536,7 @@ Frontend server example in [examples/relay/server_public.js](examples/relay/serv
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 // create a server where "add" will relay a localhost-only server
 const server = jayson.server({
@@ -549,7 +554,7 @@ Backend server example in [examples/relay/server_private.js](examples/relay/serv
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 const server = jayson.server({
   add: function(args, callback) {
@@ -572,7 +577,7 @@ Server example with custom routing logic in [examples/method_routing/server.js](
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 const methods = {
   add: function(args, callback) {
@@ -602,7 +607,7 @@ Client example in [examples/method_routing/client.js](examples/method_routing/cl
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 // create a client
 const client = jayson.client.http({
@@ -674,7 +679,7 @@ Server example showcasing most features and options in [examples/method_definiti
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const _ = require('lodash');
 
 const methods = {
@@ -731,7 +736,7 @@ Client example in [examples/method_definitions/client.js](examples/method_defini
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 const client = jayson.client.http({
   port: 3000
@@ -836,7 +841,7 @@ like [cors](https://github.com/expressjs/cors). An example of this can be found 
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const cors = require('cors');
 const connect = require('connect');
 const jsonParser = require('body-parser').json;
@@ -869,7 +874,7 @@ Server example in [examples/context/server.js](examples/context/server.js):
 'use strict';
 
 const _ = require('lodash');
-const jayson = require('./../..');
+const jayson = require('jayson');
 const jsonParser = require('body-parser').json;
 const express = require('express');
 const app = express();
@@ -973,7 +978,7 @@ Server example in [examples/reviving_and_replacing/server.js](examples/reviving_
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const shared = require('./shared');
 
 // Set the reviver/replacer options
@@ -998,7 +1003,7 @@ A client example in [examples/reviving_and_replacing/client.js](examples/revivin
 ```javascript
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const shared = require('./shared');
 
 const client = jayson.client.http({
@@ -1090,7 +1095,7 @@ Server example in [examples/promise/server.js](examples/promise/server.js) showi
 ```javascript
 'use strict';
 
-const jayson = require('../../promise');
+const jayson = require('jayson/promise');
 const _ = require('lodash');
 
 const server = jayson.server({
@@ -1120,7 +1125,7 @@ Client example in [examples/promise/client.js](examples/promise/client.js) showi
 ```javascript
 'use strict';
 
-const jayson = require('../../promise');
+const jayson = require('jayson/promise');
 
 const client = jayson.client.http({
   port: 3000
@@ -1175,6 +1180,40 @@ client.request(batch).then(function(responses) {
 ##### Notes
 
 * The third parameter to `PromiseClient.prototype.request` above is explicitly set to `undefined` - this parameter would normally represent the desired ID of the call. Remember that `null` would mean a notification (which does not return a response) and other falsy values may actually be used as ids. Setting `undefined` ensures that the id is generated automatically.
+
+#### Promise Browser Client
+
+A browser client that has no dependencies on node.js core libraries is available too. It works similar to how the regular callback-style [Browser Client](#clientbrowser) works. Here is an example:
+
+```javascript
+'use strict';
+
+const jaysonPromiseBrowserClient = require('jayson/promise/lib/client/browser');
+const fetch = require('node-fetch');
+
+const callServer = function(request) {
+  const options = {
+    method: 'POST',
+    body: request,
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  };
+  return fetch('http://localhost:3000', options).then(res => res.text());
+};
+
+const client = jaysonPromiseBrowserClient(callServer, {
+  // other options go here
+});
+
+client.request('multiply', [5, 5]).then(function(result) {
+  console.log(result);
+}, function(err) {
+  console.error(err);
+});
+```
+
+Please refer to the [regular browser client](#clientbrowser) section of the README for more information.
 
 ## FAQ
 

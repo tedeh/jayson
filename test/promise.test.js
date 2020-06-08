@@ -3,9 +3,11 @@
 const reduce = require('lodash/reduce');
 const forEach = require('lodash/forEach');
 const should = require('should');
+const fetch = require('node-fetch');
 const jayson = require('./../promise');
 const jaysonPromise = require('./../promise');
 const support = require('./support');
+const jaysonPromiseBrowserClient = require('./../promise/lib/client/browser');
 
 describe('jayson/promise', function() {
 
@@ -85,6 +87,35 @@ describe('jayson/promise', function() {
         },
         closeServer: function(https, done) {
           https.close(done);
+        }
+      },
+      browser: {
+        server: function(done) {
+          const server = jaysonPromise.Server(support.server.methods(), support.server.options());
+          const http = server.http();
+          http.listen(3999, 'localhost', done);
+          return http;
+        },
+        client: function(server) {
+          return jaysonPromiseBrowserClient(function (request) {
+            const options = {
+              method: 'POST',
+              body: request,
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            };
+            return fetch('http://localhost:3999', options)
+              .then(function(res) { return res.text(); });
+          }, {
+            reviver: support.server.options().reviver,
+            replacer: support.server.options().replacer,
+            host: 'localhost',
+            port: 3999
+          });
+        },
+        closeServer: function(http, done) {
+          http.close(done);
         }
       },
       'tcp': {

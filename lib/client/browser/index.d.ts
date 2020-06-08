@@ -1,6 +1,8 @@
 import * as jayson from '../../..';
 
-type ClientBrowserCallServerFunction = (request:jayson.JSONRPCRequestLike, callback:jayson.JSONRPCCallbackType) => void;
+type ClientBrowserCallServerFunctionCallback = (err?:Error | null, response?:string) => void;
+
+type ClientBrowserCallServerFunction = (request:string, callback:ClientBrowserCallServerFunctionCallback) => void;
 
 declare class ClientBrowser {
   constructor(callServer:ClientBrowserCallServerFunction, options:jayson.ClientOptions);

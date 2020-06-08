@@ -1,6 +1,7 @@
 import * as jayson from './..';
 import * as jaysonPromise from './../promise';
 import jaysonBrowserClient from './../lib/client/browser';
+import jaysonPromiseBrowserClient from './../promise/lib/client/browser';
 import { reduce, isArray } from 'lodash';
 import { Express } from 'express-serve-static-core';
 
@@ -722,8 +723,8 @@ export function test_ServerEventEmitter() {
 export function test_clientBrowser () {
   const shared = require('./shared');
 
-  const callServer = function(request:jayson.JSONRPCRequestLike, callback:jayson.JSONRPCCallbackType) {
-    callback(null, {code: -1, message: 'we have an error'});
+  const callServer = function(request:string, callback:((err?:Error | null, response?:string) => void)) {
+    callback(null, '{}');
   };
 
   const client = new jaysonBrowserClient(callServer, {
@@ -737,4 +738,35 @@ export function test_clientBrowser () {
     if(err) throw err;
     console.log(result); // 25
   });
+  client.request('multiply', [5, 5], '2', function(err?: Error | null, error?: jayson.JSONRPCErrorLike, result?: jayson.JSONRPCResultLike) {
+    if(err) throw err;
+    console.log(result); // 25
+  });
+  const r1 = client.request('multiply', {asdf: true});
+  const r2 = client.request('multiply', [3, 9]);
+  client.request([r1, r2], function (err: jayson.JSONRPCErrorLike, results?: Array<jayson.JSONRPCResultLike>) {
+    if(err) throw err;
+    console.log(results); // 25
+  });
+}
+
+export function test_clientBrowserPromise () {
+  const shared = require('./shared');
+
+  const callServer = function(request:string):Promise<string> {
+    return Promise.resolve(JSON.stringify({code: -1, message: 'we have an error'}));
+  };
+
+  const client = new jaysonPromiseBrowserClient(callServer, {
+    reviver: shared.reviver,
+    replacer: shared.replacer,
+    generator: () => String(Math.round(Math.random() * 10000)),
+    version: 2,
+  });
+
+  client.request('multiply', [5, 5]).then(function (response) {});
+  client.request('multiply', [5, 5], '2').then(function (response) {});
+  const r1 = client.request('multiply', {asdf: true}, undefined, false);
+  const r2 = client.request('multiply', [3, 9], undefined, false);
+  client.request([r1, r2]).then(function (response) {});
 }

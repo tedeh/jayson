@@ -79,7 +79,7 @@ export interface JSONRPCVersionOneRequest {
 }
 
 export interface JSONRPCVersionTwoRequest {
-  jsonrpc: number;
+  jsonrpc: string;
   method: string;
   params: RequestParamsLike;
   id?: JSONRPCIDLike | null;

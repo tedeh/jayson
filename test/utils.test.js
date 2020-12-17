@@ -34,6 +34,20 @@ describe('jayson.utils', function() {
 
   });
 
+  describe('response', function() {
+
+    it('exists', function() {
+      utils.should.have.property('response');
+      utils.response.should.be.a.Function;
+    });
+
+    it('should set result to null when no error or result provided', function() {
+      const result = utils.response(undefined, undefined, 'something', 2);
+      should(result).eql({ jsonrpc: '2.0', id: 'something', result: null });
+    });
+
+  });
+
   describe('parseBody', function() {
 
     const parseBody = utils.parseBody;
@@ -125,6 +139,12 @@ describe('jayson.utils', function() {
       {
         desc: 'an invalid 2 response (both error and result properties)',
         response: {jsonrpc: '2.0', id: 'something', error: {code: 123, message: 'something'}, result: null},
+        version: 2,
+        expected: false,
+      },
+      {
+        desc: 'an invalid 2 response (no result or error)',
+        response: {jsonrpc: '2.0', id: 'something'},
         version: 2,
         expected: false,
       },
@@ -240,7 +260,7 @@ describe('jayson.utils', function() {
       });
 
     });
-  
+
   });
 
 });

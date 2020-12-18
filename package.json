@@ -1,6 +1,6 @@
 {
   "name": "jayson",
-  "version": "3.3.4",
+  "version": "3.4.4",
   "description": "JSON-RPC 1.0/2.0 compliant server and client",
   "license": "MIT",
   "keywords": [
@@ -22,8 +22,8 @@
     "tls",
     "api"
   ],
-  "author": "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",
-  "maintainers": "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",
+  "author": "Tedde Lundgren <mail@tedeh.net> (https://tedeh.net)",
+  "maintainers": "Tedde Lundgren <mail@tedeh.net> (https://tedeh.net)",
   "bin": "./bin/jayson.js",
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
   "homepage": "https://jayson.tedeh.net",
   "bugs": "https://github.com/tedeh/jayson/issues",
   "contributors": [
-    "Tedde Lundgren <mail@tedeh.net> (http://tedeh.net)",
+    "Tedde Lundgren <mail@tedeh.net> (https://tedeh.net)",
     "Daniel Vicory <dvicory@gmail.com> (http://bzfx.net)",
     "Jonathan Liu <net147@gmail.com>"
   ],
@@ -72,7 +72,7 @@
     "jshint": "^2.12.0",
     "marked": "^0.7.0",
     "mocha": "^7.2.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "nyc": "^14.1.1",
     "pass-stream": "^1.0.0",
     "should": "^13.2.3",

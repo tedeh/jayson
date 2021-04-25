@@ -130,6 +130,38 @@ describe('jayson.tcp', function() {
 
     });
 
+    describe('events', function () {
+
+      describe('tcp socket', function () {
+
+        it('should allow timeout to be manipulated by listening on tcp socket event', function (done) {
+          let timeoutEventFired = false;
+
+          client.on('tcp socket', function (socket) {
+            socket.setTimeout(250, function () {
+              timeoutEventFired = true;
+              socket.end();
+            });
+          });
+
+          server.method('triggerTimeout', function (args, callback) {
+            setTimeout(function () {
+              callback(null, true);
+            }, args.timeout);
+          });
+
+          client.request('triggerTimeout', {timeout: 500}, function (err, result) {
+            console.log(err, result);
+            should(timeoutEventFired).equal(true);
+            done();
+          });
+
+        });
+
+      });
+
+    });
+
   });
 
 });

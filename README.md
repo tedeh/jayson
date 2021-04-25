@@ -245,6 +245,8 @@ Uses the same options as [net.connect][nodejs_docs_net_connect].
 
 ###### Client.tcp Events
 
+*Since version 3.5.1*
+
 The TCP client will emit the following events:
 
 | Event      | When                   | Arguments                     | Notes                         |
@@ -259,6 +261,8 @@ The TCP client will emit the following events:
 Uses the same options as [tls.connect][nodejs_docs_tls_connect].
 
 ###### Client.tls Events
+
+*Since version 3.5.1*
 
 The TLS client will emit the following events:
 

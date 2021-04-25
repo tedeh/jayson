@@ -210,7 +210,7 @@ Uses the same options as [http.request][nodejs_docs_http_request] in addition to
 
 ###### Client.http Events
 
-The HTTP server will emit the following events:
+The HTTP client will emit the following events:
 
 | Event           	| When                              	| Arguments                                                                 	| Notes                                     	|
 |-----------------	|-----------------------------------	|---------------------------------------------------------------------------	|-------------------------------------------	|
@@ -243,11 +243,29 @@ Will emit the [same custom events](#clienthttp-events) as `Client.http`.
 
 Uses the same options as [net.connect][nodejs_docs_net_connect].
 
+###### Client.tcp Events
+
+The TCP client will emit the following events:
+
+| Event      | When                   | Arguments                     | Notes                         |
+|------------|------------------------|-------------------------------|-------------------------------|
+| tcp socket | TCP socket is opened   | 1. `net.Socket`               | Can be used to setup timeouts |
+| tcp error  | TCP socket emits error | 1. Error emit by `net.Socket` |                               |
+
 [nodejs_docs_net_connect]: https://nodejs.org/api/net.html#net_net_connect
 
 ##### Client.tls
 
 Uses the same options as [tls.connect][nodejs_docs_tls_connect].
+
+###### Client.tls Events
+
+The TLS client will emit the following events:
+
+| Event      | When                   | Arguments                     | Notes                         |
+|------------|------------------------|-------------------------------|-------------------------------|
+| tcp socket | TCP socket is opened   | 1. `net.Socket`               | Can be used to setup timeouts |
+| tcp error  | TCP socket emits error | 1. Error emit by `net.Socket` |                               |
 
 [nodejs_docs_tls_connect]: https://nodejs.org/api/tls.html#tls_tls_connect_options_callback
 

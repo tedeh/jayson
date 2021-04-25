@@ -138,6 +138,7 @@ export declare class Method {
   getHandler(): MethodHandlerType;
   setHandler(handler: MethodHandlerType): void;
   execute(server: Server, requestParams: RequestParamsLike, callback: JSONRPCCallbackType): any | Promise<any>;
+  execute(server: Server, requestParams: RequestParamsLike, context:object, callback: JSONRPCCallbackType): any | Promise<any>;
 }
 
 export type MethodLike = Function | Method | Client

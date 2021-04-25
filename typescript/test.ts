@@ -679,8 +679,14 @@ export function test_Method() {
     callback(null, {});
   };
 
-  new jayson.Method(fn1, {useContext: true});
-  new jayson.Method(fn2);
+  const methodWithContext = new jayson.Method(fn1, {useContext: true});
+  const methodWithoutContext = new jayson.Method(fn2);
+
+  const server = new jayson.Server({}, {useContext: true});
+
+  // called with and without context
+  methodWithContext.execute(server, {}, {}, function () {});
+  methodWithContext.execute(server, {}, function () {});
 }
 
 export function test_Utils() {

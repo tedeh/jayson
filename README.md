@@ -116,8 +116,10 @@ client.request('add', [1, 1], function(err, response) {
 
 Install the latest version of _jayson_ from [npm](https://www.npmjs.com) by executing `npm install jayson` in your shell. Do a global install with `npm install --global jayson` if you want the `jayson` client CLI in your PATH.
 
-## Changelog (only notable milestones)
+## Changelog (only notable milestones/changes)
 
+- *3.6.1*
+  - JSON-RPC 2.0 notifications no longer have id property unless overridden
 - *3.3.3*
   - Promise support for browser client
   - TypeScript declaration for promise browser client
@@ -190,12 +192,13 @@ The client is available as the `Client` or `client` property of `require('jayson
 
 Every client supports these options:
 
-| Option      	| Default                            	| Type       	| Description                                              	|
-|-------------	|------------------------------------	|------------	|----------------------------------------------------------	|
-| `reviver`   	| `undefined`                        	| `Function` 	| `JSON.parse` reviver                                    	|
-| `replacer`  	| `undefined`                        	| `Function` 	| `JSON.stringify` replacer                               	|
-| `generator` 	| [RFC4122][rfc_4122_spec] generator 	| `Function` 	| Generates a `String` for request ID.                     	|
-| `version`   	| 2                                  	| `Number`   	| JSON-RPC version to support (1 or 2)                      |
+| Option               | Default                            | Type       | Description                                                                              |
+|----------------------|------------------------------------|------------|------------------------------------------------------------------------------------------|
+| `reviver`            | `undefined`                        | `Function` | `JSON.parse` reviver                                                                     |
+| `replacer`           | `undefined`                        | `Function` | `JSON.stringify` replacer                                                                |
+| `generator`          | [RFC4122][rfc_4122_spec] generator | `Function` | Generates a `String` for request ID.                                                     |
+| `version`            | 2                                  | `Number`   | JSON-RPC version to support (1 or 2)                                                     |
+| `notificationIdNull` | `false`                            | `Boolean`  | *Since 3.6.1*. When true "id" property of a request will be set to null when version 2.  |
 
 [rfc_4122_spec]: http://www.ietf.org/rfc/rfc4122.txt
 
@@ -363,6 +366,8 @@ server.http().listen(3000);
 * Omitting the third argument `null` to `Client.prototype.request` does not generate a notification request. This argument has to be set explicitly to `null` for this to happen.
 * Network errors and the like will still reach the callback. When the callback is invoked (with or without error) one can be certain that the server has received the request.
 * See the [Official JSON-RPC 2.0 Specification][jsonrpc-spec] for additional information on how Jayson handles notifications that are erroneous.
+* *Since 3.6.1* When making a JSON-RPC 2.0 notification request the "id" property will be omitted in the request object. In previous versions it was set to `null` against the recommendation of the official specification. This behaviour can be overridden with the `notificationIdNull` option.
+
 
 #### Batches
 

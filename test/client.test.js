@@ -29,6 +29,13 @@ describe('jayson.client', function() {
     request.should.not.have.property('jsonrpc');
   });
 
+  it('should allow the id of a notification 2.0 request to be set to null with the notificationIdNull = true option', function() {
+    const client = new jayson.Client({version: 2, notificationIdNull: true});
+    const request = client.request('add', [11, 9], null);
+    should(request).exist;
+    should(request).have.property('id', null);
+  });
+
   describe('instance', function() {
     
     const server = jayson.Server(support.server.methods(), support.server.options());

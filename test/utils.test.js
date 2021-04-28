@@ -14,6 +14,12 @@ describe('jayson.utils', function() {
       utils.request.should.be.a.Function;
     });
 
+    it('should throw a TypeError on invalid version', function () {
+      should(function() {
+        utils.request('method', [1, 2,], null, {version: 9});
+      }).throw(TypeError);
+    });
+
     it('should throw a TypeError on an invalid method argument', function() {
       (function() {
         utils.request(null, [1, 2,], null);
@@ -30,6 +36,24 @@ describe('jayson.utils', function() {
       const request = utils.request('a_method', null);
       request.should.have.property('method', 'a_method');
       request.should.not.have.property('params');
+    });
+
+    it('should set the id to null when making a notification version 1 request', function () {
+      const request = utils.request('notification', [], null, {version: 1});
+      should(request).have.property('id', null);
+    });
+
+    it('should omit the id when making a notification version 2 request', function () {
+      const request = utils.request('notification', [], null, {version: 2});
+      should(request).not.have.property('id');
+    });
+
+    it('should set the id to null when making a notification version 2 request with option notificationIdNull = true', function () {
+      const request = utils.request('notification', [], null, {
+        version: 2,
+        notificationIdNull: true,
+      });
+      should(request).have.property('id', null);
     });
 
   });

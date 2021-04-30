@@ -227,6 +227,7 @@ export interface ClientOptions {
   reviver?: JSONParseReviver;
   replacer?: JSONStringifyReplacer;
   generator?: IDGenerator;
+  notificationIdNull?: boolean;
 }
 
 export interface HttpClientOptions extends ClientOptions, http.RequestOptions {

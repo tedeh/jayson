@@ -1,14 +1,14 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
-const server = jayson.server({
+const server = new jayson.server({
   add: function(args, callback) {
     callback(null, args[0] + args[1]);
   }
 });
 
-const client = jayson.client(server);
+const client = new jayson.client(server);
 
 const batch = [
   client.request('does_not_exist', [10, 5]),

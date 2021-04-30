@@ -1,8 +1,8 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
-const server = jayson.server();
+const server = new jayson.server();
 
 // "http" will be an instance of require('http').Server
 const http = server.http();

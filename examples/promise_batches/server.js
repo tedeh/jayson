@@ -1,9 +1,9 @@
 'use strict';
 
-const jayson = require('../../promise');
+const jayson = require('jayson/promise');
 const _ = require('lodash');
 
-const server = jayson.server({
+const server = new jayson.server({
 
   add: function(args) {
     return new Promise(function(resolve, reject) {

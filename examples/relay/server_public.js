@@ -1,10 +1,10 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 // create a server where "add" will relay a localhost-only server
-const server = jayson.server({
-  add: jayson.client.http({
+const server = new jayson.server({
+  add: new jayson.client.http({
     port: 3001
   })
 });

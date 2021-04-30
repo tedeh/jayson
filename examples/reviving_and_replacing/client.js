@@ -1,9 +1,9 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const shared = require('./shared');
 
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3000,
   reviver: shared.reviver,
   replacer: shared.replacer

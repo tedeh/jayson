@@ -1,6 +1,6 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const fs = require('fs');
 const path = require('path');
 
@@ -17,7 +17,7 @@ const options = {
 };
 
 // create a client
-const client = jayson.client.tls(options);
+const client = new jayson.client.tls(options);
 
 // invoke "add"
 client.request('add', [1, 1], function(err, response) {

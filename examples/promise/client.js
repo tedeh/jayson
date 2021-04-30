@@ -1,8 +1,8 @@
 'use strict';
 
-const jayson = require('../../promise');
+const jayson = require('jayson/promise');
 
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3000
 });
 

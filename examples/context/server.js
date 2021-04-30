@@ -1,12 +1,12 @@
 'use strict';
 
 const _ = require('lodash');
-const jayson = require('./../..');
+const jayson = require('jayson');
 const jsonParser = require('body-parser').json;
 const express = require('express');
 const app = express();
 
-const server = jayson.server({
+const server = new jayson.server({
 
   getHeaders: function(args, context, callback) {
     callback(null, context.headers);

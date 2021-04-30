@@ -1,6 +1,6 @@
 'use strict';
 
-const jaysonBrowserClient = require('./../../lib/client/browser');
+const jaysonBrowserClient = require('jayson/lib/client/browser');
 const fetch = require('node-fetch');
 
 const callServer = function(request, callback) {
@@ -18,7 +18,7 @@ const callServer = function(request, callback) {
     .catch(function(err) { callback(err); });
 };
 
-const client = jaysonBrowserClient(callServer, {
+const client = new jaysonBrowserClient(callServer, {
   // other options go here
 });
 

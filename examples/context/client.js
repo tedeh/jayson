@@ -1,9 +1,9 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 // create a client
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3001
 });
 

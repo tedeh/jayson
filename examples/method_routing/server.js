@@ -1,6 +1,6 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 const methods = {
   add: function(args, callback) {
@@ -8,7 +8,7 @@ const methods = {
   }
 };
 
-const server = jayson.server(methods, {
+const server = new jayson.server(methods, {
   router: function(method, params) {
     // regular by-name routing first
     if(typeof(this._methods[method]) === 'function') return this._methods[method];

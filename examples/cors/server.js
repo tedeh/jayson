@@ -1,12 +1,12 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const cors = require('cors');
 const connect = require('connect');
 const jsonParser = require('body-parser').json;
 const app = connect();
 
-const server = jayson.server({
+const server = new jayson.server({
   myNameIs: function(args, callback) {
     callback(null, 'Your name is: ' + args.name);
   }

@@ -79,12 +79,10 @@ A basic JSON-RPC 2.0 server via HTTP:
 Server example in [examples/simple_example/server.js](examples/simple_example/server.js):
 
 ```javascript
-'use strict';
-
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 // create a server
-const server = jayson.server({
+const server = new jayson.server({
   add: function(args, callback) {
     callback(null, args[0] + args[1]);
   }
@@ -96,12 +94,10 @@ server.http().listen(3000);
 Client example in [examples/simple_example/client.js](examples/simple_example/client.js) invoking `add` on the above server:
 
 ```javascript
-'use strict';
-
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 // create a client
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3000
 });
 
@@ -225,8 +221,8 @@ The HTTP client will emit the following events:
 It is possible to pass a string URL as the first argument. The URL will be run through [url.parse][nodejs_docs_url_parse]. Example:
 
 ```javascript
-var jayson = require('jayson');
-var client = jayson.client.http('http://localhost:3000');
+const jayson = require('jayson');
+const client = new jayson.client.http('http://localhost:3000');
 // client.options is now the result of url.parse
 ```
 
@@ -311,7 +307,7 @@ const callServer = function(request, callback) {
     .catch(function(err) { callback(err); });
 };
 
-const client = jaysonBrowserClient(callServer, {
+const client = new jaysonBrowserClient(callServer, {
   // other options go here
 });
 
@@ -328,11 +324,9 @@ Notification requests are for cases where the reply from the server is not impor
 Client example in [examples/notifications/client.js](examples/notifications/client.js) doing a notification request:
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3000
 });
 
@@ -346,11 +340,9 @@ client.request('ping', [], null, function(err) {
 Server example in [examples/notifications/server.js](examples/notifications/server.js):
 
 ```javascript
-'use strict';
+const jayson = require('jayson');
 
-const jayson = require('./../..');
-
-const server = jayson.server({
+const server = new jayson.server({
   ping: function(args, callback) {
     // do something, do nothing
     callback();
@@ -376,17 +368,15 @@ A batch request is an array of individual requests that are sent to the server a
 Combined server/client example in [examples/batch_request/index.js](examples/batch_request/index.js):
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 
-const server = jayson.server({
+const server = new jayson.server({
   add: function(args, callback) {
     callback(null, args[0] + args[1]);
   }
 });
 
-const client = jayson.client(server);
+const client = new jayson.client(server);
 
 const batch = [
   client.request('does_not_exist', [10, 5]),
@@ -503,14 +493,12 @@ The middleware supports the following options:
 Middleware example in [examples/middleware/server.js](examples/middleware/server.js):
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 const jsonParser = require('body-parser').json;
 const connect = require('connect');
 const app = connect();
 
-const server = jayson.server({
+const server = new jayson.server({
   add: function(args, callback) {
     callback(null, args[0] + args[1]);
   }
@@ -530,11 +518,9 @@ A Jayson server can use many interfaces at the same time.
 Server example in [examples/many_interfaces/server.js](examples/many_interfaces/server.js) that listens to both `http` and a `https` requests:
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 
-const server = jayson.server();
+const server = new jayson.server();
 
 // "http" will be an instance of require('http').Server
 const http = server.http();
@@ -561,12 +547,10 @@ Passing an instance of a client as a method to the server makes the server relay
 Frontend server example in [examples/relay/server_public.js](examples/relay/server_public.js) listening on `*:3000`:
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 
 // create a server where "add" will relay a localhost-only server
-const server = jayson.server({
+const server = new jayson.server({
   add: jayson.client.http({
     port: 3001
   })
@@ -579,11 +563,9 @@ server.http().listen(3000);
 Backend server example in [examples/relay/server_private.js](examples/relay/server_private.js) listening on `*:3001`:
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 
-const server = jayson.server({
+const server = new jayson.server({
   add: function(args, callback) {
     callback(null, args[0] + args[1]);
   }
@@ -602,8 +584,6 @@ Passing a property named `router` in the server options will enable you to write
 Server example with custom routing logic in [examples/method_routing/server.js](examples/method_routing/server.js):
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 
 const methods = {
@@ -612,7 +592,7 @@ const methods = {
   }
 };
 
-const server = jayson.server(methods, {
+const server = new jayson.server(methods, {
   router: function(method, params) {
     // regular by-name routing first
     if(typeof(this._methods[method]) === 'function') return this._methods[method];
@@ -632,12 +612,10 @@ server.http().listen(3000);
 Client example in [examples/method_routing/client.js](examples/method_routing/client.js) invoking `add_2` on the above server:
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 
 // create a client
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3000
 });
 
@@ -651,8 +629,6 @@ client.request('add_2', [3], function(err, response) {
 Server example of nested routes where each property is separated by a dot (you do not need to use the router option for this):
 
 ```javascript
-'use strict';
-
 const _ = require('lodash');
 const jayson = require('jayson');
 
@@ -671,11 +647,11 @@ const methods = {
 
 // this reduction produces an object like this: {'foo.bar': [Function], 'math.add': [Function]}
 const map = _.reduce(methods, collapse('', '.'), {});
-const server = jayson.server(map);
+const server = new jayson.server(map);
 
 function collapse(stem, sep) {
   return function(map, value, key) {
-    var prop = stem ? stem + sep + key : key;
+    const prop = stem ? stem + sep + key : key;
     if(_.isFunction(value)) map[prop] = value;
     else if(_.isObject(value)) map = _.reduce(value, collapse(prop, sep), map);
     return map;
@@ -704,8 +680,6 @@ The method class is available as the `Method` or `method` property of  `require(
 Server example showcasing most features and options in [examples/method_definitions/server.js](examples/method_definitions/server.js):
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 const _ = require('lodash');
 
@@ -741,7 +715,7 @@ const methods = {
 
 };
 
-const server = jayson.server(methods, {
+const server = new jayson.server(methods, {
   // these options are given as options to jayson.Method when adding the method "sum".
   // this is because it is not wrapped in jayson.Method like the others.
   useContext: false,
@@ -761,11 +735,9 @@ function sum(list) {
 Client example in [examples/method_definitions/client.js](examples/method_definitions/client.js):
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3000
 });
 
@@ -815,11 +787,11 @@ In addition to events that are specific to certain interfaces, all servers will 
 If you should like to return an error from an method request to indicate a failure, remember that the [JSON-RPC 2.0][jsonrpc-spec] specification requires the error to be an `Object` with a `code (Integer/Number)` to be regarded as valid. You can also provide a `message (String)` and a `data (Object)` with additional information. Example: 
 
 ```javascript
-var jayson = require('jayson');
+const jayson = require('jayson');
 
-var server = jayson.server({
+const server = new jayson.server({
   i_cant_find_anything: function(args, callback) {
-    var error = {code: 404, message: 'Cannot find ' + args.id};
+    const error = {code: 404, message: 'Cannot find ' + args.id};
     callback(error); // will return the error object as given
   },
   i_cant_return_a_valid_error: function(callback) {
@@ -835,11 +807,11 @@ It is also possible to cause a method to return one of the predefined [JSON-RPC 
 [jsonrpc-spec#error_object]: http://jsonrpc.org/spec.html#error_object
 
 ```javascript
-var jayson = require('jayson');
+const jayson = require('jayson');
 
-var server = jayson.server({
+const server = new jayson.server({
   invalid_params: function(args, callback) {
-    var error = this.error(-32602); // returns an error with the default properties set
+    const error = this.error(-32602); // returns an error with the default properties set
     callback(error);
   }
 });
@@ -848,9 +820,9 @@ var server = jayson.server({
 You can even override the default messages:
 
 ```javascript
-var jayson = require('jayson');
+const jayson = require('jayson');
 
-var server = jayson.server({
+const server = new jayson.server({
   error_giver_of_doom: function(callback) {
     callback(true) // invalid error format, which causes an Internal Error to be returned instead
   }
@@ -866,15 +838,13 @@ Jayson does not include functionality for supporting CORS requests natively but 
 like [cors](https://github.com/expressjs/cors). An example of this can be found in [examples/cors/server.js](examples/cors/server.js):
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 const cors = require('cors');
 const connect = require('connect');
 const jsonParser = require('body-parser').json;
 const app = connect();
 
-const server = jayson.server({
+const server = new jayson.server({
   myNameIs: function(args, callback) {
     callback(null, 'Your name is: ' + args.name);
   }
@@ -898,15 +868,13 @@ This feature is unlocked by having `jayson.Method` accepts a boolean option call
 Server example in [examples/context/server.js](examples/context/server.js):
 
 ```javascript
-'use strict';
-
 const _ = require('lodash');
 const jayson = require('jayson');
 const jsonParser = require('body-parser').json;
 const express = require('express');
 const app = express();
 
-const server = jayson.server({
+const server = new jayson.server({
 
   getHeaders: function(args, context, callback) {
     callback(null, context.headers);
@@ -941,12 +909,10 @@ app.listen(3001);
 Client example in [examples/context/client.js](examples/context/client.js):
 
 ```javascript
-'use strict';
-
-const jayson = require('./../..');
+const jayson = require('jayson');
 
 // create a client
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3001
 });
 
@@ -1003,8 +969,6 @@ exports.reviver = function(key, value) {
 Server example in [examples/reviving_and_replacing/server.js](examples/reviving_and_replacing/server.js):
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 const shared = require('./shared');
 
@@ -1015,7 +979,7 @@ const options = {
 };
 
 // create a server
-const server = jayson.server({
+const server = new jayson.server({
   increment: function(args, callback) {
     args.counter.increment();
     callback(null, args.counter);
@@ -1028,12 +992,10 @@ server.http().listen(3000);
 A client example in [examples/reviving_and_replacing/client.js](examples/reviving_and_replacing/client.js) invoking "increment" on the server:
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 const shared = require('./shared');
 
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3000,
   reviver: shared.reviver,
   replacer: shared.replacer
@@ -1067,11 +1029,9 @@ It is possible to specify named parameters when doing a client request by passin
 Client example in [examples/named_parameters/client.js](examples/named_parameters/client.js):
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson');
 
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3000
 });
 
@@ -1084,11 +1044,9 @@ client.request('add', {b: 1, a: 2}, function(err, response) {
 Server example in [examples/named_parameters/server.js](examples/named_parameters/server.js):
 
 ```javascript
-'use strict';
+const jayson = require('jayson');
 
-const jayson = require('./../..');
-
-const server = jayson.server({
+const server = new jayson.server({
   add: function(params, callback) {
     callback(null, params.a + params.b);
   }
@@ -1120,12 +1078,10 @@ To use the separate tree, do a `require('jayson/promise')` instead of `require('
 Server example in [examples/promise/server.js](examples/promise/server.js) showing how to return a `Promise` in a server method:
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson/promise');
 const _ = require('lodash');
 
-const server = jayson.server({
+const server = new jayson.server({
 
   add: function(args) {
     return new Promise(function(resolve, reject) {
@@ -1150,11 +1106,9 @@ server.http().listen(3000);
 Client example in [examples/promise/client.js](examples/promise/client.js) showing how to do a request:
 
 ```javascript
-'use strict';
-
 const jayson = require('jayson/promise');
 
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3000
 });
 
@@ -1185,11 +1139,9 @@ To solve this, we need to set the fourth parameter to `PromiseClient.prototype.r
 Client example in [examples/promise_batches/client.js](examples/promise_batches/client.js) showing how to properly execute a batch request:
 
 ```javascript
-'use strict';
+const jayson = require('jayson/promise');
 
-const jayson = require('../../promise');
-
-const client = jayson.client.http({
+const client = new jayson.client.http({
   port: 3000
 });
 
@@ -1229,7 +1181,7 @@ const callServer = function(request) {
   return fetch('http://localhost:3000', options).then(res => res.text());
 };
 
-const client = jaysonPromiseBrowserClient(callServer, {
+const client = new jaysonPromiseBrowserClient(callServer, {
   // other options go here
 });
 
@@ -1266,16 +1218,14 @@ The library author [tedeh](https://github.com/tedeh) therefore recommends that i
 Example of a http server built with express in [examples/faq_recommended_http_server/server.js](examples/faq_recommended_http_server/server.js):
 
 ```javascript
-'use strict';
-
 const _ = require('lodash');
-const jayson = require('./../..');
+const jayson = require('jayson');
 const jsonParser = require('body-parser').json;
 const express = require('express');
 const app = express();
 
 // create a plain jayson server
-const server = jayson.server({
+const server = new jayson.server({
   add: function(numbers, callback) {
     callback(null, _.reduce(numbers, (sum, val) => sum + val, 0));
   }
@@ -1311,9 +1261,7 @@ app.listen(3001);
 Using some of the utilities provided and exported by jayson, creating a client offering the same kind of flexibility is also simple. Example of a compatible http client built with superagent in [examples/faq_recommended_http_server/client.js](examples/faq_recommended_http_server/client.js):
 
 ```javascript
-'use strict';
-
-const jayson = require('./../..');
+const jayson = require('jayson');
 const request = require('superagent');
 
 // generate a json-rpc version 2 compatible request (non-notification)

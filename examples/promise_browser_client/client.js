@@ -1,6 +1,6 @@
 'use strict';
 
-const jaysonPromiseBrowserClient = require('./../../promise/lib/client/browser');
+const jaysonPromiseBrowserClient = require('jayson/promise/lib/client/browser');
 const fetch = require('node-fetch');
 
 const callServer = function(request) {
@@ -14,7 +14,7 @@ const callServer = function(request) {
   return fetch('http://localhost:3000', options).then(res => res.text());
 };
 
-const client = jaysonPromiseBrowserClient(callServer, {
+const client = new jaysonPromiseBrowserClient(callServer, {
   // other options go here
 });
 

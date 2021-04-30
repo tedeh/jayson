@@ -1,6 +1,6 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const request = require('superagent');
 
 // generate a json-rpc version 2 compatible request (non-notification)

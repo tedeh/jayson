@@ -1,6 +1,6 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const shared = require('./shared');
 
 // Set the reviver/replacer options
@@ -10,7 +10,7 @@ const options = {
 };
 
 // create a server
-const server = jayson.server({
+const server = new jayson.server({
   increment: function(args, callback) {
     args.counter.increment();
     callback(null, args.counter);

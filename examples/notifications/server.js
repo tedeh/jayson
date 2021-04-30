@@ -1,8 +1,8 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 
-const server = jayson.server({
+const server = new jayson.server({
   ping: function(args, callback) {
     // do something, do nothing
     callback();

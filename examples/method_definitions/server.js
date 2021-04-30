@@ -1,6 +1,6 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const _ = require('lodash');
 
 const methods = {
@@ -35,7 +35,7 @@ const methods = {
 
 };
 
-const server = jayson.server(methods, {
+const server = new jayson.server(methods, {
   // these options are given as options to jayson.Method when adding the method "sum".
   // this is because it is not wrapped in jayson.Method like the others.
   useContext: false,

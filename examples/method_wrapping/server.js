@@ -1,9 +1,9 @@
 'use strict';
 
-const jayson = require('./../..');
+const jayson = require('jayson');
 const _ = require('lodash');
 
-const server = jayson.server({
+const server = new jayson.server({
   add: validateReturnsNumber(function (args, done) {
     const result = _.reduce(args, (sum, val) => sum + val, 0);
     done(null, result);

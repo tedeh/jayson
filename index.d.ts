@@ -14,7 +14,16 @@ export interface UtilsJSONStringifyOptions {
   replacer?: Function;
 }
 
+export interface GenerateRequestOptions {
+  version?: number;
+  notificationIdNull?: boolean;
+  generator?: IDGenerator;
+}
+
 export declare class Utils {
+
+  static request(method: string, params: RequestParamsLike, options?: GenerateRequestOptions): JSONRPCRequest;
+  static request(method: string, params: RequestParamsLike, id?: JSONRPCIDLike | null | undefined, options?: GenerateRequestOptions): JSONRPCRequest;
 
   static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version?: number): JSONRPCVersionTwoRequest;
   static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version:2): JSONRPCVersionTwoRequest;
@@ -219,7 +228,7 @@ declare class TlsServer extends tls.Server {
 type JSONParseReviver = (key: string, value: any) => any;
 type JSONStringifyReplacer = (key: string, value: any) => any;
 
-type IDGenerator = () => string;
+type IDGenerator = () => JSONRPCIDLike;
 
 export interface ClientOptions {
   version?: number;

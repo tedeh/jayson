@@ -796,5 +796,4 @@ export function test_server_and_method_call () {
   const request = jayson.Utils.request('add', [1, 2], undefined, {generator: () => Math.random()});
   server.call(request, {}, function (err, result) {});
   server.call(request, function (err, result) {});
-  server.call(request, function (err, error, result) {});
 }

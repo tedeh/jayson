@@ -694,6 +694,20 @@ export function test_Utils() {
   jayson.Utils.response({code: 1234, message: 'hello', data: {test: true}}, {}, null, 2);
   jayson.Utils.response({code: 1234, message: 'hello', data: {test: true}}, {}, null, 1);
 
+  jayson.Utils.request('add', [1, 2]);
+  jayson.Utils.request('add', {a: 1, b: 2});
+  jayson.Utils.request('add', {}, 'asdf');
+  jayson.Utils.request('add', {}, 2);
+  jayson.Utils.request('add', {}, null, {version: 1});
+  jayson.Utils.request('add', {}, null, {notificationIdNull: true});
+  jayson.Utils.request('add', {}, undefined, {
+    generator: ():number => Math.random(),
+  });
+
+  jayson.Utils.request('add', {}, {
+    generator: ():number => Math.random(),
+  });
+
   jayson.Utils.generateId();
 
   jayson.Utils.merge({a: true}, {a: false, b: true});
@@ -775,4 +789,11 @@ export function test_clientBrowserPromise () {
   const r1 = client.request('multiply', {asdf: true}, undefined, false);
   const r2 = client.request('multiply', [3, 9], undefined, false);
   client.request([r1, r2]).then(function (response) {});
+}
+
+export function test_server_and_method_call () {
+  // const server = new jayson.Server();
+  //
+  // const request = client.request('')
+  // callServer.call()
 }

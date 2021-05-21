@@ -140,14 +140,18 @@ export interface MethodOptions {
   params?: MethodOptionsParamsLike;
 }
 
+export type MethodExecuteCallbackType = {
+  (err?: Error | null, result?: JSONRPCResultLike): void
+}
+
 export declare class Method {
   constructor(options: MethodOptions);
   constructor(handler?: MethodHandlerType, options?: MethodOptions);
 
   getHandler(): MethodHandlerType;
   setHandler(handler: MethodHandlerType): void;
-  execute(server: Server, requestParams: RequestParamsLike, callback: JSONRPCCallbackType): any | Promise<any>;
-  execute(server: Server, requestParams: RequestParamsLike, context:object, callback: JSONRPCCallbackType): any | Promise<any>;
+  execute(server: Server, requestParams: RequestParamsLike, callback: MethodExecuteCallbackType): any | Promise<any>;
+  execute(server: Server, requestParams: RequestParamsLike, context:object, callback: MethodExecuteCallbackType): any | Promise<any>;
 }
 
 export type MethodLike = Function | Method | Client
@@ -190,8 +194,8 @@ export declare class Server extends events.EventEmitter {
   removeMethod(name: string): void;
   getMethod(name: string): MethodLike;
   error(code?: number, message?: string, data?: object): JSONRPCError;
-  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: JSONRPCCallbackType): void;
-  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, context: object, originalCallback?: JSONRPCCallbackType): void;
+  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: JSONRPCCallbackTypePlain): void;
+  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, context: object, originalCallback?: JSONRPCCallbackTypePlain): void;
 }
 
 export interface MiddlewareServerOptions extends ServerOptions {
@@ -229,7 +233,7 @@ declare class TlsServer extends tls.Server {
 type JSONParseReviver = (key: string, value: any) => any;
 type JSONStringifyReplacer = (key: string, value: any) => any;
 
-type IDGenerator = () => JSONRPCIdLike;
+type IDGenerator = () => JSONRPCIDLike;
 
 export interface ClientOptions {
   version?: number;

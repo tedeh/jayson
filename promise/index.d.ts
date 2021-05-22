@@ -94,6 +94,38 @@ export interface JSONRPCVersionTwoRequest {
   id?: JSONRPCIDLike | null;
 }
 
+export interface JSONRPCVersionOneResponseWithResult {
+  result: any;
+  error: null;
+  id: any;
+}
+
+export interface JSONRPCVersionOneResponseWithError {
+  result: null;
+  error: object;
+  id: any;
+}
+
+export type JSONRPCVersionOneResponse = JSONRPCVersionOneResponseWithError | JSONRPCVersionOneResponseWithResult;
+
+export interface JSONRPCVersionTwoResponseWithResult {
+  jsonrpc: string;
+  result: any;
+  id: JSONRPCIDLike | null;
+}
+
+export interface JSONRPCVersionTwoResponseWithError {
+  jsonrpc: string;
+  error: JSONRPCError;
+  id: JSONRPCIDLike | null;
+}
+
+export type JSONRPCVersionTwoResponse = JSONRPCVersionTwoResponseWithResult | JSONRPCVersionTwoResponseWithError;
+
+export type JSONRPCResponseWithError = JSONRPCVersionOneResponseWithError | JSONRPCVersionTwoResponseWithError;
+export type JSONRPCResponseWithResult = JSONRPCVersionOneResponseWithResult | JSONRPCVersionTwoResponseWithResult;
+export type JSONRPCResponse = JSONRPCVersionOneResponse | JSONRPCVersionTwoResponse;
+
 export type JSONRPCIDLike = number | string;
 
 export type JSONRPCRequest = JSONRPCVersionOneRequest | JSONRPCVersionTwoRequest;
@@ -154,7 +186,7 @@ export declare class Method {
   execute(server: Server, requestParams: RequestParamsLike, context:object, callback: MethodExecuteCallbackType): any | Promise<any>;
 }
 
-export type MethodLike = Function | Method | Client
+export type MethodLike = Function | Method | Client;
 
 export type ServerRouterFunction = (this: Server, method: string, params: RequestParamsLike) => MethodLike;
 
@@ -167,6 +199,10 @@ export interface ServerOptions {
   encoding?: string;
   router?: ServerRouterFunction;
   methodConstructor?: Function;
+}
+
+export type ServerCallCallbackType = {
+  (err?: JSONRPCResponseWithError | null, result?: JSONRPCResponseWithResult): void
 }
 
 export interface MethodMap { [methodName:string]: Method }
@@ -194,8 +230,8 @@ export declare class Server extends events.EventEmitter {
   removeMethod(name: string): void;
   getMethod(name: string): MethodLike;
   error(code?: number, message?: string, data?: object): JSONRPCError;
-  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: JSONRPCCallbackTypePlain): void;
-  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, context: object, originalCallback?: JSONRPCCallbackTypePlain): void;
+  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: ServerCallCallbackType): void;
+  call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, context: object, originalCallback?: ServerCallCallbackType): void;
 }
 
 export interface MiddlewareServerOptions extends ServerOptions {
@@ -270,8 +306,6 @@ export interface HttpsClientOptions extends ClientOptions, https.RequestOptions 
 declare class HttpsClient extends Client {
   constructor(options?: HttpsClientOptions);
 }
-
-type ClientRequestShouldCall = JSONRPCCallbackType | false;
 
 export declare class Client extends events.EventEmitter {
   constructor(server: Server, options?: ClientOptions);

@@ -794,6 +794,11 @@ export function test_clientBrowserPromise () {
 export function test_server_and_method_call () {
   const server = new jayson.Server();
   const request = jayson.Utils.request('add', [1, 2], undefined, {generator: () => Math.random()});
-  server.call(request, {}, function (err, result) {});
-  server.call(request, function (err, result) {});
+  server.call(request, {}, function (err?:jayson.JSONRPCResponseWithError | null, result?: jayson.JSONRPCResponseWithResult) {
+    if (err) {
+      console.log(err.error);
+    } else {
+      console.log(result);
+    }
+  });
 }

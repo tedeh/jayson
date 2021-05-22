@@ -8,16 +8,22 @@ const http = require('http');
 
 /**
  * Get a mocha suite for common test cases for a client
- * @param {Client} Client instance to use
+ * @param {Client|Function} outerClient Client instance to use
  * @param {Boolean} [options.instanceOfClient=true] When false, don't check if the client is an instance of Client
+ * @param {Boolean} [options.getClient=false] When true client will be derived by executing client()
  * @return {Function}
  */
-exports.getCommonForClient = function(client, options) {
-  options = options || {instanceOfClient: true};
+exports.getCommonForClient = function (outerClient, options = {}) {
+  const { instanceOfClient = true, getClient = false } = options;
 
   return function() {
 
-    if(options.instanceOfClient) {
+    let client;
+    before(() => {
+      client = getClient ? outerClient() : outerClient;
+    });
+
+    if(instanceOfClient) {
       it('should be an instance of jayson.Client', function() {
         client.should.be.instanceof(jayson.Client);
       });

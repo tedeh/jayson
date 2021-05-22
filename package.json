@@ -54,6 +54,7 @@
     "@types/lodash": "^4.14.159",
     "@types/node": "^12.12.54",
     "commander": "^2.20.3",
+    "delay": "^5.0.0",
     "es6-promisify": "^5.0.0",
     "eyes": "^0.1.8",
     "isomorphic-ws": "^4.0.1",

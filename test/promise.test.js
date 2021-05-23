@@ -41,7 +41,8 @@ describe('jayson/promise', function() {
 
     // auto-generated test-suite
     const suites = {
-      'regular': {
+
+      regular: {
         server: function(done) {
           done();
           return new jaysonPromise.Server(support.server.methods(), support.server.options());
@@ -50,7 +51,8 @@ describe('jayson/promise', function() {
           return jaysonPromise.Client(server, support.server.options());
         }
       },
-      'http': {
+
+      http: {
         server: function(done) {
           const server = jaysonPromise.Server(support.server.methods(), support.server.options());
           const http = server.http();
@@ -69,7 +71,8 @@ describe('jayson/promise', function() {
           http.close(done);
         }
       },
-      'https': {
+
+      https: {
         server: function(done) {
           const server = jaysonPromise.Server(support.server.methods(), support.server.options());
           const https = server.https(support.server.keys());
@@ -89,6 +92,7 @@ describe('jayson/promise', function() {
           https.close(done);
         }
       },
+
       browser: {
         server: function(done) {
           const server = jaysonPromise.Server(support.server.methods(), support.server.options());
@@ -118,7 +122,8 @@ describe('jayson/promise', function() {
           http.close(done);
         }
       },
-      'tcp': {
+
+      tcp: {
         server: function(done) {
           const server = jaysonPromise.Server(support.server.methods(), support.server.options());
           const tcp = server.tcp();
@@ -138,7 +143,8 @@ describe('jayson/promise', function() {
           tcp.close(done);
         }
       },
-      'tls': {
+
+      tls: {
         server: function(done) {
           const server = jaysonPromise.Server(support.server.methods(), support.server.options());
           const tls = server.tls(support.server.keys());
@@ -157,7 +163,28 @@ describe('jayson/promise', function() {
         closeServer: function(tls, done) {
           tls.close(done);
         }
+      },
+
+      websocket: {
+        server: function(done) {
+          const server = jaysonPromise.Server(support.server.methods(), support.server.options());
+          const wss = server.websocket({port: 3999});
+          done();
+          return wss;
+        },
+        client: function (server, done) {
+          const websocket = jaysonPromise.Client.websocket({
+            url: 'ws://localhost:3999',
+          });
+          websocket.ws.on('open', done);
+          return websocket;
+        },
+        closeServer: function(wss, done) {
+          wss.close();
+          done();
+        }
       }
+
     };
 
     forEach(suites, function(suite, name) {
@@ -170,8 +197,13 @@ describe('jayson/promise', function() {
         });
 
         let client = null;
-        beforeEach(function() {
-          client = suite.client(server);
+        beforeEach(function(done) {
+          if (suite.client.length === 2) {
+            client = suite.client(server, done);
+          } else {
+            client = suite.client(server);
+            done();
+          }
         });
 
         if(suite.closeServer) {

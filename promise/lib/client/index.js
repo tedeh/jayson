@@ -36,12 +36,18 @@ PromiseClient.https = require('./https');
  * @type PromiseClientTls
  * @static
  */
-
 PromiseClient.tls = require('./tls');
+
 /**
  * @type PromiseClientTcp
  * @static
  */
 PromiseClient.tcp = require('./tcp');
+
+/**
+ * @type PromiseClientWebsocket
+ * @static
+ */
+PromiseClient.websocket = require('./websocket');
 
 module.exports = PromiseClient;

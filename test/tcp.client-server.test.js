@@ -14,7 +14,7 @@ describe('jayson.tcp', function() {
 
     let server = null;
     before(function() {
-      server = jayson.server(support.server.methods(), support.server.options()).tcp();
+      server = new jayson.server(support.server.methods(), support.server.options()).tcp();
     });
 
     after(function() {
@@ -31,7 +31,7 @@ describe('jayson.tcp', function() {
       server.should.be.instanceof(net.Server);
     });
 
-    context('connected socket', function() {
+    describe('connected socket', function() {
 
       let socket = null;
       let responses = null;

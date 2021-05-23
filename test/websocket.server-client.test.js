@@ -28,27 +28,26 @@ describe('jayson.websocket', function() {
 
   describe('client', function() {
 
-    let ws, client, server, serverWebsocket;
-    before(function () {
+    let client, server, serverWebsocket;
+    before(function (done) {
       server = new jayson.server(support.server.methods(), support.server.options());
       serverWebsocket = server.websocket({port: 3999});
-      ws = new WebSocket('ws://localhost:3999');
-      client = jayson.client.websocket(ws, {
+      client = jayson.client.websocket({
+        url: 'ws://localhost:3999',
         reviver: support.server.options().reviver,
         replacer: support.server.options().replacer,
       });
+      client.ws.on('open', done);
     });
 
     after(function() {
-      ws.close();
+      client.ws.close();
       serverWebsocket.close();
     });
 
     describe('common tests', suites.getCommonForClient(() => client, {
       getClient: true,
     }));
-
-    it('should handle many requests at the same time');
 
     describe('timeout', function () {
 

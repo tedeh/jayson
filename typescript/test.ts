@@ -4,6 +4,7 @@ import jaysonBrowserClient from './../lib/client/browser';
 import jaysonPromiseBrowserClient from './../promise/lib/client/browser';
 import { reduce, isArray } from 'lodash';
 import { Express } from 'express-serve-static-core';
+import WebSocket from 'isomorphic-ws';
 
 /**
  * This file contains tests for the typescript type definitions.
@@ -803,4 +804,32 @@ export function test_server_and_method_call () {
       console.log(result);
     }
   });
+}
+
+export function test_websocket () {
+  const wss = new WebSocket.Server({port: 12345});
+  const server = new jayson.Server();
+  const websocketServer = server.websocket({wss});
+
+  const ws = new WebSocket('ws://localhost:12345');
+  const websocketClient = jayson.Client.websocket({
+    url: 'ws://localhost:12345',
+    ws,
+    timeout: 5000,
+  });
+}
+
+export async function test_websocket_Promise () {
+  const wss = new WebSocket.Server({port: 12345});
+  const server = new jaysonPromise.Server();
+  const websocketServer = server.websocket({wss});
+
+  const ws = new WebSocket('ws://localhost:12345');
+  const websocketClient = jaysonPromise.Client.websocket({
+    url: 'ws://localhost:12345',
+    ws,
+    timeout: 5000,
+  });
+
+  const result = await websocketClient.request('add', [1,2,3]);
 }

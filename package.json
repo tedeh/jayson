@@ -53,6 +53,7 @@
     "@types/express-serve-static-core": "^4.17.9",
     "@types/lodash": "^4.14.159",
     "@types/node": "^12.12.54",
+    "@types/ws": "^7.4.4",
     "commander": "^2.20.3",
     "delay": "^5.0.0",
     "es6-promisify": "^5.0.0",

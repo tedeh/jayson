@@ -4,6 +4,7 @@ import https = require('https');
 import http = require('http');
 import events = require('events');
 import Stream = require('stream');
+import WebSocket = require('isomorphic-ws');
 import * as connect from 'connect';
 
 export interface UtilsJSONParseOptions {
@@ -222,6 +223,7 @@ export declare class Server extends events.EventEmitter {
   https(options?: HttpsServerOptions): HttpsServer;
   tcp(options?: TcpServerOptions): TcpServer;
   tls(options?: TlsServerOptions): TlsServer;
+  websocket(options?: WebsocketServerOptions): WebsocketServer;
   middleware(options?: MiddlewareServerOptions): connect.HandleFunction;
 
   method(name: string, definition: MethodLike): void;
@@ -266,6 +268,14 @@ declare class TlsServer extends tls.Server {
   constructor(server: Server, options?: TlsServerOptions);
 }
 
+export interface WebsocketServerOptions extends ServerOptions, WebSocket.ServerOptions {
+  wss?: WebSocket.Server;
+}
+
+declare class WebsocketServer {
+  constructor(server: Server, options?: WebsocketServerOptions);
+}
+
 type JSONParseReviver = (key: string, value: any) => any;
 type JSONStringifyReplacer = (key: string, value: any) => any;
 
@@ -307,6 +317,16 @@ declare class HttpsClient extends Client {
   constructor(options?: HttpsClientOptions);
 }
 
+export interface WebsocketClientOptions extends ClientOptions {
+  url?: string;
+  ws?: WebSocket;
+  timeout?: number;
+}
+
+declare class WebsocketClient extends Client {
+  constructor(options?: WebsocketClientOptions);
+}
+
 export declare class Client extends events.EventEmitter {
   constructor(server: Server, options?: ClientOptions);
   constructor(options: ClientOptions);
@@ -315,6 +335,7 @@ export declare class Client extends events.EventEmitter {
   static https(options?: HttpsClientOptions): HttpsClient;
   static tcp(options?: TcpClientOptions): TcpClient;
   static tls(options?: TlsClientOptions): TlsClient;
+  static websocket(options?: WebsocketClientOptions): WebsocketClient;
 
   request(method:string, params:RequestParamsLike, id:JSONRPCIDLike | undefined, shouldCall:false): JSONRPCRequest;
   request(method:string, params:RequestParamsLike, id?:JSONRPCIDLike): Promise<JSONRPCResultLike>;

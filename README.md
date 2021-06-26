@@ -28,7 +28,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Features](#features)
 - [Example](#example)
 - [Installation](#installation)
-- [Changelog](#changelog-only-notable-milestones)
+- [Changelog](#changelog-only-notable-milestoneschanges)
 - [Requirements](#requirements)
 - [Class Documentation](#class-documentation)
 - [Running tests](#running-tests)
@@ -114,6 +114,8 @@ Install the latest version of _jayson_ from [npm](https://www.npmjs.com) by exec
 
 ## Changelog (only notable milestones/changes)
 
+- *3.6.4*
+  - Websocket client and server support
 - *3.6.1*
   - JSON-RPC 2.0 notifications no longer have id property unless overridden
 - *3.3.3*
@@ -162,12 +164,14 @@ In addition to this document, a comprehensive class documentation made with [jsd
 - Change directory to the repository root
 - Install the development packages by executing `npm install --dev`
 - Run the tests with `npm run test`
+- Run the typescript tests with `npm run test-tsc`
+- Run the coverage tests with `npm run coverage`
 
 ## Typescript
 
-Since `v2.1.0` there is experimental typescript support available with jayson.
+Since `v2.1.0` there is typescript support available with jayson.
 
-If you have a problem with the type definitions, see the [Contributing](#contributing) section.
+If you encounter any problems with the type definitions, see the [Contributing](#contributing) section.
 
 ## Usage
 
@@ -177,14 +181,15 @@ The client is available as the `Client` or `client` property of `require('jayson
 
 #### Client interface description
 
-| Name            | Description       |
-| --------------- | ----------------  |
-| `Client`        | Base class        |
-| `Client.tcp`    | TCP interface     |
-| `Client.tls`    | TLS interface     |
-| `Client.http`   | HTTP interface    |
-| `Client.https`  | HTTPS interface   |
-| `Client.browser`| Browser interface |
+| Name               | Description         |
+|--------------------|---------------------|
+| `Client`           | Base class          |
+| `Client.tcp`       | TCP sub-class       |
+| `Client.tls`       | TLS sub-class       |
+| `Client.http`      | HTTP sub-class      |
+| `Client.https`     | HTTPS sub-class     |
+| `Client.browser`   | Standalone class    |
+| `Client.websocket` | Websocket sub-class |
 
 Every client supports these options:
 
@@ -316,6 +321,22 @@ client.request('multiply', [5, 5], function(err, error, result) {
   console.log(result); // 25
 });
 ```
+
+##### Client.websocket
+
+*Since v3.6.4*
+
+Experimental websocket client that wraps around an `isomorphic-ws` instance. Will listen to every received (JSON) message and see if it matches any of the currently outstanding requests made, in which case the callback of that outstanding request will fire. If you do not provide the `timeout` option it will wait forever. Has a promise-based equivalent receiving the same options, and a companion jayson server where you can find an example and more information.
+
+Has the following options:
+
+| Option    | Default     | Type                                | Description                                                          |
+|-----------|-------------|-------------------------------------|----------------------------------------------------------------------|
+| `url`     | `undefined` | `String`                            | First argument to `require('isomorphic-ws')` if `options.ws` not set |
+| `ws`      | `undefined` | `require('isomorphic-ws')` instance | WebSocket instance                                                   |
+| `timeout` | `undefined` | `Number`                            | Timeout in ms before callbacking with an error                       |
+
+If you want to "unwrap" the `isomorphic-ws` instance you can use the `Client.websocket.prototype.unlisten` which stops listening for messages on the `isomorphic-ws` instance.
 
 #### Notifications
 

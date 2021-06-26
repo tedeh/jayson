@@ -833,4 +833,3 @@ export async function test_websocket_Promise () {
 
   const result = await websocketClient.request('add', [1,2,3]);
 }
->>>>>>> websocket

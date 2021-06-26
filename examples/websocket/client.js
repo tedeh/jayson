@@ -1,4 +1,3 @@
-const WebSocket = require('isomorphic-ws');
 const jayson = require('../../');
 
 const client = jayson.client.websocket({

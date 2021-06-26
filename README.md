@@ -326,7 +326,7 @@ client.request('multiply', [5, 5], function(err, error, result) {
 
 *Since v3.6.4*
 
-Experimental websocket client that wraps around an `isomorphic-ws` instance. Will listen to every received (JSON) message and see if it matches any of the currently outstanding requests made, in which case the callback of that outstanding request will fire. If you do not provide the `timeout` option it will wait forever. Has a promise-based equivalent receiving the same options, and a companion jayson server where you can find an example and more information.
+Experimental websocket client that wraps around an `isomorphic-ws` instance. Will listen to every received (JSON) message and see if it matches any of the currently outstanding requests made, in which case the callback of that outstanding request will fire. If you do not provide the `timeout` option it will wait forever. Has a promise-based equivalent receiving the same options, and a [companion jayson server](#serverwebsocket) where you can find an example.
 
 Has the following options:
 
@@ -337,6 +337,8 @@ Has the following options:
 | `timeout` | `undefined` | `Number`                            | Timeout in ms before callbacking with an error                       |
 
 If you want to "unwrap" the `isomorphic-ws` instance you can use the `Client.websocket.prototype.unlisten` which stops listening for messages on the `isomorphic-ws` instance.
+
+- [isomorphic-ws docs](https://github.com/heineiuo/isomorphic-ws)
 
 #### Notifications
 
@@ -455,8 +457,10 @@ The server also sports several interfaces that can be accessed as properties of 
 | `Server.tls`        	| TLS server that inherits from [tls.Server][nodejs_doc_tls_server]                          	|
 | `Server.http`       	| HTTP server that inherits from [http.Server][nodejs_doc_http_server]                       	|
 | `Server.https`      	| HTTPS server that inherits from [https.Server][nodejs_doc_https_server]                    	|
+| `Server.websocket`   	| Websocket server that uses [isomorphic-ws Server][isomorphic-ws-docs]                     	|
 | `Server.middleware` 	| Method that returns a [Connect][connect]/[Express][express] compatible middleware function 	|
 
+[isomorphic-ws-docs]: https://github.com/heineiuo/isomorphic-ws
 [nodejs_doc_net_server]: http://nodejs.org/docs/latest/api/net.html#net_class_net_server
 [nodejs_doc_http_server]: http://nodejs.org/docs/latest/api/http.html#http_class_http_server
 [nodejs_doc_https_server]: http://nodejs.org/docs/latest/api/https.html#https_class_https_server
@@ -530,6 +534,51 @@ app.use(jsonParser());
 app.use(server.middleware());
 
 app.listen(3000);
+```
+
+##### Server.websocket
+
+Websocket server that either wraps around a provided `require('isomorphic-ws').Server` instance or creates one from scratch. Expects **every** incoming message on every connection to be a valid JSON-RPC call.
+
+The websocket server supports the following options in addition to the base class:
+
+| Option | Default     | Type                              | Description                     |
+|--------|-------------|-----------------------------------|---------------------------------|
+| `wss`  | `undefined` | `require('isomorphic-ws').Server` | If not provided will be created |
+
+
+Websocket server example in [examples/websocket/server.js](examples/websocket/server.js):
+
+```javascript
+const jayson = require('jayson');
+
+const server = new jayson.Server({
+  add: function (args, done) {
+    const sum = args.reduce((sum, val) => sum + val, 0);
+    done(null, sum);
+  },
+});
+
+const wss = server.websocket({
+  port: 12345,
+});
+```
+
+Websocket client example in [examples/websocket/client.js](examples/websocket/client.js):
+
+```javascript
+const jayson = require('jayson');
+
+const client = jayson.client.websocket({
+  url: 'ws://localhost:12345',
+});
+
+client.ws.on('open', function () {
+  client.request('add', [1,2,3,4], function (err, result) {
+    console.log(err, result);
+    client.ws.close();
+  });
+});
 ```
 
 #### Many interfaces at the same time

@@ -1,4 +1,3 @@
-const WebSocket = require('ws');
 const jayson = require('../../');
 
 const server = new jayson.Server({

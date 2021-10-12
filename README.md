@@ -82,7 +82,7 @@ Server example in [examples/simple_example/server.js](examples/simple_example/se
 const jayson = require('jayson');
 
 // create a server
-const server = new jayson.server({
+const server = new jayson.Server({
   add: function(args, callback) {
     callback(null, args[0] + args[1]);
   }
@@ -97,7 +97,7 @@ Client example in [examples/simple_example/client.js](examples/simple_example/cl
 const jayson = require('jayson');
 
 // create a client
-const client = new jayson.client.http({
+const client = jayson.Client.http({
   port: 3000
 });
 
@@ -173,6 +173,14 @@ Since `v2.1.0` there is typescript support available with jayson.
 
 If you encounter any problems with the type definitions, see the [Contributing](#contributing) section.
 
+### Typescript instantiation recommendations
+
+Unfortunately we've been unable to express the flexibility with which jayson clients and servers can be instantiated in the Typescript definitions. Specifically, jayson allows all classes to be instantiated with or without the `new` keyword and this has been hard to get Typescript to understand. This has caused problems for some users. When using Typescript with jayson, we recommend the following:
+
+1. Do not use `new` when instantiating client sub-classes. Use `jayson.Client.http()` **not** `new jayson.Client.http()`
+2. Use `new` when instantiating all other classes. Use `new jayson.Server()`, `new jayson.Client()`, `new jayson.Method()`, etc.
+3. If you feel that you have a solution for the problem of allowing instantiation with or without the `new` keyword, feel free to attempt a pull request.
+
 ## Usage
 
 ### Client
@@ -227,7 +235,7 @@ It is possible to pass a string URL as the first argument. The URL will be run t
 
 ```javascript
 const jayson = require('jayson');
-const client = new jayson.client.http('http://localhost:3000');
+const client = jayson.Client.http('http://localhost:3000');
 // client.options is now the result of url.parse
 ```
 
@@ -349,7 +357,7 @@ Client example in [examples/notifications/client.js](examples/notifications/clie
 ```javascript
 const jayson = require('jayson');
 
-const client = new jayson.client.http({
+const client = jayson.Client.http({
   port: 3000
 });
 
@@ -365,7 +373,7 @@ Server example in [examples/notifications/server.js](examples/notifications/serv
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.server({
+const server = new jayson.Server({
   ping: function(args, callback) {
     // do something, do nothing
     callback();
@@ -393,13 +401,13 @@ Combined server/client example in [examples/batch_request/index.js](examples/bat
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.server({
+const server = new jayson.Server({
   add: function(args, callback) {
     callback(null, args[0] + args[1]);
   }
 });
 
-const client = new jayson.client(server);
+const client = new jayson.Client(server);
 
 const batch = [
   client.request('does_not_exist', [10, 5]),
@@ -523,7 +531,7 @@ const jsonParser = require('body-parser').json;
 const connect = require('connect');
 const app = connect();
 
-const server = new jayson.server({
+const server = new jayson.Server({
   add: function(args, callback) {
     callback(null, args[0] + args[1]);
   }
@@ -569,7 +577,7 @@ Websocket client example in [examples/websocket/client.js](examples/websocket/cl
 ```javascript
 const jayson = require('jayson');
 
-const client = jayson.client.websocket({
+const client = jayson.Client.websocket({
   url: 'ws://localhost:12345',
 });
 
@@ -590,7 +598,7 @@ Server example in [examples/many_interfaces/server.js](examples/many_interfaces/
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.server();
+const server = new jayson.Server();
 
 // "http" will be an instance of require('http').Server
 const http = server.http();
@@ -620,8 +628,8 @@ Frontend server example in [examples/relay/server_public.js](examples/relay/serv
 const jayson = require('jayson');
 
 // create a server where "add" will relay a localhost-only server
-const server = new jayson.server({
-  add: new jayson.client.http({
+const server = new jayson.Server({
+  add: jayson.Client.http({
     port: 3001
   })
 });
@@ -635,7 +643,7 @@ Backend server example in [examples/relay/server_private.js](examples/relay/serv
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.server({
+const server = new jayson.Server({
   add: function(args, callback) {
     callback(null, args[0] + args[1]);
   }
@@ -662,7 +670,7 @@ const methods = {
   }
 };
 
-const server = new jayson.server(methods, {
+const server = new jayson.Server(methods, {
   router: function(method, params) {
     // regular by-name routing first
     if(typeof(this._methods[method]) === 'function') return this._methods[method];
@@ -685,7 +693,7 @@ Client example in [examples/method_routing/client.js](examples/method_routing/cl
 const jayson = require('jayson');
 
 // create a client
-const client = new jayson.client.http({
+const client = jayson.Client.http({
   port: 3000
 });
 
@@ -717,7 +725,7 @@ const methods = {
 
 // this reduction produces an object like this: {'foo.bar': [Function], 'math.add': [Function]}
 const map = _.reduce(methods, collapse('', '.'), {});
-const server = new jayson.server(map);
+const server = new jayson.Server(map);
 
 function collapse(stem, sep) {
   return function(map, value, key) {
@@ -785,7 +793,7 @@ const methods = {
 
 };
 
-const server = new jayson.server(methods, {
+const server = new jayson.Server(methods, {
   // these options are given as options to jayson.Method when adding the method "sum".
   // this is because it is not wrapped in jayson.Method like the others.
   useContext: false,
@@ -807,7 +815,7 @@ Client example in [examples/method_definitions/client.js](examples/method_defini
 ```javascript
 const jayson = require('jayson');
 
-const client = new jayson.client.http({
+const client = jayson.Client.http({
   port: 3000
 });
 
@@ -859,7 +867,7 @@ If you should like to return an error from an method request to indicate a failu
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.server({
+const server = new jayson.Server({
   i_cant_find_anything: function(args, callback) {
     const error = {code: 404, message: 'Cannot find ' + args.id};
     callback(error); // will return the error object as given
@@ -879,7 +887,7 @@ It is also possible to cause a method to return one of the predefined [JSON-RPC 
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.server({
+const server = new jayson.Server({
   invalid_params: function(args, callback) {
     const error = this.error(-32602); // returns an error with the default properties set
     callback(error);
@@ -892,7 +900,7 @@ You can even override the default messages:
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.server({
+const server = new jayson.Server({
   error_giver_of_doom: function(callback) {
     callback(true) // invalid error format, which causes an Internal Error to be returned instead
   }
@@ -914,7 +922,7 @@ const connect = require('connect');
 const jsonParser = require('body-parser').json;
 const app = connect();
 
-const server = new jayson.server({
+const server = new jayson.Server({
   myNameIs: function(args, callback) {
     callback(null, 'Your name is: ' + args.name);
   }
@@ -944,7 +952,7 @@ const jsonParser = require('body-parser').json;
 const express = require('express');
 const app = express();
 
-const server = new jayson.server({
+const server = new jayson.Server({
 
   getHeaders: function(args, context, callback) {
     callback(null, context.headers);
@@ -982,7 +990,7 @@ Client example in [examples/context/client.js](examples/context/client.js):
 const jayson = require('jayson');
 
 // create a client
-const client = new jayson.client.http({
+const client = jayson.Client.http({
   port: 3001
 });
 
@@ -1049,7 +1057,7 @@ const options = {
 };
 
 // create a server
-const server = new jayson.server({
+const server = new jayson.Server({
   increment: function(args, callback) {
     args.counter.increment();
     callback(null, args.counter);
@@ -1065,7 +1073,7 @@ A client example in [examples/reviving_and_replacing/client.js](examples/revivin
 const jayson = require('jayson');
 const shared = require('./shared');
 
-const client = new jayson.client.http({
+const client = jayson.Client.http({
   port: 3000,
   reviver: shared.reviver,
   replacer: shared.replacer
@@ -1101,7 +1109,7 @@ Client example in [examples/named_parameters/client.js](examples/named_parameter
 ```javascript
 const jayson = require('jayson');
 
-const client = new jayson.client.http({
+const client = jayson.Client.http({
   port: 3000
 });
 
@@ -1116,7 +1124,7 @@ Server example in [examples/named_parameters/server.js](examples/named_parameter
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.server({
+const server = new jayson.Server({
   add: function(params, callback) {
     callback(null, params.a + params.b);
   }
@@ -1151,7 +1159,7 @@ Server example in [examples/promise/server.js](examples/promise/server.js) showi
 const jayson = require('jayson/promise');
 const _ = require('lodash');
 
-const server = new jayson.server({
+const server = new jayson.Server({
 
   add: async function(args) {
     const sum = _.reduce(args, function(sum, value) { return sum + value; }, 0);
@@ -1174,7 +1182,7 @@ Client example in [examples/promise/client.js](examples/promise/client.js) showi
 ```javascript
 const jayson = require('jayson/promise');
 
-const client = new jayson.client.http({
+const client = jayson.Client.http({
   port: 3000
 });
 
@@ -1207,7 +1215,7 @@ Client example in [examples/promise_batches/client.js](examples/promise_batches/
 ```javascript
 const jayson = require('jayson/promise');
 
-const client = new jayson.client.http({
+const client = jayson.Client.http({
   port: 3000
 });
 
@@ -1291,7 +1299,7 @@ const express = require('express');
 const app = express();
 
 // create a plain jayson server
-const server = new jayson.server({
+const server = new jayson.Server({
   add: function(numbers, callback) {
     callback(null, _.reduce(numbers, (sum, val) => sum + val, 0));
   }

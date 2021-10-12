@@ -12,11 +12,11 @@ import WebSocket from 'isomorphic-ws';
  */
 
 export function test_example_1() {
-  var jsonParser = require('body-parser').json;
-  var connect = require('connect');
-  var app = connect();
+  const jsonParser = require('body-parser').json;
+  const connect = require('connect');
+  const app = connect();
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     add: function(args:any, callback:any) {
       callback(null, args[0] + args[1]);
     }
@@ -31,15 +31,15 @@ export function test_example_1() {
 
 export function test_example_2() {
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     add: function(args:any, callback:any) {
       callback(null, args[0] + args[1]);
     }
   });
 
-  var client = new jayson.Client(server);
+  const client = new jayson.Client(server);
 
-  var batch = [
+  const batch = [
     client.request('does_not_exist', [10, 5]),
     client.request('add', [1, 1]),
     client.request('add', [0, 0], null) // a notification
@@ -59,7 +59,7 @@ export function test_example_2() {
 
 export function test_example_3() {
 
-  var client = jayson.Client.https({
+  const client = jayson.Client.https({
     port: 3000
   });
 
@@ -71,7 +71,7 @@ export function test_example_3() {
 
 export function test_example_4() {
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     multiply: function(args:any, callback:any) {
       callback(null, args[0] * args[1]);
     }
@@ -83,16 +83,16 @@ export function test_example_4() {
 }
 
 export function test_example_5() {
-  var fs = require('fs');
-  var path = require('path');
+  const fs = require('fs');
+  const path = require('path');
 
-  var options = {
+  const options = {
     port: 3000,
     host: 'localhost'
   };
 
   // create a client
-  var client = jayson.Client.tcp(options);
+  const client = jayson.Client.tcp(options);
 
   // invoke "add"
   client.request('add', [1, 1], function(err:any, response:any) {
@@ -102,14 +102,14 @@ export function test_example_5() {
 }
 
 export function test_example_6() {
-  var fs = require('fs');
-  var path = require('path');
+  const fs = require('fs');
+  const path = require('path');
 
-  var options = {
+  const options = {
   };
 
   // create a server
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     add: function(args:any, callback:any) {
       callback(null, args[0] + args[1]);
     }
@@ -121,7 +121,7 @@ export function test_example_6() {
 
 export function test_example_7() {
 
-  var client = jayson.Client.http({
+  const client = jayson.Client.http({
     port: 3000
   });
 
@@ -133,7 +133,7 @@ export function test_example_7() {
 
 export function test_example_8() {
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     multiply: function(args:any, callback:any) {
       callback(null, args[0] * args[1]);
     }
@@ -146,11 +146,11 @@ export function test_example_8() {
 
 export function test_example_9() {
 
-  var client = jaysonPromise.Client.http({
+  const client = jaysonPromise.Client.http({
     port: 3000
   });
 
-  var batch = [
+  const batch = [
     client.request('add', [1, 2, 3, 4, 5], undefined, false),
     client.request('add', [5, 6, 7, 8, 9], undefined, false),
   ];
@@ -163,11 +163,11 @@ export function test_example_9() {
 
 export function test_example_10() {
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
 
     add: function(args:any) {
       return new Promise(function(resolve, reject) {
-        var sum = reduce(args, function(sum:number, value:number) { return sum + value; }, 0);
+        const sum = reduce(args, function(sum:number, value:number) { return sum + value; }, 0);
         resolve(sum);
       });
     }
@@ -179,13 +179,13 @@ export function test_example_10() {
 
 export function test_example_11() {
 
-  var server = new jayson.Server();
+  const server = new jayson.Server();
 
   // "http" will be an instance of require('http').Server
-  var http = server.http();
+  const http = server.http();
 
   // "https" will be an instance of require('https').Server
-  var https = server.https({
+  const https = server.https({
     //cert: require('fs').readFileSync('cert.pem'),
     //key require('fs').readFileSync('key.pem')
   });
@@ -201,7 +201,7 @@ export function test_example_11() {
 
 export function test_example_12() {
 
-  var client = jayson.Client.http({
+  const client = jayson.Client.http({
     port: 3000
   });
 
@@ -213,7 +213,7 @@ export function test_example_12() {
 
 export function test_example_13() {
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     add: function(a:any, b:any, callback:any) {
       callback(null, a + b);
     }
@@ -226,7 +226,7 @@ export function test_example_13() {
 export function test_example_14() {
 
   // create a client
-  var client = jayson.Client.http({
+  const client = jayson.Client.http({
     port: 3000
   });
 
@@ -240,7 +240,7 @@ export function test_example_14() {
 export function test_example_15() {
 
   // create a server
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     add: function(args:any, callback:any) {
       callback(null, args[0] + args[1]);
     }
@@ -251,7 +251,7 @@ export function test_example_15() {
 
 export function test_example_16() {
 
-  var client = jayson.Client.http({
+  const client = jayson.Client.http({
     port: 3000
   });
 
@@ -286,7 +286,7 @@ export function test_example_16() {
 }
 
 export function test_example_17() {
-  var methods = {
+  const methods = {
 
     // this function will be wrapped in jayson.Method with options given to the server
     sum: function(args:any, done:any) {
@@ -296,14 +296,14 @@ export function test_example_17() {
     // this method gets the raw params as first arg to handler
     sumCollect: new jayson.Method({
       handler: function(args:any, done:any) {
-        var total = sum(args);
+        const total = sum(args);
         done(null, total);
       },
     }),
 
     // specifies some default values (alternate definition too)
     sumDefault: new jayson.Method(function(args:any, done:any) {
-      var total = sum(args);
+      const total = sum(args);
       done(null, total);
     }, {
       params: {a: 2, b: 5} // map of defaults
@@ -312,7 +312,7 @@ export function test_example_17() {
     // this method returns true when it gets an array (which it always does)
     isArray: new jayson.Method({
       handler: function(args:any, done:any) {
-        var result = isArray(args);
+        const result = isArray(args);
         done(null, result);
       },
       params: Array // could also be "Object"
@@ -320,7 +320,7 @@ export function test_example_17() {
 
   };
 
-  var server = new jayson.Server(methods, {
+  const server = new jayson.Server(methods, {
     // Given as options to jayson.Method when adding the method "sum"
     params: Array
   });
@@ -337,7 +337,7 @@ export function test_example_17() {
 
 export function test_example_18() {
 
-  var client = jayson.Client.http({
+  const client = jayson.Client.http({
     port: 3000
   });
 
@@ -349,12 +349,12 @@ export function test_example_18() {
 
 export function test_example_19() {  
 
-  var cors = require('cors');
-  var connect = require('connect');
-  var jsonParser = require('body-parser').json;
-  var app = connect();
+  const cors = require('cors');
+  const connect = require('connect');
+  const jsonParser = require('body-parser').json;
+  const app = connect();
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     myNameIs: function(args:any, callback:any) {
       callback(null, 'Your name is: ' + args.name);
     }
@@ -369,11 +369,11 @@ export function test_example_19() {
 
 export function test_example_20() {
 
-  var client = jaysonPromise.Client.http({
+  const client = jaysonPromise.Client.http({
     port: 3000
   });
 
-  var reqs = [
+  const reqs = [
     client.request('add', [1, 2, 3, 4, 5]),
     client.request('rejection', [])
   ];
@@ -386,11 +386,11 @@ export function test_example_20() {
 
 export function test_example_21() {
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
 
     add: function(args:any) {
       return new Promise(function(resolve, reject) {
-        var sum = reduce(args, function(sum:any, value:any) { return sum + value; }, 0);
+        const sum = reduce(args, function(sum:any, value:any) { return sum + value; }, 0);
         resolve(sum);
       });
     },
@@ -410,7 +410,7 @@ export function test_example_21() {
 
 export function test_example_22() {
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     add: function(args:any, callback:any) {
       callback(null, args[0] + args[1]);
     }
@@ -422,7 +422,7 @@ export function test_example_22() {
 
 export function test_example_23() {
 
-  var client = jayson.Client.http({
+  const client = jayson.Client.http({
     port: 3000 // the port of the frontend server
   });
 
@@ -435,7 +435,7 @@ export function test_example_23() {
 export function test_example_24() {
 
   // create a server where "add" will relay a localhost-only server
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     add: jayson.Client.http({
       port: 3001
     })
@@ -446,12 +446,12 @@ export function test_example_24() {
 }
 
 export function test_example_25() {
-  var fs = require('fs');
-  var path = require('path');
+  const fs = require('fs');
+  const path = require('path');
 
   // Read node's tls documentation for more information about these options:
   // https://nodejs.org/api/tls.html#tls_tls_connect_options_callback
-  var options = {
+  const options = {
     key: fs.readFileSync(path.resolve('./../../../test/fixtures/keys/agent1-key.pem')),
     cert: fs.readFileSync(path.resolve('./../../../test/fixtures/keys/agent1-cert.pem')),
 
@@ -462,7 +462,7 @@ export function test_example_25() {
   };
 
   // create a client
-  var client = jayson.Client.tls(options);
+  const client = jayson.Client.tls(options);
 
   // invoke "add"
   client.request('add', [1, 1], function(err:any, response:any) {
@@ -472,12 +472,12 @@ export function test_example_25() {
 }
 
 export function test_example_26() {
-  var fs = require('fs');
-  var path = require('path');
+  const fs = require('fs');
+  const path = require('path');
 
   // Read node's tls documentation for more information about these options:
   // https://nodejs.org/api/tls.html#tls_tls_createserver_options_secureconnectionlistener
-  var options = {
+  const options = {
     key: fs.readFileSync(path.resolve('./../../../test/fixtures/keys/agent1-key.pem')),
     cert: fs.readFileSync(path.resolve('./../../../test/fixtures/keys/agent1-cert.pem')),
     requestCert: true,
@@ -486,7 +486,7 @@ export function test_example_26() {
   };
 
   // create a server
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     add: function(args:any, callback:any) {
       callback(null, args[0] + args[1]);
     }
@@ -513,7 +513,7 @@ export function test_example_26() {
 
   exports.reviver = function(key:any, value:any) {
     if(value && value.$class === 'counter') {
-      var obj = new Counter(value.$props.count);
+      const obj = new Counter(value.$props.count);
       return obj;
     }
     return value;
@@ -521,23 +521,23 @@ export function test_example_26() {
 }
 
 export function test_example_27() {
-  var shared = require('./shared');
+  const shared = require('./shared');
 
-  var client = jayson.Client.http({
+  const client = jayson.Client.http({
     port: 3000,
     reviver: shared.reviver,
     replacer: shared.replacer
   });
 
   // create the object
-  var params = {
+  const params = {
     counter: new shared.Counter(2)
   };
 
   // invoke "increment"
   client.request('increment', params, function(err:any, response:any) {
     if(err) throw err;
-    var result = response.result;
+    const result = response.result;
     console.log(
       result instanceof shared.Counter, // true
       result.count, // 3
@@ -547,16 +547,16 @@ export function test_example_27() {
 }
 
 export function test_example_28() {
-  var shared = require('./shared');
+  const shared = require('./shared');
 
   // Set the reviver/replacer options
-  var options = {
+  const options = {
     reviver: shared.reviver,
     replacer: shared.replacer
   };
 
   // create a server
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     increment: function(args:any, callback:any) {
       args.counter.increment();
       callback(null, args.counter);
@@ -568,7 +568,7 @@ export function test_example_28() {
 
 export function test_example_29() {  
 
-  var client = jayson.Client.http({
+  const client = jayson.Client.http({
     port: 3000
   });
 
@@ -581,7 +581,7 @@ export function test_example_29() {
 
 export function test_example_30() {
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     ping: function(args:any, callback:any) {
       // do something, do nothing
       callback();
@@ -594,7 +594,7 @@ export function test_example_30() {
 export function test_example_31() {
 
   // create a client
-  var client = jayson.Client.http({
+  const client = jayson.Client.http({
     port: 3000
   });
 
@@ -606,18 +606,18 @@ export function test_example_31() {
 }
 
 export function test_example_32() {
-  var methods = {
+  const methods = {
     add: function(args:any, callback:any) {
       callback(null, args[0] + args[1]);
     }
   };
 
-  var server = new jayson.Server(methods, {
+  const server = new jayson.Server(methods, {
     router: <jayson.ServerRouterFunction>function(method:any, params:any) {
       // regular by-name routing first
       if(typeof(this._methods[method]) === 'function') return this._methods[method];
       if(method === 'add_2') {
-        var fn = (server.getMethod('add') as jayson.Method).getHandler() as jayson.MethodHandler;
+        const fn = (server.getMethod('add') as jayson.Method).getHandler() as jayson.MethodHandler;
         return new jayson.Method(function(args:any, done:any) {
           args.unshift(2);
           fn.call(server, args, done);
@@ -630,15 +630,15 @@ export function test_example_32() {
 }
 
 export function test_Middleware() {
-  var app = require('express') as Express;
+  const app = require('express') as Express;
 
-  var server = new jayson.Server({
+  const server = new jayson.Server({
     add: function (args:any, callback:any) {
       callback(null, args[0] + args[1]);
     }
   });
 
-  var jsonParser = require('body-parser').json;
+  const jsonParser = require('body-parser').json;
   // parse request body before the jayson middleware
   app.use(jsonParser());
   app.use(server.middleware());
@@ -832,4 +832,22 @@ export async function test_websocket_Promise () {
   });
 
   const result = await websocketClient.request('add', [1,2,3]);
+}
+
+export async function test_differentCases () {
+  jayson.client.http({host: 'http://something', port: 80});
+  // new jayson.client.http({host: 'http://something', port: 80}); // gives error
+  jaysonPromise.client.http({port: 3000});
+  // jayson.server(); // gives error
+  const server = new jayson.server();
+  new jayson.client(server);
+  new jayson.Client(server);
+  new jayson.Method();
+  new jayson.method();
+  // jayson.Method(); // gives error
+  // jayson.method(); // givers error
+  // jayson.client(server); // gives error
+  // jayson.Client(server); // gives error
+  jayson.Utils.response(null, null, 1, 2);
+  jayson.utils.response(null, null, 1, 2);
 }

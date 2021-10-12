@@ -54,6 +54,10 @@ export declare class Utils {
 
 }
 
+// lowercase Utils
+export declare class utils extends Utils {
+}
+
 type UtilsJSON = {
   parse(str:string, options:UtilsJSONParseOptions | null | undefined, callback: (err?:Error, obj?:object) => void):void;
   stringify(obj:object, options:UtilsJSONStringifyOptions | null | undefined, callback: (err?:Error, str?:string) => void):void;
@@ -186,6 +190,10 @@ export declare class Method {
   execute(server: Server, requestParams: RequestParamsLike, context:object, callback: MethodExecuteCallbackType): any | Promise<any>;
 }
 
+// lowercase Method
+export declare class method extends Method {
+}
+
 export type MethodLike = Function | Method | Client;
 
 export type ServerRouterFunction = (this: Server, method: string, params: RequestParamsLike) => MethodLike;
@@ -233,6 +241,10 @@ export declare class Server extends events.EventEmitter {
   error(code?: number, message?: string, data?: object): JSONRPCError;
   call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: ServerCallCallbackType): void;
   call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, context: object, originalCallback?: ServerCallCallbackType): void;
+}
+
+// lowercase Server
+export declare class server extends Server {
 }
 
 export interface MiddlewareServerOptions extends ServerOptions {
@@ -339,4 +351,8 @@ export declare class Client extends events.EventEmitter {
   request(method: string, params: RequestParamsLike, id?: string | null, callback?: JSONRPCCallbackType): JSONRPCRequest;
   request(method: string, params: RequestParamsLike, callback?: JSONRPCCallbackType): JSONRPCRequest;
   request(method: Array<JSONRPCRequestLike>, callback: JSONRPCCallbackTypeBatch): Array<JSONRPCRequest>;
+}
+
+// lowercase Client
+export declare class client extends Client {
 }

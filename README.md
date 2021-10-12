@@ -33,6 +33,7 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Class Documentation](#class-documentation)
 - [Running tests](#running-tests)
 - [Typescript](#typescript)
+  - [Typescript instantiation recommendations](#typescript-instantiation-recommendations)
 - [Usage](#usage)
   - [Client](#client)
      - [Interface description](#client-interface-description)

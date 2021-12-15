@@ -6,6 +6,7 @@ attributes             = req_attributes
 prompt                 = no
 output_password        = password
 default_md             = sha256
+x509_extensions        = v3_ca
 
 [ req_distinguished_name ]
 C                      = AA
@@ -18,3 +19,6 @@ emailAddress           = mail@tedeh.net
 
 [ req_attributes ]
 challengePassword              = A challenge password
+
+[ v3_ca ]
+basicConstraints = CA:TRUE

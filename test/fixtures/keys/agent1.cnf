@@ -4,6 +4,7 @@ days                   = 999
 distinguished_name     = req_distinguished_name
 attributes             = req_attributes
 prompt                 = no
+default_md             = sha256
 
 [ req_distinguished_name ]
 C                      = AA

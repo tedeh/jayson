@@ -5,6 +5,7 @@ distinguished_name     = req_distinguished_name
 attributes             = req_attributes
 prompt                 = no
 output_password        = password
+default_md             = sha256
 
 [ req_distinguished_name ]
 C                      = AA

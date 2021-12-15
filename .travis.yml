@@ -7,10 +7,15 @@ node_js:
   - "10"
   - "12"
 
+# Temporary workaround for Node 17
+# See: https://nodejs.org/en/blog/release/v17.0.0/#openssl-3-0
+env:
+  - NODE_OPTIONS=--openssl-legacy-provider
+
 # Notifications
 notifications:
- email:
-   - notify+mail@tedeh.net
+  email:
+    - notify+mail@tedeh.net
 
 after_success:
   - nyc npm test && nyc report --reporter=text-lcov | coveralls

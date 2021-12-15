@@ -4,7 +4,7 @@ ca1-cert.pem: ca1.cnf
 	openssl req -new -x509 -days 9999 -config ca1.cnf -keyout ca1-key.pem -out ca1-cert.pem
 
 agent1-key.pem:
-	openssl genrsa -out agent1-key.pem 1024
+	openssl genrsa -out agent1-key.pem 2048
 
 agent1-csr.pem: agent1.cnf agent1-key.pem
 	openssl req -new -config agent1.cnf -key agent1-key.pem -out agent1-csr.pem

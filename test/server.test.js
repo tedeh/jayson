@@ -343,6 +343,20 @@ describe('jayson.server', function() {
 
     });
 
+    describe('request with null "params"', function() {
+
+      it('should return the expected result if params is null', function(done) {
+        const request = utils.request('add', []);
+        request.params = null;
+        server.call(request, function(err, response) {
+          if(err) return done(err);
+          response.should.have.property('result', 0);
+          done();
+        });
+      });
+
+    });
+
     describe('request', function() {
 
       it('should return the expected result', function(done) {

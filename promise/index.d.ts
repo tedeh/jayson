@@ -7,6 +7,12 @@ import Stream = require('stream');
 import WebSocket = require('isomorphic-ws');
 import * as connect from 'connect';
 
+type ConstructorOf<Proto, CtorArgs extends any[]> = {
+        (...args: CtorArgs): Proto;
+        new(...args: CtorArgs): Proto;
+        prototype: Proto;
+}
+
 export interface UtilsJSONParseOptions {
   reviver?: Function;
 }
@@ -181,19 +187,20 @@ export type MethodExecuteCallbackType = {
   (err?: Error | null, result?: JSONRPCResultLike): void
 }
 
-export declare class Method {
-  constructor(options: MethodOptions);
-  constructor(handler?: MethodHandlerType, options?: MethodOptions);
+type MethodConstructor= ConstructorOf<Method, [options: MethodOptions] | [handler?: MethodHandlerType, options?: MethodOptions]>;
 
+export interface Method {
   getHandler(): MethodHandlerType;
   setHandler(handler: MethodHandlerType): void;
   execute(server: Server, requestParams: RequestParamsLike, callback: MethodExecuteCallbackType): any | Promise<any>;
   execute(server: Server, requestParams: RequestParamsLike, context:object, callback: MethodExecuteCallbackType): any | Promise<any>;
 }
 
+export declare const Method: MethodConstructor;
+
 // lowercase Method
-export declare class method extends Method {
-}
+export type method = Method;
+export declare const method: MethodConstructor;
 
 export type MethodLike = Function | Method | Client;
 
@@ -216,17 +223,13 @@ export type ServerCallCallbackType = {
 
 export interface MethodMap { [methodName:string]: Method }
 
-export declare class Server extends events.EventEmitter {
-  constructor(methods?: {[methodName: string]: MethodLike}, options?: ServerOptions);
+type ServerConstructor = ConstructorOf<Server, [methods?: { [methodName: string]: MethodLike }, options?: ServerOptions]> & {
+  _methods: MethodMap;
+  options: ServerOptions;
+  errorMessages: {[errorMessage: string]: string};
+}
 
-  static errors: {[errorName: string]: number};
-  static errorMessages: {[errorMessage: string]: string};
-  static interfaces: {[interfaces: string]: Function};
-
-  public _methods: MethodMap;
-  public options: ServerOptions;
-  public errorMessages: {[errorMessage: string]: string};
-
+export interface Server extends events.EventEmitter {
   http(options?: HttpServerOptions): HttpServer;
   https(options?: HttpsServerOptions): HttpsServer;
   tcp(options?: TcpServerOptions): TcpServer;
@@ -244,9 +247,11 @@ export declare class Server extends events.EventEmitter {
   call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, context: object, originalCallback?: ServerCallCallbackType): void;
 }
 
+export declare const Server: ServerConstructor;
+
 // lowercase Server
-export declare class server extends Server {
-}
+export type server = Server;
+export declare const server: ServerConstructor;
 
 export interface MiddlewareServerOptions extends ServerOptions {
   end?: boolean;
@@ -339,21 +344,22 @@ declare class WebsocketClient extends Client {
   constructor(options?: WebsocketClientOptions);
 }
 
-export declare class Client extends events.EventEmitter {
-  constructor(server: Server, options?: ClientOptions);
-  constructor(options: ClientOptions);
+type ClientConstructor = ConstructorOf<Client, [options: ClientOptions] | [server: Server, options?: ClientOptions]> & {
+  http(options?: HttpClientOptions): HttpClient;
+  https(options?: HttpsClientOptions): HttpsClient;
+  tcp(options?: TcpClientOptions): TcpClient;
+  tls(options?: TlsClientOptions): TlsClient;
+  websocket(options?: WebsocketClientOptions): WebsocketClient;
+}
 
-  static http(options?: HttpClientOptions): HttpClient;
-  static https(options?: HttpsClientOptions): HttpsClient;
-  static tcp(options?: TcpClientOptions): TcpClient;
-  static tls(options?: TlsClientOptions): TlsClient;
-  static websocket(options?: WebsocketClientOptions): WebsocketClient;
-
+export interface Client extends events.EventEmitter {
   request(method:string, params:RequestParamsLike, id:JSONRPCIDLike | undefined, shouldCall:false): JSONRPCRequest;
   request(method:string, params:RequestParamsLike, id?:JSONRPCIDLike): Promise<JSONRPCResultLike>;
   request(method: Array<JSONRPCRequestLike>): Promise<JSONRPCResultLike>;
 }
 
+export declare const Client: ClientConstructor;
+
 // lowercase Client
-export declare class client extends Client {
-}
+export type client = Client;
+export declare const client: ClientConstructor;

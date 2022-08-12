@@ -245,6 +245,7 @@ export interface Server extends events.EventEmitter {
   error(code?: number, message?: string, data?: object): JSONRPCError;
   call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, originalCallback?: ServerCallCallbackType): void;
   call(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, context: object, originalCallback?: ServerCallCallbackType): void;
+  callp(request: JSONRPCRequestLike | Array<JSONRPCRequestLike>, context?: object): Promise<JSONRPCResultLike>;
 }
 
 export declare const Server: ServerConstructor;

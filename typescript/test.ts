@@ -806,6 +806,28 @@ export function test_server_and_method_call () {
   });
 }
 
+export async function test_server_and_method_callp () {
+  const server = new jayson.Server();
+  const request = jayson.Utils.request('add', [1, 2], undefined, {generator: () => Math.random()});
+  await server.callp(request, {});
+  await server.callp(request);
+  const response = await server.callp(request).catch(err => {
+    console.error(err);
+  })
+  console.log(response.result);
+}
+
+export async function test_server_and_method_callp_promise () {
+  const server = new jaysonPromise.Server();
+  const request = jayson.Utils.request('add', [1, 2], undefined, {generator: () => Math.random()});
+  await server.callp(request, {});
+  await server.callp(request);
+  const response = await server.callp(request).catch(err => {
+    console.error(err);
+  })
+  console.log(response.result);
+}
+
 export function test_websocket () {
   const wss = new WebSocket.Server({port: 12345});
   const server = new jayson.Server();

@@ -551,6 +551,24 @@ describe('jayson.server', function() {
     
     });
 
+    describe('callp', function () {
+
+      it('should return a promise that resolves', async function () {
+        const context = {};
+        const request = utils.request('add', [10, 20]);
+        const response = await server.callp(request, context);
+        await should(response).have.property('result', 30);
+      });
+
+      it('should return a promise that rejects', async function () {
+        const context = {};
+        const request = 'invalid request'
+        const promise = server.callp(request, context);
+        await should(promise).be.rejected();
+      });
+
+    });
+
   });
 
 });

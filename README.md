@@ -33,7 +33,6 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 - [Class Documentation](#class-documentation)
 - [Running tests](#running-tests)
 - [Typescript](#typescript)
-  - [Typescript instantiation recommendations](#typescript-instantiation-recommendations)
 - [Usage](#usage)
   - [Client](#client)
      - [Interface description](#client-interface-description)
@@ -173,14 +172,6 @@ In addition to this document, a comprehensive class documentation made with [jsd
 Since `v2.1.0` there is typescript support available with jayson.
 
 If you encounter any problems with the type definitions, see the [Contributing](#contributing) section.
-
-### Typescript instantiation recommendations
-
-Unfortunately we've been unable to express the flexibility with which jayson clients and servers can be instantiated in the Typescript definitions. Specifically, jayson allows all classes to be instantiated with or without the `new` keyword and this has been hard to get Typescript to understand. This has caused problems for some users. When using Typescript with jayson, we recommend the following:
-
-1. Do not use `new` when instantiating client sub-classes. Use `jayson.Client.http()` **not** `new jayson.Client.http()`
-2. Use `new` when instantiating all other classes. Use `new jayson.Server()`, `new jayson.Client()`, `new jayson.Method()`, etc.
-3. If you feel that you have a solution for the problem of allowing instantiation with or without the `new` keyword, feel free to attempt a pull request.
 
 ## Usage
 
@@ -1389,6 +1380,6 @@ requests on [Github](https://github.com/tedeh/jayson) is most welcome.
 
 Please make sure to follow the style of the project, and lint your code with `npm run lint` before submitting a patch.
 
-### Submitting issues with the Typescript type definitions
+### Submitting issues or pull requests with the Typescript type definitions
 
 You are required to provide an easily reproducible code sample of any errors with the Typescript type definitions so that they can be added to the typescript test file in [typescript/test.ts](typescript/test.ts). Better yet, issue a pull request adding a test there yourself that shows up when running the `package.json` script `test-tsc`.

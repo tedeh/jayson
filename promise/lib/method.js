@@ -1,7 +1,6 @@
 'use strict';
 
 const jayson = require('../../');
-const isFunction = require('lodash/isFunction');
 
 /**
  * Constructor for a Jayson Promise Method
@@ -43,7 +42,7 @@ PromiseMethod.prototype.execute = function(server, requestParams, context, outer
     outerCallback.apply(null, arguments);
   });
 
-  wasPromised = promise && isFunction(promise.then);
+  wasPromised = promise && typeof promise.then === 'function';
 
   // if the handler returned a promise, call the callback when it resolves
   if(wasPromised) {

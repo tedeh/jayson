@@ -1,7 +1,6 @@
 'use strict';
 
 const reduce = require('lodash/reduce');
-const forEach = require('lodash/forEach');
 const should = require('should');
 const fetch = require('node-fetch');
 const jayson = require('./../promise');
@@ -187,7 +186,8 @@ describe('jayson/promise', function() {
 
     };
 
-    forEach(suites, function(suite, name) {
+    Object.keys(suites).forEach(function(name) {
+      const suite = suites[name];
 
       describe(name, function() {
 

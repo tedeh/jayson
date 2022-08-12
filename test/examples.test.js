@@ -1,6 +1,5 @@
 'use strict';
 
-const last = require('lodash/last');
 const { spawn } = require('child_process');
 const path = require('path');
 const should = require('should');

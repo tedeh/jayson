@@ -8,9 +8,9 @@ import WebSocket = require('isomorphic-ws');
 import * as connect from 'connect';
 
 type ConstructorOf<Proto, CtorArgs extends any[]> = {
-        (...args: CtorArgs): Proto;
-        new(...args: CtorArgs): Proto;
-        prototype: Proto;
+  (...args: CtorArgs): Proto;
+  new(...args: CtorArgs): Proto;
+  prototype: Proto;
 }
 
 export interface UtilsJSONParseOptions {

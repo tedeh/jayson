@@ -851,3 +851,15 @@ export async function test_differentCases () {
   jayson.Utils.response(null, null, 1, 2);
   jayson.utils.response(null, null, 1, 2);
 }
+
+export function test_constructors () {
+  const server = jayson.Server();
+  const client = jayson.Client(server);
+  const method = jayson.Method();
+}
+
+export function test_constructors_promise () {
+  const server = jaysonPromise.Server();
+  const client = jaysonPromise.Client(server);
+  const method = jaysonPromise.Method();
+}

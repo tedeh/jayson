@@ -699,7 +699,6 @@ client.request('add_2', [3], function(err, response) {
 Server example of nested routes where each property is separated by a dot (you do not need to use the router option for this):
 
 ```javascript
-const _ = require('lodash');
 const jayson = require('jayson');
 
 const methods = {
@@ -716,14 +715,15 @@ const methods = {
 };
 
 // this reduction produces an object like this: {'foo.bar': [Function], 'math.add': [Function]}
-const map = _.reduce(methods, collapse('', '.'), {});
+const map = Object.keys(methods).reduce(collapse('', '.', methods), {});
 const server = new jayson.Server(map);
 
-function collapse(stem, sep) {
-  return function(map, value, key) {
+function collapse(stem, sep, obj) {
+  return function(map, key) {
     const prop = stem ? stem + sep + key : key;
-    if(_.isFunction(value)) map[prop] = value;
-    else if(_.isObject(value)) map = _.reduce(value, collapse(prop, sep), map);
+    const value = obj[key];
+    if(typeof value === 'function') map[prop] = value;
+    else if(typeof value === 'object' && value !== null) map = Object.keys(value).reduce(collapse(prop, sep, value), map);
     return map;
   }
 }
@@ -751,7 +751,6 @@ Server example showcasing most features and options in [examples/method_definiti
 
 ```javascript
 const jayson = require('jayson');
-const _ = require('lodash');
 
 const methods = {
 
@@ -777,7 +776,7 @@ const methods = {
   // this method returns true when it gets an array (which it always does)
   isArray: new jayson.Method({
     handler: function(args, done) {
-      const result = _.isArray(args);
+      const result = Array.isArray(args);
       done(null, result);
     },
     params: Array // could also be "Object"
@@ -796,9 +795,7 @@ server.http().listen(3000);
 
 // sums all numbers in an array or object
 function sum(list) {
-  return _.reduce(list, function(sum, val) {
-    return sum + val;
-  }, 0);
+  return Object.keys(list).reduce(function(sum, key) { return sum + list[key]; }, 0);
 }
 ```
 
@@ -938,7 +935,6 @@ This feature is unlocked by having `jayson.Method` accepts a boolean option call
 Server example in [examples/context/server.js](examples/context/server.js):
 
 ```javascript
-const _ = require('lodash');
 const jayson = require('jayson');
 const jsonParser = require('body-parser').json;
 const express = require('express');
@@ -1149,12 +1145,11 @@ Server example in [examples/promise/server.js](examples/promise/server.js) showi
 
 ```javascript
 const jayson = require('jayson/promise');
-const _ = require('lodash');
 
 const server = new jayson.Server({
 
   add: async function(args) {
-    const sum = _.reduce(args, function(sum, value) { return sum + value; }, 0);
+    const sum = Object.keys(args).reduce(function(sum, key) { return sum + args[key]; }, 0);
     return sum;
   },
 
@@ -1284,7 +1279,6 @@ The library author [tedeh](https://github.com/tedeh) therefore recommends that i
 Example of a http server built with express in [examples/faq_recommended_http_server/server.js](examples/faq_recommended_http_server/server.js):
 
 ```javascript
-const _ = require('lodash');
 const jayson = require('jayson');
 const jsonParser = require('body-parser').json;
 const express = require('express');
@@ -1293,7 +1287,8 @@ const app = express();
 // create a plain jayson server
 const server = new jayson.Server({
   add: function(numbers, callback) {
-    callback(null, _.reduce(numbers, (sum, val) => sum + val, 0));
+    const sum = Object.keys(numbers).reduce(function(sum, key) { return sum + numbers[key]; }, 0);
+    callback(null, sum);
   }
 });
 

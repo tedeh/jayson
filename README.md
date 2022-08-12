@@ -114,6 +114,8 @@ Install the latest version of _jayson_ from [npm](https://www.npmjs.com) by exec
 
 ## Changelog (only notable milestones/changes)
 
+- *4.0.0*
+  - Remove `lodash` dependency which should halve bundle size. There might be minor incompatibilities if you pass funky object or array types to jayson methods.
 - *3.6.4*
   - Websocket client and server support
 - *3.6.1*

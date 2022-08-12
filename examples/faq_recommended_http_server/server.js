@@ -1,6 +1,5 @@
 'use strict';
 
-const _ = require('lodash');
 const jayson = require('jayson');
 const jsonParser = require('body-parser').json;
 const express = require('express');
@@ -9,7 +8,7 @@ const app = express();
 // create a plain jayson server
 const server = new jayson.server({
   add: function(numbers, callback) {
-    callback(null, _.reduce(numbers, (sum, val) => sum + val, 0));
+    callback(null, Object.keys(numbers).reduce((sum, key) => sum + numbers[key], 0));
   }
 });
 

@@ -1,11 +1,10 @@
 'use strict';
 
 const jayson = require('jayson');
-const _ = require('lodash');
 
 const server = new jayson.server({
   add: validateReturnsNumber(function (args, done) {
-    const result = _.reduce(args, (sum, val) => sum + val, 0);
+    const result = Object.keys(args).reduce((sum, key) => sum + args[key], 0);
     done(null, result);
   }),
 });
@@ -18,7 +17,7 @@ function validateReturnsNumber (fn) {
     const self = this;
     return fn(args, function (err, result) {
       if (err) return done(err);
-      if (!_.isFinite(result)) {
+      if (!isFinite(result)) {
         return done(self.error(500, 'not a finite number'));
       }
       return done(null, result);

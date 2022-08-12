@@ -1,6 +1,5 @@
 'use strict';
 
-const _ = require('lodash');
 const jayson = require('jayson');
 const jsonParser = require('body-parser').json;
 const express = require('express');

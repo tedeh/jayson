@@ -2,7 +2,6 @@ import * as jayson from './..';
 import * as jaysonPromise from './../promise';
 import jaysonBrowserClient from './../lib/client/browser';
 import jaysonPromiseBrowserClient from './../promise/lib/client/browser';
-import { reduce, isArray } from 'lodash';
 import { Express } from 'express-serve-static-core';
 import WebSocket from 'isomorphic-ws';
 
@@ -167,7 +166,7 @@ export function test_example_10() {
 
     add: function(args:any) {
       return new Promise(function(resolve, reject) {
-        const sum = reduce(args, function(sum:number, value:number) { return sum + value; }, 0);
+        const sum = Object.keys(args).reduce((sum, key) => sum + args[key], 0);
         resolve(sum);
       });
     }
@@ -312,7 +311,7 @@ export function test_example_17() {
     // this method returns true when it gets an array (which it always does)
     isArray: new jayson.Method({
       handler: function(args:any, done:any) {
-        const result = isArray(args);
+        const result = Array.isArray(args);
         done(null, result);
       },
       params: Array // could also be "Object"
@@ -329,7 +328,8 @@ export function test_example_17() {
 
   // sums all numbers in an array
   function sum(list:any) {
-    return reduce(list, function(sum:any, val:any) {
+    return Object.keys(list).reduce(function(sum:any, key:string) {
+      const val = list[key];
       return sum + val;
     }, 0);
   }
@@ -390,7 +390,7 @@ export function test_example_21() {
 
     add: function(args:any) {
       return new Promise(function(resolve, reject) {
-        const sum = reduce(args, function(sum:any, value:any) { return sum + value; }, 0);
+        const sum = Object.keys(args).reduce((sum, key) => sum + args[key], 0);
         resolve(sum);
       });
     },

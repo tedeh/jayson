@@ -1,12 +1,11 @@
 'use strict';
 
 const jayson = require('jayson/promise');
-const _ = require('lodash');
 
 const server = new jayson.server({
 
   add: async function(args) {
-    const sum = _.reduce(args, function(sum, value) { return sum + value; }, 0);
+    const sum = Object.keys(args).reduce((sum, key) => sum + args[key], 0);
     return sum;
   },
 

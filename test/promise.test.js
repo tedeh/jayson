@@ -1,6 +1,5 @@
 'use strict';
 
-const reduce = require('lodash/reduce');
 const should = require('should');
 const fetch = require('node-fetch');
 const jayson = require('./../promise');
@@ -273,7 +272,7 @@ describe('jayson/promise', function() {
         const handlers = {
           sum: function(args) {
             return new Promise(function(resolve, reject) {
-              const sum = reduce(args, function(sum, arg) { return sum + arg; }, 0);
+              const sum = Object.keys(args).reduce((sum, key) => sum + args[key], 0);
               resolve(sum);
             });
           },
@@ -286,7 +285,7 @@ describe('jayson/promise', function() {
           // returns a "Promise-like" object
           thenable: function(args) {
             return {then: function(resolve, reject) {
-              const sum = reduce(args, function(sum, arg) { return sum + arg; }, 0);
+              const sum = Object.keys(args).reduce((sum, key) => sum + args[key], 0);
               resolve(sum);
             }};
           }

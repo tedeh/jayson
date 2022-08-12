@@ -1,8 +1,5 @@
 'use strict';
 
-const reduce = require('lodash/reduce');
-const isArray = require('lodash/isArray');
-const isNumber = require('lodash/isNumber');
 const should = require('should');
 const jayson = require('./../../');
 const fs = require('fs');
@@ -27,7 +24,7 @@ exports.server.methods = () => ({
   },
 
   incrementCounterBy: function(args, callback) {
-    const {counter, value} = isArray(args) ? {counter: args[0], value: args[1]} : args;
+    const {counter, value} = Array.isArray(args) ? {counter: args[0], value: args[1]} : args;
     if(!(counter instanceof exports.Counter)) {
       return callback(this.error(-1000, 'Argument not an instance of Counter'));
     }
@@ -36,7 +33,7 @@ exports.server.methods = () => ({
   },
 
   add: function(args, callback) {
-    const result = reduce(args, (sum, arg) => isNumber(arg) ? sum + arg : sum, 0);
+    const result = Object.keys(args).reduce((sum, key) => sum + (typeof args[key] === 'number' ? args[key] : 0), 0);
     callback(null, result);
   },
 

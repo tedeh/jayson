@@ -1,7 +1,6 @@
 'use strict';
 
 const jayson = require('jayson');
-const _ = require('lodash');
 
 const methods = {
 
@@ -27,7 +26,7 @@ const methods = {
   // this method returns true when it gets an array (which it always does)
   isArray: new jayson.Method({
     handler: function(args, done) {
-      const result = _.isArray(args);
+      const result = Array.isArray(args);
       done(null, result);
     },
     params: Array // could also be "Object"
@@ -46,7 +45,8 @@ server.http().listen(3000);
 
 // sums all numbers in an array or object
 function sum(list) {
-  return _.reduce(list, function(sum, val) {
+  return Object.keys(list).reduce(function(sum, key) {
+    const val = list[key];
     return sum + val;
   }, 0);
 }

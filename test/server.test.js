@@ -516,6 +516,24 @@ describe('jayson.server', function() {
 
     });
 
+    it('should limit max batch size', function(done) {
+
+      server.options.maxBatchSize = 2;
+
+      const request = [ 
+        utils.request('add_slow', [1, 1, true]),
+        utils.request('add_slow', [1, 2, false]),
+        utils.request('add_slow', [1, 2, false])
+      ];
+
+      server.call(request, function(err, response) {
+        err.should.containDeep({error: {code: ServerErrors.INVALID_REQUEST}});
+        should.not.exist(response);
+        done();
+      });
+    
+    });
+    
     describe('call context', function() {
 
       beforeEach(function() {

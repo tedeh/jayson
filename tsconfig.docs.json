@@ -1,0 +1,7 @@
+{
+	"files": ["jayson.d.ts", "promise/index.d.ts"],
+	"typedocOptions": {
+		"entryPoints": ["jayson.d.ts", "promise/index.d.ts"],
+		"out": "docs/typedoc"
+	}
+}

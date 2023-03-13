@@ -73,7 +73,10 @@ describe('jayson/promise', function() {
       https: {
         server: function(done) {
           const server = jaysonPromise.Server(support.server.methods(), support.server.options());
-          const https = server.https(support.server.keys());
+          const https = server.https({
+            ...support.server.keys(),
+            keepAliveTimeout: 200,
+          });
           https.listen(3999, 'localhost', done);
           return https;
         },
@@ -213,23 +216,23 @@ describe('jayson/promise', function() {
 
         describe('request', function() {
 
-          it('should do a request and fulfill a promise', function() {
-            return client.request('add', [333, 333]).should.be.fulfilled().catch(err => {
+          it('should do a request and fulfill a promise', function () {
+            return should(client.request('add', [333, 333])).be.fulfilled().catch(err => {
               console.log(err, err.stack);
             }).then(function(response) {
-              response.should.containDeep({result: 666});
+              should(response).containDeep({result: 666});
             });
           });
 
           it('should do a request and fulfill a promise that errored', function() {
-            return client.request('error', []).should.be.fulfilled().then(function(response) {
-              response.should.containDeep({error: {code: -1000}});
+            return should(client.request('error', [])).be.fulfilled().then(function(response) {
+              should(response).containDeep({error: {code: -1000}});
             });
           });
 
           it('should return a raw request when fourth parameter is false', function() {
             const request = client.request('add', [1, 2], false, false);
-            request.should.not.be.a.Promise();
+            should(request).not.be.a.Promise();
             should(request.id).be.a.string;
             should(request.method).equal('add');
             should(request.params).eql([1,2]);
@@ -237,10 +240,10 @@ describe('jayson/promise', function() {
 
           it('should accept an array of requests and make a batch', function() {
             const batch = [client.request('add', [1,2], undefined, false)];
-            return client.request(batch).should.be.fulfilled().then(function(responses) {
-              responses.should.be.an.array;
-              responses.should.have.lengthOf(1);
-              responses[0].should.have.property('result', 3);
+            return should(client.request(batch)).be.fulfilled().then(function(responses) {
+              should(responses).be.an.array;
+              should(responses).have.lengthOf(1);
+              should(responses[0]).have.property('result', 3);
             });
           });
 

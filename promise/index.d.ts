@@ -215,6 +215,7 @@ export interface ServerOptions {
   encoding?: string;
   router?: ServerRouterFunction;
   methodConstructor?: Function;
+  maxBatchLength?: number;
 }
 
 export type ServerCallCallbackType = {

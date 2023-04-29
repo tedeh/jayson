@@ -514,6 +514,34 @@ describe('jayson.server', function() {
       
       });
 
+      describe('max batch length', function () {
+
+        it('should error when maximum batch length exceeded', function (done) {
+          server.options.maxBatchLength = 1;
+          const request = [utils.request('add', [1, 1, true]), utils.request('add', [1, 2, false])];
+          server.call(request, function(err, responses) {
+            should(err).containDeep({
+              error: {code: -32099, message: 'Invalid request: Maximum batch length exceeded'},
+            });
+            should(responses).be.undefined();
+            done();
+          });
+        });
+
+        it('should allow batches to be forbidden', function (done) {
+          server.options.maxBatchLength = 0;
+          const request = [utils.request('add', [1, 1, true])];
+          server.call(request, function(err, responses) {
+            should(err).containDeep({
+              error: {code: -32099, message: 'Invalid request: Maximum batch length exceeded'},
+            });
+            should(responses).be.undefined();
+            done();
+          });
+        });
+
+      });
+
     });
 
     describe('call context', function() {

@@ -111,6 +111,8 @@ Install the latest version of _jayson_ from [npm](https://www.npmjs.com) by exec
 
 ## Changelog (only notable milestones/changes)
 
+- *4.1.0*
+  - New server option `maxBatchLength`
 - *4.0.0*
   - Remove `lodash` dependency which should halve bundle size. There might be minor incompatibilities if you pass funky object or array types to jayson methods.
 - *3.6.4*
@@ -478,6 +480,7 @@ Servers supports these options:
 | `params`            	| `undefined`     	| `Array/Object/null` 	| Passed to `methodConstructor` options                     	|
 | `methodConstructor` 	| `jayson.Method` 	| `Function`          	| Server functions are made an instance of this class       	|
 | `version`           	| 2               	| `Number`            	| JSON-RPC version to support (1 or 2)                      	|
+| `maxBatchLength`     	| Infinity         	| `Number`            	| Maximum batch requests allowed                                |
 
 ##### Server.tcp
 

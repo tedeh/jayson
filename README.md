@@ -6,12 +6,9 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 [jsonrpc1-spec]: http://json-rpc.org/wiki/specification
 [node.js]: http://nodejs.org/
 [jayson-npm]: https://www.npmjs.com/package/jayson
-[jayson-travis]: https://travis-ci.org/tedeh/jayson
-[badge-travis]: https://img.shields.io/travis/tedeh/jayson/master.svg
 [badge-npm]: https://img.shields.io/npm/v/jayson.svg
 [badge-downloads-month]: https://img.shields.io/npm/dm/jayson.svg
 
-[![travis build status][badge-travis]][jayson-travis] 
 [![Coverage Status](https://coveralls.io/repos/github/tedeh/jayson/badge.svg?branch=master)](https://coveralls.io/github/tedeh/jayson?branch=master)
 ![GitHub issues](https://img.shields.io/github/issues/tedeh/jayson)
 ![Dependents (via libraries.io)](https://img.shields.io/librariesio/dependents/npm/jayson)
@@ -153,7 +150,7 @@ There is a basic CLI client in `bin/jayson.js` and it should be available as `ja
 
 ## Requirements
 
-Jayson does not have any special dependencies that cannot be resolved with a simple `npm install`. It is being [continuously tested][jayson-travis] using [travis-ci](https://travis-ci.org/). You can look inside [.travis.yml](.travis.yml) if you want to see which versions are tested against.
+Jayson does not have any special dependencies that cannot be resolved with a simple `npm install` or `yarn install`.
 
 ## Class documentation
 

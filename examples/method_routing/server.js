@@ -11,9 +11,9 @@ const methods = {
 const server = new jayson.Server(methods, {
   router: function(method, params) {
     // regular by-name routing first
-    const fn = this._methods[method];
-    if(typeof fn === 'function' && this._methods.hasOwnProperty(method)) {
-      return this._methods[method];
+    const fn = this._methods.hasOwnProperty(method) ? this._methods[method] : null;
+    if(typeof fn === 'function') {
+      return fn;
     }
     if(method === 'add_2') {
       const fn = server.getMethod('add').getHandler();

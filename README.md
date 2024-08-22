@@ -655,6 +655,8 @@ Passing a property named `router` in the server options will enable you to write
 
 Server example with custom routing logic in [examples/method_routing/server.js](examples/method_routing/server.js):
 
+**Note:** You are strongly recommended to check method names using `Object.prototype.hasOwnProperty` to prevent a denial-of-service attack against your Jayson server where method names such as `__defineGetter__` are requested from the server.
+
 ```javascript
 const jayson = require('jayson');
 
@@ -667,7 +669,10 @@ const methods = {
 const server = new jayson.Server(methods, {
   router: function(method, params) {
     // regular by-name routing first
-    if(typeof(this._methods[method]) === 'function') return this._methods[method];
+    const fn = this._methods[method];
+    if(typeof fn === 'function' && this._methods.hasOwnProperty(method)) {
+      return this._methods[method];
+    }
     if(method === 'add_2') {
       const fn = server.getMethod('add').getHandler();
       return new jayson.Method(function(args, done) {

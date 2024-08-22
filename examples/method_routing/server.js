@@ -8,10 +8,13 @@ const methods = {
   }
 };
 
-const server = new jayson.server(methods, {
+const server = new jayson.Server(methods, {
   router: function(method, params) {
     // regular by-name routing first
-    if(typeof(this._methods[method]) === 'function') return this._methods[method];
+    const fn = this._methods[method];
+    if(typeof fn === 'function' && this._methods.hasOwnProperty(method)) {
+      return this._methods[method];
+    }
     if(method === 'add_2') {
       const fn = server.getMethod('add').getHandler();
       return new jayson.Method(function(args, done) {

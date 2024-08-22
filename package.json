@@ -1,6 +1,6 @@
 {
   "name": "jayson",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "JSON-RPC 1.0/2.0 compliant server and client",
   "license": "MIT",
   "keywords": [

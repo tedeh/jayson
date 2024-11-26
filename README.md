@@ -669,7 +669,7 @@ const methods = {
 const server = new jayson.Server(methods, {
   router: function(method, params) {
     // regular by-name routing first
-    const fn = this._methods.hasOwnProperty(method) ? this._methods[method] : null;
+    const fn = Object.prototype.hasOwnProperty.call(this._methods, method) ? this._methods[method] : null;
     if(typeof fn === 'function') {
       return fn;
     }

@@ -5,7 +5,7 @@ const fs = require('fs');
 const jayson = require('./..');
 const support = require('./support');
 const suites = require('./support/suites');
-const JSONStream = require('JSONStream');
+const StreamValues = require('stream-json/streamers/StreamValues');
 const tls = require('tls');
 
 const serverOptions = {
@@ -66,10 +66,12 @@ describe('jayson.tls', function() {
 
     it('should send a parse error for invalid JSON data', function(done) {
       const socket = tls.connect(3999, 'localhost', serverOptions, function() {
-        const response = JSONStream.parse();
+        const response = StreamValues.withParser();
 
-        response.on('data', function(data) {
-          data.should.containDeep({
+        response.on('data', function(obj) {
+          const data = obj.value;
+
+          should(data).containDeep({
             id: null,
             error: {code: -32700} // Parse Error
           });
@@ -79,8 +81,9 @@ describe('jayson.tls', function() {
 
         socket.pipe(response);
 
-        // obviously invalid
+        // write obviously invalid non-JSON data
         socket.write('abc');
+        socket.end();
       });
     });
 

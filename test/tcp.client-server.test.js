@@ -5,8 +5,7 @@ const jayson = require('./../');
 const support = require('./support');
 const suites = require('./support/suites');
 const net = require('net');
-const url = require('url');
-const JSONStream = require('JSONStream');
+const StreamValues = require('stream-json/streamers/StreamValues');
 
 describe('jayson.tcp', function() {
 
@@ -41,8 +40,8 @@ describe('jayson.tcp', function() {
       });
 
       beforeEach(function(done) {
+        responses = StreamValues.withParser();
         socket = net.connect(3999, 'localhost', done);
-        responses = JSONStream.parse();
         socket.pipe(responses);
       });
 
@@ -52,7 +51,9 @@ describe('jayson.tcp', function() {
       });
 
       it('should send a parse error for invalid JSON data', function(done) {
-        responses.on('data', function(data) {
+        responses.on('data', function(obj) {
+          const data = obj.value;
+
           data.should.containDeep({
             id: null,
             error: {code: -32700} // Parse Error
@@ -60,13 +61,16 @@ describe('jayson.tcp', function() {
           done();
         });
 
-        // obviously invalid
-        socket.end('abc');
+        // obviously invalid data non-JSON data
+        socket.write('abc');
+        socket.end();
       });
 
       it('should send more than one reply on the same socket', function(done) {
         const replies = [];
-        responses.on('data', function(data) {
+        responses.on('data', function(obj) {
+          const data = obj.value;
+
           replies.push(data);
         });
 
@@ -151,7 +155,6 @@ describe('jayson.tcp', function() {
           });
 
           client.request('triggerTimeout', {timeout: 500}, function (err, result) {
-            console.log(err, result);
             should(timeoutEventFired).equal(true);
             done();
           });

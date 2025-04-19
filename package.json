@@ -23,7 +23,7 @@
     "api"
   ],
   "author": "Tedde Lundgren <mail@tedeh.net> (https://tedeh.net)",
-  "maintainers": "Tedde Lundgren <mail@tedeh.net> (https://tedeh.net)",
+  "maintainers": ["Tedde Lundgren <mail@tedeh.net> (https://tedeh.net)"],
   "bin": "./bin/jayson.js",
   "repository": {
     "type": "git",

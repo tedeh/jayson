@@ -23,7 +23,9 @@
     "api"
   ],
   "author": "Tedde Lundgren <mail@tedeh.net> (https://tedeh.net)",
-  "maintainers": ["Tedde Lundgren <mail@tedeh.net> (https://tedeh.net)"],
+  "maintainers": [
+    "Tedde Lundgren <mail@tedeh.net> (https://tedeh.net)"
+  ],
   "bin": "./bin/jayson.js",
   "repository": {
     "type": "git",
@@ -66,7 +68,7 @@
     "@types/express-serve-static-core": "^4.17.30",
     "body-parser": "^1.19.0",
     "connect": "^3.7.0",
-    "coveralls": "^3.1.0",
+    "coveralls-next": "^4.2.1",
     "es6-promise": "^4.2.8",
     "express": "^4.17.1",
     "ink-docstrap": "github:docstrap/docstrap#pull/345/head",
@@ -74,7 +76,7 @@
     "jshint": "^2.12.0",
     "mocha": "^10.2.0",
     "node-fetch": "^2.7.0",
-    "nyc": "^14.1.1",
+    "nyc": "^17.1.0",
     "pass-stream": "^1.0.0",
     "should": "^13.2.3",
     "superagent": "^3.8.3",

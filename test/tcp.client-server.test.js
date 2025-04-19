@@ -54,15 +54,41 @@ describe('jayson.tcp', function() {
         responses.on('data', function(obj) {
           const data = obj.value;
 
-          data.should.containDeep({
-            id: null,
-            error: {code: -32700} // Parse Error
-          });
+          try {
+            should(data).containDeep({
+              id: null,
+              error: {code: -32700} // Parse Error
+            });
+          } catch (err) {
+            done(err);
+            return;
+          }
           done();
         });
 
         // obviously invalid data non-JSON data
         socket.write('abc');
+        socket.end();
+      });
+
+      it('should send a parse error for invalid JSON-RPC request', function(done) {
+        responses.on('data', function(obj) {
+          const data = obj.value;
+
+          try {
+            should(data).containDeep({
+              id: null,
+              error: { code: -32600, message: 'Invalid request' },
+            });
+          } catch (err) {
+            done(err);
+            return;
+          }
+          done();
+        });
+
+        // write valid JSON but invalid JSON-RPC data
+        socket.write('true');
         socket.end();
       });
 

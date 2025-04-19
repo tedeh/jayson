@@ -71,10 +71,15 @@ describe('jayson.tls', function() {
         response.on('data', function(obj) {
           const data = obj.value;
 
-          should(data).containDeep({
-            id: null,
-            error: {code: -32700} // Parse Error
-          });
+          try {
+            should(data).containDeep({
+              id: null,
+              error: {code: -32700} // Parse Error
+            });
+          } catch (err) {
+            done(err);
+            return;
+          }
           socket.end();
           done();
         });
@@ -83,6 +88,34 @@ describe('jayson.tls', function() {
 
         // write obviously invalid non-JSON data
         socket.write('abc');
+        socket.end();
+      });
+    });
+
+    it('should send a parse error for invalid JSON-RPC request', function(done) {
+      const socket = tls.connect(3999, 'localhost', serverOptions, function() {
+        const response = StreamValues.withParser();
+
+        response.on('data', function(obj) {
+          const data = obj.value;
+
+          try {
+            should(data).containDeep({
+              id: null,
+              error: { code: -32600, message: 'Invalid request' },
+            });
+          } catch (err) {
+            done(err);
+            return;
+          }
+          socket.end();
+          done();
+        });
+
+        socket.pipe(response);
+
+        // write valid JSON but invalid JSON-RPC data
+        socket.write('true');
         socket.end();
       });
     });

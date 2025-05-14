@@ -2,8 +2,7 @@
 language: node_js
 node_js:
   - "lts/*"
-  - "14"
-  - "16"
+  - "22"
 
 # Notifications
 notifications:

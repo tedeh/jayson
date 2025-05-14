@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@types/connect": "^3.4.33",
-    "@types/node": "^12.12.54",
+    "@types/node": "^22.15.17",
     "@types/ws": "^7.4.4",
     "commander": "^2.20.3",
     "delay": "^5.0.0",

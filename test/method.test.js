@@ -2,7 +2,6 @@
 
 const should = require('should');
 const jayson = require('./../');
-const support = require('./support');
 
 describe('jayson.method', function() {
 
@@ -199,28 +198,6 @@ describe('jayson.method', function() {
       });
 
       describe('options.params undefined', function() {
-
-        const add = function(args, callback) {
-
-          if(args instanceof Array) {
-
-            // given Array
-            return callback(null, args.reduce(function(sum, value) {
-              return sum + value;
-            }, 0));
-
-          } else {
-
-            // given Object
-            const sum = 0;
-            for(const name in args) {
-              sum += args[name];
-            }
-
-            return callback(null, sum);
-          }
-
-        };
 
         it('should pass an array when given an array', function(done) {
           const fn = function(args, callback) {

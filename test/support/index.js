@@ -1,7 +1,5 @@
 'use strict';
 
-const should = require('should');
-const jayson = require('./../../');
 const fs = require('fs');
 
 exports.Counter = require('./counter');
@@ -26,7 +24,8 @@ exports.server.methods = () => ({
   incrementCounterBy: function(args, callback) {
     const {counter, value} = Array.isArray(args) ? {counter: args[0], value: args[1]} : args;
     if(!(counter instanceof exports.Counter)) {
-      return callback(this.error(-1000, 'Argument not an instance of Counter'));
+      callback(this.error(-1000, 'Argument not an instance of Counter'));
+      return;
     }
     counter.incrementBy(value);
     callback(null, counter);
@@ -39,7 +38,10 @@ exports.server.methods = () => ({
 
   add_slow: function([a, b, isSlow], callback) {
     const result = a + b;
-    if(!isSlow) return callback(null, result);
+    if(!isSlow) {
+      callback(null, result);
+      return;
+    }
     setTimeout(function() {
       callback(null, result);
     }, 15);

@@ -5,8 +5,8 @@ type ClientBrowserCallServerFunctionCallback = (err?:Error | null, response?:str
 type ClientBrowserCallServerFunction = (request:string, callback:ClientBrowserCallServerFunctionCallback) => void;
 
 declare class ClientBrowser {
-  constructor(callServer:ClientBrowserCallServerFunction, options:jayson.ClientOptions);
-  request(method: string, params: jayson.RequestParamsLike, id?: string | null, callback?: jayson.JSONRPCCallbackType): jayson.JSONRPCRequest;
+  constructor(callServer:ClientBrowserCallServerFunction, options?:jayson.ClientOptions);
+  request(method: string, params: jayson.RequestParamsLike, id?: jayson.JSONRPCIDLike | null, callback?: jayson.JSONRPCCallbackType): jayson.JSONRPCRequest;
   request(method: string, params: jayson.RequestParamsLike, callback?: jayson.JSONRPCCallbackType): jayson.JSONRPCRequest;
   request(method: Array<jayson.JSONRPCRequestLike>, callback: jayson.JSONRPCCallbackTypeBatch): Array<jayson.JSONRPCRequest>;
 }

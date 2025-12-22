@@ -32,9 +32,9 @@ export declare class Utils {
   static request(method: string, params: RequestParamsLike, options?: GenerateRequestOptions): JSONRPCRequest;
   static request(method: string, params: RequestParamsLike, id?: JSONRPCIDLike | null | undefined, options?: GenerateRequestOptions): JSONRPCRequest;
 
-  static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version?: number): JSONRPCVersionTwoRequest;
-  static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version:2): JSONRPCVersionTwoRequest;
-  static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version:1): JSONRPCVersionOneRequest;
+  static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version?: number): JSONRPCVersionTwoResponse;
+  static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version:2): JSONRPCVersionTwoResponse;
+  static response(error: JSONRPCError | undefined | null, result: JSONRPCResultLike | undefined | null, id: JSONRPCIDLike | null | undefined, version:1): JSONRPCVersionOneResponse;
 
   static generateId(): string;
 
@@ -51,6 +51,16 @@ export declare class Utils {
   static isMethod(request:http.IncomingMessage, method:string): boolean;
 
   static walk(obj:object, key:string, fn: (key:string, value:any) => any): object;
+
+  static once<T extends (...args: any[]) => any>(fn: T): T;
+
+  static isPlainObject(obj: any): boolean;
+
+  static toArray(obj: any): Array<any>;
+
+  static toPlainObject(obj: any): object;
+
+  static pick(obj: object, keys: string[]): object;
 
   static JSON: UtilsJSON;
 
@@ -225,12 +235,16 @@ export type ServerCallCallbackType = {
 export interface MethodMap { [methodName:string]: Method }
 
 type ServerConstructor = ConstructorOf<Server, [methods?: { [methodName: string]: MethodLike }, options?: ServerOptions]> & {
-  _methods: MethodMap;
-  options: ServerOptions;
+  errors: {[errorName: string]: number};
   errorMessages: {[errorMessage: string]: string};
+  interfaces: {[interfaces: string]: Function};
 }
 
 export interface Server extends events.EventEmitter {
+  _methods: MethodMap;
+  options: ServerOptions;
+  errorMessages: {[errorMessage: string]: string};
+
   http(options?: HttpServerOptions): HttpServer;
   https(options?: HttpsServerOptions): HttpsServer;
   tcp(options?: TcpServerOptions): TcpServer;
@@ -346,12 +360,22 @@ declare class WebsocketClient extends Client {
   constructor(options?: WebsocketClientOptions);
 }
 
+export type BrowserClientCallServerFunction = (request: string) => Promise<string>;
+
+declare class BrowserClient {
+  constructor(callServer: BrowserClientCallServerFunction, options?: ClientOptions);
+  request(method: string, params: RequestParamsLike, id: JSONRPCIDLike | undefined, shouldCall: false): JSONRPCRequest;
+  request(method: string, params: RequestParamsLike, id?: JSONRPCIDLike): Promise<JSONRPCResultLike>;
+  request(method: Array<JSONRPCRequestLike>): Promise<JSONRPCResultLike>;
+}
+
 type ClientConstructor = ConstructorOf<Client, [options: ClientOptions] | [server: Server, options?: ClientOptions]> & {
   http(options?: HttpClientOptions): HttpClient;
   https(options?: HttpsClientOptions): HttpsClient;
   tcp(options?: TcpClientOptions): TcpClient;
   tls(options?: TlsClientOptions): TlsClient;
   websocket(options?: WebsocketClientOptions): WebsocketClient;
+  browser(callServer: BrowserClientCallServerFunction, options?: ClientOptions): BrowserClient;
 }
 
 export interface Client extends events.EventEmitter {

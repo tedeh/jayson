@@ -5,7 +5,7 @@ const fs = require('fs');
 const jayson = require('./..');
 const support = require('./support');
 const suites = require('./support/suites');
-const StreamValues = require('stream-json/streamers/StreamValues');
+const {streamValues} = require('stream-json/streamers/stream-values.js');
 const tls = require('tls');
 
 const serverOptions = {
@@ -66,7 +66,7 @@ describe('jayson.tls', function() {
 
     it('should send a parse error for invalid JSON data', function(done) {
       const socket = tls.connect(3999, 'localhost', serverOptions, function() {
-        const response = StreamValues.withParser();
+        const response = streamValues.withParserAsStream();
 
         response.on('data', function(obj) {
           const data = obj.value;
@@ -94,7 +94,7 @@ describe('jayson.tls', function() {
 
     it('should send a parse error for invalid JSON-RPC request', function(done) {
       const socket = tls.connect(3999, 'localhost', serverOptions, function() {
-        const response = StreamValues.withParser();
+        const response = streamValues.withParserAsStream();
 
         response.on('data', function(obj) {
           const data = obj.value;

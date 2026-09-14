@@ -5,7 +5,7 @@ const jayson = require('./../');
 const support = require('./support');
 const suites = require('./support/suites');
 const net = require('net');
-const StreamValues = require('stream-json/streamers/StreamValues');
+const {streamValues} = require('stream-json/streamers/stream-values.js');
 
 describe('jayson.tcp', function() {
 
@@ -40,7 +40,7 @@ describe('jayson.tcp', function() {
       });
 
       beforeEach(function(done) {
-        responses = StreamValues.withParser();
+        responses = streamValues.withParserAsStream();
         socket = net.connect(3999, 'localhost', done);
         socket.pipe(responses);
       });

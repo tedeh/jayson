@@ -5,7 +5,6 @@ const fs = require('fs');
 const jayson = require('./..');
 const support = require('./support');
 const suites = require('./support/suites');
-const StreamValues = require('stream-json/streamers/StreamValues');
 const tls = require('tls');
 
 const serverOptions = {
@@ -66,11 +65,8 @@ describe('jayson.tls', function() {
 
     it('should send a parse error for invalid JSON data', function(done) {
       const socket = tls.connect(3999, 'localhost', serverOptions, function() {
-        const response = StreamValues.withParser();
-
-        response.on('data', function(obj) {
-          const data = obj.value;
-
+        jayson.utils.parseStream(socket, {}, function(err, data) {
+          if(err) return done(err);
           try {
             should(data).containDeep({
               id: null,
@@ -84,21 +80,15 @@ describe('jayson.tls', function() {
           done();
         });
 
-        socket.pipe(response);
-
         // write obviously invalid non-JSON data
-        socket.write('abc');
-        socket.end();
+        socket.write('abc\n');
       });
     });
 
     it('should send a parse error for invalid JSON-RPC request', function(done) {
       const socket = tls.connect(3999, 'localhost', serverOptions, function() {
-        const response = StreamValues.withParser();
-
-        response.on('data', function(obj) {
-          const data = obj.value;
-
+        jayson.utils.parseStream(socket, {}, function(err, data) {
+          if(err) return done(err);
           try {
             should(data).containDeep({
               id: null,
@@ -112,11 +102,8 @@ describe('jayson.tls', function() {
           done();
         });
 
-        socket.pipe(response);
-
         // write valid JSON but invalid JSON-RPC data
-        socket.write('true');
-        socket.end();
+        socket.write('true\n');
       });
     });
 

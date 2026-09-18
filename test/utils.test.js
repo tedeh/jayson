@@ -84,6 +84,55 @@ describe('jayson.utils', function() {
 
   });
 
+  describe('parseStream', function() {
+
+    it('should parse chunked and consecutive frames', function(done) {
+      const stream = new PassStream();
+      const values = [];
+
+      utils.parseStream(stream, {}, function(err, value) {
+        if(err) return done(err);
+        values.push(value);
+        if(values.length === 2) {
+          values.should.eql([{value: 1}, [2, 3]]);
+          done();
+        }
+      });
+
+      stream.write('{"val');
+      stream.end('ue":1}\n[2,3]\n');
+    });
+
+    it('should support a custom delimiter and reviver', function(done) {
+      const stream = new PassStream();
+
+      utils.parseStream(stream, {
+        delimiter: '|',
+        reviver: function(key, value) {
+          return key === 'value' ? value * 2 : value;
+        }
+      }, function(err, value) {
+        if(err) return done(err);
+        value.should.eql({value: 4});
+        done();
+      });
+
+      stream.end('{"value":2}|');
+    });
+
+    it('should return an error for an unterminated frame', function(done) {
+      const stream = new PassStream();
+
+      utils.parseStream(stream, {}, function(err) {
+        should(err).be.instanceof(Error);
+        done();
+      });
+
+      stream.end('{"value":1}');
+    });
+
+  });
+
   describe('parseBody', function() {
 
     const parseBody = utils.parseBody;

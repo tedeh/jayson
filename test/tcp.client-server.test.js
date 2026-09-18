@@ -5,7 +5,6 @@ const jayson = require('./../');
 const support = require('./support');
 const suites = require('./support/suites');
 const net = require('net');
-const StreamValues = require('stream-json/streamers/StreamValues');
 
 describe('jayson.tcp', function() {
 
@@ -33,16 +32,17 @@ describe('jayson.tcp', function() {
     describe('connected socket', function() {
 
       let socket = null;
-      let responses = null;
+      let onResponse = null;
 
       before(function(done) {
         server.listen(3999, 'localhost', done);
       });
 
       beforeEach(function(done) {
-        responses = StreamValues.withParser();
         socket = net.connect(3999, 'localhost', done);
-        socket.pipe(responses);
+        jayson.utils.parseStream(socket, {}, function(err, data) {
+          onResponse(err, data);
+        });
       });
 
       afterEach(function(done) {
@@ -51,9 +51,8 @@ describe('jayson.tcp', function() {
       });
 
       it('should send a parse error for invalid JSON data', function(done) {
-        responses.on('data', function(obj) {
-          const data = obj.value;
-
+        onResponse = function(err, data) {
+          if(err) return done(err);
           try {
             should(data).containDeep({
               id: null,
@@ -64,17 +63,15 @@ describe('jayson.tcp', function() {
             return;
           }
           done();
-        });
+        };
 
         // obviously invalid data non-JSON data
-        socket.write('abc');
-        socket.end();
+        socket.write('abc\n');
       });
 
       it('should send a parse error for invalid JSON-RPC request', function(done) {
-        responses.on('data', function(obj) {
-          const data = obj.value;
-
+        onResponse = function(err, data) {
+          if(err) return done(err);
           try {
             should(data).containDeep({
               id: null,
@@ -85,24 +82,22 @@ describe('jayson.tcp', function() {
             return;
           }
           done();
-        });
+        };
 
         // write valid JSON but invalid JSON-RPC data
-        socket.write('true');
-        socket.end();
+        socket.write('true\n');
       });
 
       it('should send more than one reply on the same socket', function(done) {
         const replies = [];
-        responses.on('data', function(obj) {
-          const data = obj.value;
-
+        onResponse = function(err, data) {
+          if(err) return done(err);
           replies.push(data);
-        });
+        };
 
         // write raw requests to the socket
-        socket.write(JSON.stringify(jayson.Utils.request('delay', [20])));
-        socket.write(JSON.stringify(jayson.Utils.request('delay', [5])));
+        socket.write(JSON.stringify(jayson.Utils.request('delay', [20])) + '\n');
+        socket.write(JSON.stringify(jayson.Utils.request('delay', [5])) + '\n');
 
         setTimeout(function() {
           replies.should.have.lengthOf(2);
@@ -119,7 +114,7 @@ describe('jayson.tcp', function() {
   describe('client', function() {
 
     const server = jayson.server(support.server.methods(), support.server.options());
-    const serverTcp = server.tcp();
+    const serverTcp = server.tcp({delimiter: '\r\n'});
     const client = jayson.client.tcp({
       reviver: support.server.options().reviver,
       replacer: support.server.options().replacer,

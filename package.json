@@ -56,7 +56,6 @@
     "es6-promisify": "^5.0.0",
     "isomorphic-ws": "^4.0.1",
     "json-stringify-safe": "^5.0.1",
-    "stream-json": "^1.9.1",
     "ws": "^7.5.10"
   },
   "devDependencies": {

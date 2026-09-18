@@ -111,6 +111,7 @@ Install the latest version of _jayson_ from [npm](https://www.npmjs.com) by exec
 
 - *5.0.0*
   - Removed `uuid` package dependency. Now native (node or browser) `crypto` implementation is used to generate uuids. If your browser doesn't have it: provide your own `generator` as described below.
+  - Removed `stream-json` package dependency. TCP and TLS messages must now end with the configured `delimiter` (`\n` by default); concatenated JSON without delimiters is no longer supported.
 - *4.1.0*
   - New server option `maxBatchLength`
 - *4.0.0*
@@ -246,7 +247,7 @@ Will emit the [same custom events](#clienthttp-events) as `Client.http`.
 
 ##### Client.tcp
 
-Uses the same options as [net.connect][nodejs_docs_net_connect].
+Uses the same options as [net.connect][nodejs_docs_net_connect]. The additional `delimiter` option is a non-empty string used to terminate requests and parse responses. It defaults to `\n`, making the transport NDJSON-compatible. Both peers must use the same delimiter.
 
 ###### Client.tcp Events
 
@@ -263,7 +264,7 @@ The TCP client will emit the following events:
 
 ##### Client.tls
 
-Uses the same options as [tls.connect][nodejs_docs_tls_connect].
+Uses the same options as [tls.connect][nodejs_docs_tls_connect]. The additional `delimiter` option is a non-empty string used to terminate requests and parse responses. It defaults to `\n`, making the transport NDJSON-compatible. Both peers must use the same delimiter.
 
 ###### Client.tls Events
 
@@ -484,11 +485,11 @@ Servers supports these options:
 
 ##### Server.tcp
 
-Uses the same options as the base class. Inherits from [net.Server][nodejs_doc_net_server].
+Uses the same options as the base class. Inherits from [net.Server][nodejs_doc_net_server]. The additional `delimiter` option is a non-empty string used to parse requests and terminate responses. It defaults to `\n`, making the transport NDJSON-compatible. Every message must end with the delimiter, and both peers must use the same value.
 
 ##### Server.tls
 
-Uses the same options as the base class. Inherits from [tls.Server][nodejs_doc_tls_server].
+Uses the same options as the base class. Inherits from [tls.Server][nodejs_doc_tls_server]. The additional `delimiter` option behaves as described for `Server.tcp` and defaults to `\n`.
 
 ##### Server.http
 

@@ -9,13 +9,16 @@ const promiseUtils = require('../../utils');
  * @extends ClientBrowser
  * @return {PromiseClientBrowser}
  */
-const PromiseClientBrowser = function(callServerPromise, options) {
-  if(!(this instanceof PromiseClientBrowser)) {
+const PromiseClientBrowser = function (callServerPromise, options) {
+  if (!(this instanceof PromiseClientBrowser)) {
     return new PromiseClientBrowser(callServerPromise, options);
   }
 
   const callServer = function (request, callback) {
-    callServerPromise(request).then(res => callback(null, res), err => callback(err));
+    callServerPromise(request).then(
+      (res) => callback(null, res),
+      (err) => callback(err)
+    );
   };
 
   ClientBrowser.call(this, callServer, options);

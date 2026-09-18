@@ -3,7 +3,7 @@
 const jayson = require('jayson/promise');
 
 const client = new jayson.client.http({
-  port: 3000
+  port: 3000,
 });
 
 const batch = [
@@ -11,7 +11,7 @@ const batch = [
   client.request('add', [5, 6, 7, 8, 9], undefined, false),
 ];
 
-client.request(batch).then(function(responses) {
+client.request(batch).then(function (responses) {
   console.log(responses[0].result); // 15
   console.log(responses[1].result); // 35
 });

@@ -1,6 +1,5 @@
 'use strict';
 
-const promisify = require('es6-promisify');
 const jayson = require('../../../');
 const promiseUtils = require('../utils');
 
@@ -11,8 +10,8 @@ const promiseUtils = require('../utils');
  * @extends ClientTcp
  * @return {PromiseClientTcp}
  */
-const PromiseClientTcp = function(options) {
-  if(!(this instanceof PromiseClientTcp)) {
+const PromiseClientTcp = function (options) {
+  if (!(this instanceof PromiseClientTcp)) {
     return new PromiseClientTcp(options);
   }
   jayson.Client.tcp.apply(this, arguments);

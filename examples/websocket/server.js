@@ -7,6 +7,6 @@ const server = new jayson.Server({
   },
 });
 
-const wss = server.websocket({
+const _wss = server.websocket({
   port: 12345,
 });

@@ -9,12 +9,12 @@ const jayson = require('../../');
  * @extends Method
  * @return {PromiseMethod}
  */
-const PromiseMethod = module.exports = function(handler, options) {
-  if(!(this instanceof PromiseMethod)) {
+const PromiseMethod = (module.exports = function (handler, options) {
+  if (!(this instanceof PromiseMethod)) {
     return new PromiseMethod(handler, options);
   }
   jayson.Method.apply(this, arguments);
-};
+});
 require('util').inherits(PromiseMethod, jayson.Method);
 
 module.exports = PromiseMethod;
@@ -27,16 +27,16 @@ module.exports = PromiseMethod;
  * @param {Function} outerCallback
  * @return {Promise}
  */
-PromiseMethod.prototype.execute = function(server, requestParams, context, outerCallback) {
+PromiseMethod.prototype.execute = function (server, requestParams, context, outerCallback) {
   let wasPromised = false;
 
-  if(typeof(context) === 'function') {
+  if (typeof context === 'function') {
     outerCallback = context;
     context = {};
   }
 
-  const promise = jayson.Method.prototype.execute.call(this, server, requestParams, context, function() {
-    if(wasPromised) {
+  const promise = jayson.Method.prototype.execute.call(this, server, requestParams, context, function () {
+    if (wasPromised) {
       return; // ignore any invocations of the callback if a promise was returned
     }
     outerCallback.apply(null, arguments);
@@ -45,10 +45,14 @@ PromiseMethod.prototype.execute = function(server, requestParams, context, outer
   wasPromised = promise && typeof promise.then === 'function';
 
   // if the handler returned a promise, call the callback when it resolves
-  if(wasPromised) {
+  if (wasPromised) {
     return promise.then(
-      function(fulfilled) { outerCallback(null, fulfilled); },
-      function(rejected) { outerCallback(rejected); }
+      function (fulfilled) {
+        outerCallback(null, fulfilled);
+      },
+      function (rejected) {
+        outerCallback(rejected);
+      }
     );
   }
 };

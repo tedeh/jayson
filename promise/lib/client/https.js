@@ -1,6 +1,5 @@
 'use strict';
 
-const promisify = require('es6-promisify');
 const jayson = require('../../../');
 const promiseUtils = require('../utils');
 
@@ -11,8 +10,8 @@ const promiseUtils = require('../utils');
  * @extends ClientHttps
  * @return {PromiseClientHttps}
  */
-const PromiseClientHttps = function(options) {
-  if(!(this instanceof PromiseClientHttps)) {
+const PromiseClientHttps = function (options) {
+  if (!(this instanceof PromiseClientHttps)) {
     return new PromiseClientHttps(options);
   }
   jayson.Client.https.apply(this, arguments);
@@ -21,4 +20,3 @@ const PromiseClientHttps = function(options) {
 require('util').inherits(PromiseClientHttps, jayson.Client.https);
 
 module.exports = PromiseClientHttps;
-

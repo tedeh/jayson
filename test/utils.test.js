@@ -5,58 +5,54 @@ const PassStream = require('pass-stream');
 const jayson = require('./..');
 const utils = jayson.utils;
 
-describe('jayson.utils', function() {
-
-  describe('generateId', function() {
-
-    it('generates native UUID v4 IDs', function() {
+describe('jayson.utils', function () {
+  describe('generateId', function () {
+    it('generates native UUID v4 IDs', function () {
       const pattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
       utils.generateId().should.match(pattern);
-      utils.generateId({disableEntropyCache: 'invalid'}, {}).should.match(pattern);
+      utils.generateId({ disableEntropyCache: 'invalid' }, {}).should.match(pattern);
       utils.request('method').id.should.match(pattern);
       jayson.client().request('method', []).id.should.match(pattern);
     });
-
   });
 
-  describe('request', function() {
-
-    it('exists', function() {
+  describe('request', function () {
+    it('exists', function () {
       utils.should.have.property('request');
       utils.request.should.be.a.Function;
     });
 
     it('should throw a TypeError on invalid version', function () {
-      should(function() {
-        utils.request('method', [1, 2,], null, {version: 9});
+      should(function () {
+        utils.request('method', [1, 2], null, { version: 9 });
       }).throw(TypeError);
     });
 
-    it('should throw a TypeError on an invalid method argument', function() {
-      (function() {
-        utils.request(null, [1, 2,], null);
+    it('should throw a TypeError on an invalid method argument', function () {
+      (function () {
+        utils.request(null, [1, 2], null);
       }).should.throw(TypeError);
     });
 
-    it('should throw a TypeError on an invalid params argument', function() {
-      (function() {
+    it('should throw a TypeError on an invalid params argument', function () {
+      (function () {
         utils.request('a_method', true);
       }).should.throw(TypeError);
     });
 
-    it('should omit the params argument when not given', function() {
+    it('should omit the params argument when not given', function () {
       const request = utils.request('a_method', null);
       request.should.have.property('method', 'a_method');
       request.should.not.have.property('params');
     });
 
     it('should set the id to null when making a notification version 1 request', function () {
-      const request = utils.request('notification', [], null, {version: 1});
+      const request = utils.request('notification', [], null, { version: 1 });
       should(request).have.property('id', null);
     });
 
     it('should omit the id when making a notification version 2 request', function () {
-      const request = utils.request('notification', [], null, {version: 2});
+      const request = utils.request('notification', [], null, { version: 2 });
       should(request).not.have.property('id');
     });
 
@@ -67,34 +63,32 @@ describe('jayson.utils', function() {
       });
       should(request).have.property('id', null);
     });
-
   });
 
-  describe('response', function() {
-
-    it('exists', function() {
+  describe('response', function () {
+    it('exists', function () {
       utils.should.have.property('response');
       utils.response.should.be.a.Function;
     });
 
-    it('should set result to null when no error or result provided', function() {
+    it('should set result to null when no error or result provided', function () {
       const result = utils.response(undefined, undefined, 'something', 2);
       should(result).eql({ jsonrpc: '2.0', id: 'something', result: null });
     });
-
   });
 
-  describe('parseStream', function() {
-
-    it('should parse chunked and consecutive frames', function(done) {
+  describe('parseStream', function () {
+    it('should parse chunked and consecutive frames', function (done) {
       const stream = new PassStream();
       const values = [];
 
-      utils.parseStream(stream, {}, function(err, value) {
-        if(err) return done(err);
+      utils.parseStream(stream, {}, function (err, value) {
+        if (err) {
+          return done(err);
+        }
         values.push(value);
-        if(values.length === 2) {
-          values.should.eql([{value: 1}, [2, 3]]);
+        if (values.length === 2) {
+          values.should.eql([{ value: 1 }, [2, 3]]);
           done();
         }
       });
@@ -103,46 +97,52 @@ describe('jayson.utils', function() {
       stream.end('ue":1}\n[2,3]\n');
     });
 
-    it('should support a custom delimiter and reviver', function(done) {
+    it('should support a custom delimiter and reviver', function (done) {
       const stream = new PassStream();
 
-      utils.parseStream(stream, {
-        delimiter: '|',
-        reviver: function(key, value) {
-          return key === 'value' ? value * 2 : value;
+      utils.parseStream(
+        stream,
+        {
+          delimiter: '|',
+          reviver: function (key, value) {
+            return key === 'value' ? value * 2 : value;
+          },
+        },
+        function (err, value) {
+          if (err) {
+            return done(err);
+          }
+          value.should.eql({ value: 4 });
+          done();
         }
-      }, function(err, value) {
-        if(err) return done(err);
-        value.should.eql({value: 4});
-        done();
-      });
+      );
 
       stream.end('{"value":2}|');
     });
 
-    it('should return an error for an unterminated frame', function(done) {
+    it('should return an error for an unterminated frame', function (done) {
       const stream = new PassStream();
 
-      utils.parseStream(stream, {}, function(err) {
+      utils.parseStream(stream, {}, function (err) {
         should(err).be.instanceof(Error);
         done();
       });
 
       stream.end('{"value":1}');
     });
-
   });
 
-  describe('parseBody', function() {
-
+  describe('parseBody', function () {
     const parseBody = utils.parseBody;
 
-    it('should parse a valid json object', function(done) {
+    it('should parse a valid json object', function (done) {
       const stream = new PassStream();
-      const obj = {asdf: true, complex: {value: 2, a: 3}};
+      const obj = { asdf: true, complex: { value: 2, a: 3 } };
 
-      parseBody(stream, {}, function(err, result) {
-        if(err) return done(err);
+      parseBody(stream, {}, function (err, result) {
+        if (err) {
+          return done(err);
+        }
         obj.should.eql(result);
         done();
       });
@@ -150,12 +150,14 @@ describe('jayson.utils', function() {
       stream.end(JSON.stringify(obj));
     });
 
-    it('should parse a valid json array', function(done) {
+    it('should parse a valid json array', function (done) {
       const stream = new PassStream();
-      const arr = [{first: true}, {asdf: true, complex: {value: 2, a: 3}}];
+      const arr = [{ first: true }, { asdf: true, complex: { value: 2, a: 3 } }];
 
-      parseBody(stream, {}, function(err, result) {
-        if(err) return done(err);
+      parseBody(stream, {}, function (err, result) {
+        if (err) {
+          return done(err);
+        }
         arr.should.eql(result);
         done();
       });
@@ -163,121 +165,116 @@ describe('jayson.utils', function() {
       stream.end(JSON.stringify(arr));
     });
 
-    it('should return an error on bad input', function(done) {
+    it('should return an error on bad input', function (done) {
       const stream = new PassStream();
 
-      parseBody(stream, {}, function(err, result) {
+      parseBody(stream, {}, function (err, result) {
         should(err).be.instanceof(Error);
         done();
       });
 
-      stream.end("\"");
+      stream.end('"');
     });
-
   });
 
-  describe('JSON.stringify', function(done) {
-
-    it('should not throw with circular JSON reference', function(done) {
-
+  describe('JSON.stringify', function (done) {
+    it('should not throw with circular JSON reference', function (done) {
       const foo = {};
       const bar = { foo: foo };
       foo.bar = bar;
 
-      const fn = utils.JSON.stringify(bar, {}, function(err, str) {
+      const fn = utils.JSON.stringify(bar, {}, function (err, str) {
         should(err).not.exist;
         done();
       });
 
       should(fn).not.throw();
     });
-
   });
 
-  describe('Response.isValidResponse', function() {
-
+  describe('Response.isValidResponse', function () {
     const specs = [
       {
         desc: 'a valid 2 response',
-        response: {jsonrpc: '2.0', result: null, id: 'something'},
+        response: { jsonrpc: '2.0', result: null, id: 'something' },
         version: 2,
         expected: true,
       },
       {
         desc: 'a valid 2 response',
-        response: {jsonrpc: '2.0', result: null, id: null},
+        response: { jsonrpc: '2.0', result: null, id: null },
         version: 2,
         expected: true,
       },
       {
         desc: 'a valid 2 error response with data',
-        response: {jsonrpc: '2.0', id: 'something', error: {code: 123, message: 'something', data: {}}},
+        response: { jsonrpc: '2.0', id: 'something', error: { code: 123, message: 'something', data: {} } },
         version: 2,
         expected: true,
       },
       {
         desc: 'a valid 2 error response without data',
-        response: {jsonrpc: '2.0', id: 'something', error: {code: 123, message: 'something'}},
+        response: { jsonrpc: '2.0', id: 'something', error: { code: 123, message: 'something' } },
         version: 2,
         expected: true,
       },
       {
         desc: 'an invalid 2 response (both error and result properties)',
-        response: {jsonrpc: '2.0', id: 'something', error: {code: 123, message: 'something'}, result: null},
+        response: { jsonrpc: '2.0', id: 'something', error: { code: 123, message: 'something' }, result: null },
         version: 2,
         expected: false,
       },
       {
         desc: 'an invalid 2 response (no result or error)',
-        response: {jsonrpc: '2.0', id: 'something'},
+        response: { jsonrpc: '2.0', id: 'something' },
         version: 2,
         expected: false,
       },
       {
         desc: 'an invalid 2 error response (no code)',
-        response: {jsonrpc: '2.0', id: 'something', error: {message: 'something'}},
+        response: { jsonrpc: '2.0', id: 'something', error: { message: 'something' } },
         version: 2,
         expected: false,
       },
       {
         desc: 'an invalid 2 error response (no message)',
-        response: {jsonrpc: '2.0', id: 'something', error: {code: 123}},
+        response: { jsonrpc: '2.0', id: 'something', error: { code: 123 } },
         version: 2,
         expected: false,
       },
       {
         desc: 'an invalid 2 error response (code not number)',
-        response: {jsonrpc: '2.0', id: 'something', error: {code: '123', message: 'asdf'}},
+        response: { jsonrpc: '2.0', id: 'something', error: { code: '123', message: 'asdf' } },
         version: 2,
         expected: false,
       },
       {
         desc: 'an invalid 2 error response (code not integer)',
-        response: {jsonrpc: '2.0', id: 'something', error: {code: 123.3, message: 'asdf'}},
+        response: { jsonrpc: '2.0', id: 'something', error: { code: 123.3, message: 'asdf' } },
         version: 2,
         expected: false,
       },
       {
         desc: 'an invalid 2 response (invalid error and contains result property)',
-        response: {jsonrpc: '2.0', id: 'something', error: {}, result: {}},
+        response: { jsonrpc: '2.0', id: 'something', error: {}, result: {} },
         version: 2,
         expected: false,
       },
       {
         desc: 'an invalid 2 response (no jsonrpc property)',
-        response: {id: 'something', result: {}},
+        response: { id: 'something', result: {} },
         version: 2,
         expected: false,
       },
       {
         desc: 'an invalid 2 response (jsonrpc property not equal to 2.0)',
-        response: {jsonrpc: '3.0', id: 'something', result: {}},
+        response: { jsonrpc: '3.0', id: 'something', result: {} },
         version: 2,
         expected: false,
       },
       {
         desc: 'an invalid 2 response (no id property)',
-        response: {jsonrpc: '2.0', result: null},
+        response: { jsonrpc: '2.0', result: null },
         version: 2,
         expected: false,
       },
@@ -289,13 +286,13 @@ describe('jayson.utils', function() {
       },
       {
         desc: 'a valid 1 response',
-        response: {id: 'something', result: {}, error: null},
+        response: { id: 'something', result: {}, error: null },
         version: 1,
         expected: true,
       },
       {
         desc: 'a valid 1 error response',
-        response: {id: 'something', result: null, error: {}},
+        response: { id: 'something', result: null, error: {} },
         version: 1,
         expected: true,
       },
@@ -307,45 +304,41 @@ describe('jayson.utils', function() {
       },
       {
         desc: 'an invalid 1 response (non-null result and error)',
-        response: {id: 'something', result: {}, error: {}},
+        response: { id: 'something', result: {}, error: {} },
         version: 1,
         expected: false,
       },
       {
         desc: 'an invalid 1 response (no result or error)',
-        response: {id: 'something'},
+        response: { id: 'something' },
         version: 1,
         expected: false,
       },
       {
         desc: 'an invalid 1 response (missing id)',
-        response: {result: {}, error: null},
+        response: { result: {}, error: null },
         version: 1,
         expected: false,
       },
       {
         desc: 'an invalid 1 response (missing error null)',
-        response: {id: 'something', result: {}},
+        response: { id: 'something', result: {} },
         version: 1,
         expected: false,
       },
       {
         desc: 'an invalid 1 response (missing result null)',
-        response: {id: 'something', error: {}},
+        response: { id: 'something', error: {} },
         version: 1,
         expected: false,
       },
     ];
 
-    specs.forEach(function(spec) {
-
-      it(`should handle ${spec.desc}`, function() {
+    specs.forEach(function (spec) {
+      it(`should handle ${spec.desc}`, function () {
         const result = utils.Response.isValidResponse(spec.response, spec.version);
         should(result).equal(spec.expected);
       });
-
     });
-
   });
-
 });

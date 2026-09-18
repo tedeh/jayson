@@ -1,6 +1,5 @@
 'use strict';
 
-const promisify = require('es6-promisify');
 const jayson = require('../../../');
 const promiseUtils = require('../utils');
 
@@ -11,8 +10,8 @@ const promiseUtils = require('../utils');
  * @extends ClientTls
  * @return {PromiseClientTls}
  */
-const PromiseClientTls = function(options) {
-  if(!(this instanceof PromiseClientTls)) {
+const PromiseClientTls = function (options) {
+  if (!(this instanceof PromiseClientTls)) {
     return new PromiseClientTls(options);
   }
   jayson.Client.tls.apply(this, arguments);

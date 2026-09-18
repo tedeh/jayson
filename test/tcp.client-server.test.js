@@ -6,57 +6,56 @@ const support = require('./support');
 const suites = require('./support/suites');
 const net = require('net');
 
-describe('jayson.tcp', function() {
-
-  describe('server', function() {
-
+describe('jayson.tcp', function () {
+  describe('server', function () {
     let server = null;
-    before(function() {
+    before(function () {
       server = new jayson.server(support.server.methods(), support.server.options()).tcp();
     });
 
-    after(function() {
+    after(function () {
       server.close();
     });
 
-    it('should listen to a local port', function(done) {
-      server.listen(3999, 'localhost', function() {
+    it('should listen to a local port', function (done) {
+      server.listen(3999, 'localhost', function () {
         server.close(done);
       });
     });
 
-    it('should be an instance of net.Server', function() {
+    it('should be an instance of net.Server', function () {
       server.should.be.instanceof(net.Server);
     });
 
-    describe('connected socket', function() {
-
+    describe('connected socket', function () {
       let socket = null;
       let onResponse = null;
 
-      before(function(done) {
+      before(function (done) {
         server.listen(3999, 'localhost', done);
       });
 
-      beforeEach(function(done) {
+      beforeEach(function (done) {
         socket = net.connect(3999, 'localhost', done);
-        jayson.utils.parseStream(socket, {}, function(err, data) {
+        jayson.utils.parseStream(socket, {}, function (err, data) {
           onResponse(err, data);
         });
       });
 
-      afterEach(function(done) {
+      afterEach(function (done) {
         socket.end();
         done();
       });
 
-      it('should send a parse error for invalid JSON data', function(done) {
-        onResponse = function(err, data) {
-          if(err) return done(err);
+      it('should send a parse error for invalid JSON data', function (done) {
+        onResponse = function (err, data) {
+          if (err) {
+            return done(err);
+          }
           try {
             should(data).containDeep({
               id: null,
-              error: {code: -32700} // Parse Error
+              error: { code: -32700 }, // Parse Error
             });
           } catch (err) {
             done(err);
@@ -69,9 +68,11 @@ describe('jayson.tcp', function() {
         socket.write('abc\n');
       });
 
-      it('should send a parse error for invalid JSON-RPC request', function(done) {
-        onResponse = function(err, data) {
-          if(err) return done(err);
+      it('should send a parse error for invalid JSON-RPC request', function (done) {
+        onResponse = function (err, data) {
+          if (err) {
+            return done(err);
+          }
           try {
             should(data).containDeep({
               id: null,
@@ -88,10 +89,12 @@ describe('jayson.tcp', function() {
         socket.write('true\n');
       });
 
-      it('should send more than one reply on the same socket', function(done) {
+      it('should send more than one reply on the same socket', function (done) {
         const replies = [];
-        onResponse = function(err, data) {
-          if(err) return done(err);
+        onResponse = function (err, data) {
+          if (err) {
+            return done(err);
+          }
           replies.push(data);
         };
 
@@ -99,66 +102,61 @@ describe('jayson.tcp', function() {
         socket.write(JSON.stringify(jayson.Utils.request('delay', [20])) + '\n');
         socket.write(JSON.stringify(jayson.Utils.request('delay', [5])) + '\n');
 
-        setTimeout(function() {
+        setTimeout(function () {
           replies.should.have.lengthOf(2);
           replies[0].should.have.property('result', 5);
           replies[1].should.have.property('result', 20);
           done();
         }, 40);
       });
-    
     });
-
   });
 
-  describe('client', function() {
-
+  describe('client', function () {
     const server = jayson.server(support.server.methods(), support.server.options());
-    const serverTcp = server.tcp({delimiter: '\r\n'});
+    const serverTcp = server.tcp({ delimiter: '\r\n' });
     const client = jayson.client.tcp({
       reviver: support.server.options().reviver,
       replacer: support.server.options().replacer,
       host: 'localhost',
       port: 3999,
-      delimiter: '\r\n'
+      delimiter: '\r\n',
     });
 
-    before(function(done) {
+    before(function (done) {
       serverTcp.listen(3999, 'localhost', done);
     });
 
-    after(function() {
+    after(function () {
       serverTcp.close();
     });
 
     describe('common tests', suites.getCommonForClient(client));
 
-    describe('options', function() {
-
+    describe('options', function () {
       const serverIcp = server.tcp();
-      before(function(done) {
+      before(function (done) {
         serverIcp.listen('/tmp/test.sock', done);
       });
 
-      after(function() {
+      after(function () {
         serverIcp.close();
       });
 
-      it('should accept a string as the first option for an IPC connection', function(done) {
+      it('should accept a string as the first option for an IPC connection', function (done) {
         const client = jayson.client.tcp('/tmp/test.sock');
-        client.request('add', [1, 2], function(err, error, result) {
-          if(err || error) return done(err || error);
+        client.request('add', [1, 2], function (err, error, result) {
+          if (err || error) {
+            return done(err || error);
+          }
           should(result).equal(3);
           done();
         });
       });
-
     });
 
     describe('events', function () {
-
       describe('tcp socket', function () {
-
         it('should allow timeout to be manipulated by listening on tcp socket event', function (done) {
           let timeoutEventFired = false;
 
@@ -175,17 +173,12 @@ describe('jayson.tcp', function() {
             }, args.timeout);
           });
 
-          client.request('triggerTimeout', {timeout: 500}, function (err, result) {
+          client.request('triggerTimeout', { timeout: 500 }, function (err, result) {
             should(timeoutEventFired).equal(true);
             done();
           });
-
         });
-
       });
-
     });
-
   });
-
 });

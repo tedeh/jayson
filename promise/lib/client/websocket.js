@@ -1,6 +1,5 @@
 'use strict';
 
-const promisify = require('es6-promisify');
 const jayson = require('../../../');
 const promiseUtils = require('../utils');
 
@@ -11,8 +10,8 @@ const promiseUtils = require('../utils');
  * @extends ClientWebsocket
  * @return {PromiseClientWebsocket}
  */
-const PromiseClientWebsocket = function(options) {
-  if(!(this instanceof PromiseClientWebsocket)) {
+const PromiseClientWebsocket = function (options) {
+  if (!(this instanceof PromiseClientWebsocket)) {
     return new PromiseClientWebsocket(options);
   }
   jayson.Client.websocket.apply(this, arguments);

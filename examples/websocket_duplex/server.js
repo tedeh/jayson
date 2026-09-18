@@ -8,7 +8,7 @@ const wss = server.websocket({
 });
 
 wss.on('connection', function (ws) {
-  const client = jayson.client.websocket({ws});
+  const client = jayson.client.websocket({ ws });
   const intervalId = common.randomlyCallClient(client);
 
   ws.on('close', function () {

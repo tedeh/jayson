@@ -1,0 +1,64 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "es5"
+    },
+    "globals": ["after", "afterEach", "before", "beforeEach", "describe", "it"]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": false,
+      "correctness": {
+        "noUndeclaredVariables": "error",
+        "noUnreachable": "error",
+        "noUnusedImports": "error",
+        "noUnusedInstantiation": "error",
+        "noUnusedVariables": "error"
+      },
+      "style": {
+        "useBlockStatements": "error"
+      },
+      "suspicious": {
+        "noDoubleEquals": {
+          "level": "error",
+          "options": {
+            "ignoreNull": false
+          }
+        },
+        "noGlobalAssign": "error",
+        "noWith": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["typescript/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedInstantiation": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.d.ts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -13,10 +13,10 @@ const https = server.https({
   //key require('fs').readFileSync('key.pem')
 });
 
-http.listen(80, function() {
+http.listen(80, function () {
   console.log('Listening on *:80');
 });
 
-https.listen(443, function() {
+https.listen(443, function () {
   console.log('Listening on *:443');
 });

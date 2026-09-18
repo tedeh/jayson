@@ -10,8 +10,8 @@ const jayson = require('../../');
  * @extends Server
  * @return {PromiseServer}
  */
-const PromiseServer = function(methods, options) {
-  if(!(this instanceof PromiseServer)) {
+const PromiseServer = function (methods, options) {
+  if (!(this instanceof PromiseServer)) {
     return new PromiseServer(methods, options);
   }
   options = options || {};

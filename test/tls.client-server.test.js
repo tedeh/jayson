@@ -12,7 +12,7 @@ const serverOptions = {
   key: fs.readFileSync(__dirname + '/fixtures/keys/agent1-key.pem'),
   cert: fs.readFileSync(__dirname + '/fixtures/keys/agent1-cert.pem'),
   requestCert: true,
-  secureProtocol: 'TLSv1_2_method'
+  secureProtocol: 'TLSv1_2_method',
 };
 
 const clientOptions = {
@@ -23,54 +23,52 @@ const clientOptions = {
   reviver: support.server.options().reviver,
   replacer: support.server.options().replacer,
   host: 'localhost',
-  port: 3999
-}
+  port: 3999,
+};
 
-describe('jayson.tls', function() {
-
-  describe('server', function() {
-
+describe('jayson.tls', function () {
+  describe('server', function () {
     let server = null;
 
-    after(function() {
+    after(function () {
       server.close();
     });
 
-    it('should listen to a local port', function(done) {
+    it('should listen to a local port', function (done) {
       server = jayson.server(support.methods, support.options).tls(serverOptions);
       server.listen(3999, 'localhost', done);
     });
 
-    it('should be an instance of tls.Server', function() {
+    it('should be an instance of tls.Server', function () {
       server.should.be.instanceof(tls.Server);
     });
-
   });
 
-  describe('client', function() {
-    
+  describe('client', function () {
     const server = jayson.server(support.server.methods(), support.server.options());
     const serverTls = server.tls(serverOptions);
     const client = jayson.client.tls(clientOptions);
 
-    before(function(done) {
+    before(function (done) {
       serverTls.listen(3999, 'localhost', done);
     });
 
-    after(function() {
+    after(function () {
       serverTls.close();
     });
 
     describe('common tests', suites.getCommonForClient(client));
 
-    it('should send a parse error for invalid JSON data', function(done) {
-      const socket = tls.connect(3999, 'localhost', serverOptions, function() {
-        jayson.utils.parseStream(socket, {}, function(err, data) {
-          if(err) return done(err);
+    it('should send a parse error for invalid JSON data', function (done) {
+      const socket = tls.connect(3999, 'localhost', serverOptions, function () {
+        jayson.utils.parseStream(socket, {}, function (err, data) {
+          if (err) {
+            return done(err);
+          }
           try {
             should(data).containDeep({
               id: null,
-              error: {code: -32700} // Parse Error
+              error: { code: -32700 }, // Parse Error
             });
           } catch (err) {
             done(err);
@@ -85,10 +83,12 @@ describe('jayson.tls', function() {
       });
     });
 
-    it('should send a parse error for invalid JSON-RPC request', function(done) {
-      const socket = tls.connect(3999, 'localhost', serverOptions, function() {
-        jayson.utils.parseStream(socket, {}, function(err, data) {
-          if(err) return done(err);
+    it('should send a parse error for invalid JSON-RPC request', function (done) {
+      const socket = tls.connect(3999, 'localhost', serverOptions, function () {
+        jayson.utils.parseStream(socket, {}, function (err, data) {
+          if (err) {
+            return done(err);
+          }
           try {
             should(data).containDeep({
               id: null,
@@ -107,29 +107,27 @@ describe('jayson.tls', function() {
       });
     });
 
-    describe('options', function() {
-
+    describe('options', function () {
       const serverIcp = server.tls(serverOptions);
-      before(function(done) {
+      before(function (done) {
         serverIcp.listen('/tmp/test.sock', done);
       });
 
-      after(function() {
+      after(function () {
         serverIcp.close();
       });
 
-      it('should accept a string as the frist option for an IPC connection', function(done) {
+      it('should accept a string as the frist option for an IPC connection', function (done) {
         const client = jayson.client.tls('/tmp/test.sock');
         client.options.secureContext = tls.createSecureContext(clientOptions);
-        client.request('add', [1, 2], function(err, error, result) {
-          if(err || error) return done(err || error);
+        client.request('add', [1, 2], function (err, error, result) {
+          if (err || error) {
+            return done(err || error);
+          }
           should(result).equal(3);
           done();
         });
       });
-
     });
-
   });
-
 });

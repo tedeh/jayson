@@ -10,11 +10,11 @@ const PromiseUtils = module.exports;
  * @param {Function} request The original request method
  * @return {Function}
  */
-PromiseUtils.wrapClientRequestMethod = function(request) {
+PromiseUtils.wrapClientRequestMethod = function (request) {
   const promisified = promisify(request);
 
-  return function(method, params, id, shouldCall) {
-    if(shouldCall === false) {
+  return function (method, params, id, shouldCall) {
+    if (shouldCall === false) {
       // this should return a raw request for use in batches
       return request(method, params, id);
     }

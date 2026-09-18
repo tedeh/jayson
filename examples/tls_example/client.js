@@ -11,16 +11,18 @@ const options = {
   cert: fs.readFileSync(path.resolve('./../../test/fixtures/keys/agent1-cert.pem')),
 
   // This is necessary only if the client uses the self-signed certificate.
-  ca: [ fs.readFileSync(path.resolve('./../../test/fixtures/keys/ca1-cert.pem')) ],
+  ca: [fs.readFileSync(path.resolve('./../../test/fixtures/keys/ca1-cert.pem'))],
   port: 3000,
-  host: 'localhost'
+  host: 'localhost',
 };
 
 // create a client
 const client = new jayson.client.tls(options);
 
 // invoke "add"
-client.request('add', [1, 1], function(err, response) {
-  if(err) throw err;
+client.request('add', [1, 1], function (err, response) {
+  if (err) {
+    throw err;
+  }
   console.log(response.result); // 2
 });

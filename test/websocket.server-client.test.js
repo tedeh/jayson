@@ -6,32 +6,28 @@ const support = require('./support');
 const suites = require('./support/suites');
 const WebSocket = require('isomorphic-ws');
 
-describe('jayson.websocket', function() {
-
-  describe('server', function() {
-
+describe('jayson.websocket', function () {
+  describe('server', function () {
     let server, serverWebsocket;
-    before(function() {
+    before(function () {
       server = jayson.server(support.server.methods(), support.server.options());
-      serverWebsocket = server.websocket({port: 3999});
+      serverWebsocket = server.websocket({ port: 3999 });
     });
 
     it('should be an instance of WebSocket.Server', function () {
       should(serverWebsocket).be.an.instanceof(WebSocket.Server);
     });
 
-    after(function() {
+    after(function () {
       serverWebsocket.close();
     });
-
   });
 
-  describe('client', function() {
-
+  describe('client', function () {
     let client, server, serverWebsocket;
     before(function (done) {
       server = new jayson.server(support.server.methods(), support.server.options());
-      serverWebsocket = server.websocket({port: 3999});
+      serverWebsocket = server.websocket({ port: 3999 });
       client = jayson.client.websocket({
         url: 'ws://localhost:3999',
         reviver: support.server.options().reviver,
@@ -40,17 +36,19 @@ describe('jayson.websocket', function() {
       client.ws.on('open', done);
     });
 
-    after(function() {
+    after(function () {
       client.ws.close();
       serverWebsocket.close();
     });
 
-    describe('common tests', suites.getCommonForClient(() => client, {
-      getClient: true,
-    }));
+    describe(
+      'common tests',
+      suites.getCommonForClient(() => client, {
+        getClient: true,
+      })
+    );
 
     describe('timeout', function () {
-
       it('should timeout of timeout in options', function (done) {
         client.options.timeout = 5;
         client.request('add_slow', [1, 2, true], function (err, result) {
@@ -63,9 +61,6 @@ describe('jayson.websocket', function() {
       it('should have zero outstanding requests', function () {
         should(client).have.property('outstandingRequests').eql([]);
       });
-
     });
-
   });
-
 });

@@ -7,12 +7,12 @@ const jsonParser = require('body-parser').json;
 const app = connect();
 
 const server = new jayson.server({
-  myNameIs: function(args, callback) {
+  myNameIs: function (args, callback) {
     callback(null, 'Your name is: ' + args.name);
-  }
+  },
 });
 
-app.use(cors({methods: ['POST']}));
+app.use(cors({ methods: ['POST'] }));
 app.use(jsonParser());
 app.use(server.middleware());
 

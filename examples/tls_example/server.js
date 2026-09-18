@@ -11,14 +11,14 @@ const options = {
   cert: fs.readFileSync(path.resolve('./../../test/fixtures/keys/agent1-cert.pem')),
   requestCert: true,
   // This is necessary only if the client uses the self-signed certificate.
-  ca: [ fs.readFileSync(path.resolve('./../../test/fixtures/keys/ca1-cert.pem')) ],
+  ca: [fs.readFileSync(path.resolve('./../../test/fixtures/keys/ca1-cert.pem'))],
 };
 
 // create a server
 const server = new jayson.server({
-  add: function(args, callback) {
+  add: function (args, callback) {
     callback(null, args[0] + args[1]);
-  }
+  },
 });
 
 // Bind a tls interface to the server and let it listen to localhost:3000

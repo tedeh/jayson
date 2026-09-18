@@ -1,45 +1,47 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const util = require('util');
 
 const pkg = require('../package.json');
 const jayson = require('../');
 const program = require('commander');
-const net = require('net')
+const net = require('net');
 
 // initialize program and define arguments
-program.version(pkg.version)
-       .option('-m, --method [name]', 'Method', String)
-       .option('-p, --params [json]', 'Array or Object to use as parameters', JSON.parse)
-       .option('-u, --url [url]', 'URL to server', url.parse)
-       .option('-q, --quiet', 'Only output the response value and any errors', Boolean)
-       .option('-s, --socket [path] or [ip:port]', 'Path to UNIX socket, or TCP socket address', parseSocket)
-       .option('-j, --json', 'Only output the response value as JSON (implies --quiet)')
-       .parse(process.argv);
+program
+  .version(pkg.version)
+  .option('-m, --method [name]', 'Method', String)
+  .option('-p, --params [json]', 'Array or Object to use as parameters', JSON.parse)
+  .option('-u, --url [url]', 'URL to server', url.parse)
+  .option('-q, --quiet', 'Only output the response value and any errors', Boolean)
+  .option('-s, --socket [path] or [ip:port]', 'Path to UNIX socket, or TCP socket address', parseSocket)
+  .option('-j, --json', 'Only output the response value as JSON (implies --quiet)')
+  .parse(process.argv);
 
 // quiet is implied if json is specified
-if(program.json) program.quiet = true;
+if (program.json) {
+  program.quiet = true;
+}
 
 // wrapper for printing different kinds of output
 const std = {
   out: getPrinter({ fn: console.log }),
-  err: getPrinter({ fn: console.error })
+  err: getPrinter({ fn: console.error }),
 };
 
 // do we have all arguments required to do something?
-if(!(program.method && (program.url || program.socket))) {
+if (!(program.method && (program.url || program.socket))) {
   std.err.result(program.helpInformation());
-  return process.exit(-1);
+  process.exit(-1);
 }
 
-const client = (program.socket && program.socket.host)
-  ? jayson.client.tcp(program.socket)
-  : (program.url && program.url.protocol == 'https:')
-    ? jayson.client.https(program.url || program.socket)
-    : jayson.client.http(program.url || program.socket);
+const client =
+  program.socket && program.socket.host
+    ? jayson.client.tcp(program.socket)
+    : program.url && program.url.protocol === 'https:'
+      ? jayson.client.https(program.url || program.socket)
+      : jayson.client.http(program.url || program.socket);
 
 std.out.noise(
   '-> %s(%s)',
@@ -47,19 +49,19 @@ std.out.noise(
   Array.isArray(program.params) ? program.params.join(', ') : JSON.stringify(program.params)
 );
 
-client.request(program.method, program.params, function(err, response) {
-  if(err) {
-    std.err.noise(('<- %s'), err.stack);
+client.request(program.method, program.params, function (err, response) {
+  if (err) {
+    std.err.noise('<- %s', err.stack);
     return process.exit(-1);
   }
 
-  if(!response) {
+  if (!response) {
     std.err.noise('<- %s'), 'empty response';
     return process.exit(-1);
-  }    
+  }
 
-  if(program.json) {
-    std.out.result('%s', JSON.stringify(response).replace("\n", ""));
+  if (program.json) {
+    std.out.result('%s', JSON.stringify(response).replace('\n', ''));
     return process.exit(0);
   }
 
@@ -68,31 +70,30 @@ client.request(program.method, program.params, function(err, response) {
 });
 
 function parseSocket(value) {
-  const addr = value.split(":");
+  const addr = value.split(':');
 
-  if (addr.length == 2 && (net.isIP(addr[0]) || addr[0].toLowerCase() == "localhost")) {
-    return {port: addr[1], host: addr[0]};
+  if (addr.length === 2 && (net.isIP(addr[0]) || addr[0].toLowerCase() === 'localhost')) {
+    return { port: addr[1], host: addr[0] };
   }
 
-  return {socketPath: path.normalize(value)};
+  return { socketPath: path.normalize(value) };
 }
 
 function getPrinter(options) {
-
   const fn = options.fn || console.log;
 
   return {
-
     // print noise (printed if program is not quiet)
-    noise: function() {
-      if(program.quiet) return;
+    noise: function () {
+      if (program.quiet) {
+        return;
+      }
       return fn.apply(console, arguments);
     },
 
     // print results (always printed)
-    result: function() {
+    result: function () {
       return fn.apply(console, arguments);
-    }
-  
+    },
   };
 }

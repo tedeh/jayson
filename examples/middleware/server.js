@@ -6,9 +6,9 @@ const connect = require('connect');
 const app = connect();
 
 const server = new jayson.server({
-  add: function(args, callback) {
+  add: function (args, callback) {
     callback(null, args[0] + args[1]);
-  }
+  },
 });
 
 // parse request body before the jayson middleware

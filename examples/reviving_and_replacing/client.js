@@ -6,17 +6,19 @@ const shared = require('./shared');
 const client = new jayson.client.http({
   port: 3000,
   reviver: shared.reviver,
-  replacer: shared.replacer
+  replacer: shared.replacer,
 });
 
 // create the object
 const params = {
-  counter: new shared.Counter(2)
+  counter: new shared.Counter(2),
 };
 
 // invoke "increment"
-client.request('increment', params, function(err, response) {
-  if(err) throw err;
+client.request('increment', params, function (err, response) {
+  if (err) {
+    throw err;
+  }
   const result = response.result;
   console.log(
     result instanceof shared.Counter, // true

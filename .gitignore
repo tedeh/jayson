@@ -2,7 +2,6 @@
 .*
 !.gitignore
 !.travis.yml
-!.jshintrc
 !.npmignore
 /coverage
 /yarn-error.log

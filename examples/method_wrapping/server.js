@@ -12,11 +12,13 @@ const server = new jayson.server({
 server.http().listen(3000);
 
 // this validator errors unless the value returned from the wrapped function is a finite number
-function validateReturnsNumber (fn) {
+function validateReturnsNumber(fn) {
   return function (args, done) {
     const self = this;
     return fn(args, function (err, result) {
-      if (err) return done(err);
+      if (err) {
+        return done(err);
+      }
       if (!isFinite(result)) {
         return done(self.error(500, 'not a finite number'));
       }

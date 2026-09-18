@@ -77,10 +77,10 @@ Server example in [examples/simple_example/server.js](examples/simple_example/se
 const jayson = require('jayson');
 
 // create a server
-const server = new jayson.Server({
-  add: function(args, callback) {
+const server = new jayson.server({
+  add: function (args, callback) {
     callback(null, args[0] + args[1]);
-  }
+  },
 });
 
 server.http().listen(3000);
@@ -92,13 +92,15 @@ Client example in [examples/simple_example/client.js](examples/simple_example/cl
 const jayson = require('jayson');
 
 // create a client
-const client = jayson.Client.http({
-  port: 3000
+const client = new jayson.client.http({
+  port: 3000,
 });
 
 // invoke "add"
-client.request('add', [1, 1], function(err, response) {
-  if(err) throw err;
+client.request('add', [1, 1], function (err, response) {
+  if (err) {
+    throw err;
+  }
   console.log(response.result); // 2
 });
 ```
@@ -229,7 +231,7 @@ It is possible to pass a string URL as the first argument. The URL will be run t
 
 ```javascript
 const jayson = require('jayson');
-const client = jayson.Client.http('http://localhost:3000');
+const client = new jayson.client.http('http://localhost:3000');
 // client.options is now the result of url.parse
 ```
 
@@ -281,7 +283,7 @@ The TLS client will emit the following events:
 
 ##### Client.browser
 
-The browser client is a simplified version of the regular client for use browser-side. It does not have any dependencies on node.js core libraries, but does depend on the `uuid` package for generating request ids. It also does not know how to "send" a request to a server like the other clients.
+The browser client is a simplified version of the regular client for use browser-side. It does not have any dependencies on node.js core libraries and uses the local native-crypto-backed ID generator. If native crypto is unavailable, provide a custom `generator` option. It also does not know how to "send" a request to a server like the other clients.
 
 Because it does not depend on any core libraries, the browser client is **not** an instance of `JaysonClient` or `EventEmitter` and therefore does **not** emit any of the normal request events that the other clients do.
 
@@ -299,27 +301,35 @@ The browser client has a separate TypeScript type declaration available in `jays
 const jaysonBrowserClient = require('jayson/lib/client/browser');
 const fetch = require('node-fetch');
 
-const callServer = function(request, callback) {
+const callServer = function (request, callback) {
   const options = {
     method: 'POST',
     body: request,
     headers: {
       'Content-Type': 'application/json',
-    }
+    },
   };
 
   fetch('http://localhost:3000', options)
-    .then(function(res) { return res.text(); })
-    .then(function(text) { callback(null, text); })
-    .catch(function(err) { callback(err); });
+    .then(function (res) {
+      return res.text();
+    })
+    .then(function (text) {
+      callback(null, text);
+    })
+    .catch(function (err) {
+      callback(err);
+    });
 };
 
 const client = new jaysonBrowserClient(callServer, {
   // other options go here
 });
 
-client.request('multiply', [5, 5], function(err, error, result) {
-  if(err) throw err;
+client.request('multiply', [5, 5], function (err, error, result) {
+  if (err) {
+    throw err;
+  }
   console.log(result); // 25
 });
 ```
@@ -351,13 +361,15 @@ Client example in [examples/notifications/client.js](examples/notifications/clie
 ```javascript
 const jayson = require('jayson');
 
-const client = jayson.Client.http({
-  port: 3000
+const client = new jayson.client.http({
+  port: 3000,
 });
 
 // the third parameter is set to "null" to indicate a notification
-client.request('ping', [], null, function(err) {
-  if(err) throw err;
+client.request('ping', [], null, function (err) {
+  if (err) {
+    throw err;
+  }
   console.log('ok'); // request was received successfully
 });
 ```
@@ -367,11 +379,11 @@ Server example in [examples/notifications/server.js](examples/notifications/serv
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.Server({
-  ping: function(args, callback) {
+const server = new jayson.server({
+  ping: function (args, callback) {
     // do something, do nothing
     callback();
-  }
+  },
 });
 
 server.http().listen(3000);
@@ -395,28 +407,32 @@ Combined server/client example in [examples/batch_request/index.js](examples/bat
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.Server({
-  add: function(args, callback) {
+const server = new jayson.server({
+  add: function (args, callback) {
     callback(null, args[0] + args[1]);
-  }
+  },
 });
 
-const client = new jayson.Client(server);
+const client = new jayson.client(server);
 
 const batch = [
   client.request('does_not_exist', [10, 5]),
   client.request('add', [1, 1]),
-  client.request('add', [0, 0], null) // a notification
+  client.request('add', [0, 0], null), // a notification
 ];
 
-client.request(batch, function(err, errors, successes) {
-  if(err) throw err;
+client.request(batch, function (err, errors, successes) {
+  if (err) {
+    throw err;
+  }
   console.log('errors', errors); // array of requests that errored
   console.log('successes', successes); // array of requests that succeeded
 });
 
-client.request(batch, function(err, responses) {
-  if(err) throw err;
+client.request(batch, function (err, responses) {
+  if (err) {
+    throw err;
+  }
   console.log('responses', responses); // all responses together
 });
 ```
@@ -526,10 +542,10 @@ const jsonParser = require('body-parser').json;
 const connect = require('connect');
 const app = connect();
 
-const server = new jayson.Server({
-  add: function(args, callback) {
+const server = new jayson.server({
+  add: function (args, callback) {
     callback(null, args[0] + args[1]);
-  }
+  },
 });
 
 // parse request body before the jayson middleware
@@ -555,14 +571,14 @@ Websocket server example in [examples/websocket/server.js](examples/websocket/se
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.Server({
+const server = new jayson.server({
   add: function (args, done) {
     const sum = args.reduce((sum, val) => sum + val, 0);
     done(null, sum);
   },
 });
 
-const wss = server.websocket({
+const _wss = server.websocket({
   port: 12345,
 });
 ```
@@ -572,12 +588,12 @@ Websocket client example in [examples/websocket/client.js](examples/websocket/cl
 ```javascript
 const jayson = require('jayson');
 
-const client = jayson.Client.websocket({
+const client = jayson.client.websocket({
   url: 'ws://localhost:12345',
 });
 
 client.ws.on('open', function () {
-  client.request('add', [1,2,3,4], function (err, result) {
+  client.request('add', [1, 2, 3, 4], function (err, result) {
     console.log(err, result);
     client.ws.close();
   });
@@ -593,7 +609,7 @@ Server example in [examples/many_interfaces/server.js](examples/many_interfaces/
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.Server();
+const server = new jayson.server();
 
 // "http" will be an instance of require('http').Server
 const http = server.http();
@@ -604,11 +620,11 @@ const https = server.https({
   //key require('fs').readFileSync('key.pem')
 });
 
-http.listen(80, function() {
+http.listen(80, function () {
   console.log('Listening on *:80');
 });
 
-https.listen(443, function() {
+https.listen(443, function () {
   console.log('Listening on *:443');
 });
 ```
@@ -623,10 +639,10 @@ Frontend server example in [examples/relay/server_public.js](examples/relay/serv
 const jayson = require('jayson');
 
 // create a server where "add" will relay a localhost-only server
-const server = new jayson.Server({
-  add: jayson.Client.http({
-    port: 3001
-  })
+const server = new jayson.server({
+  add: new jayson.client.http({
+    port: 3001,
+  }),
 });
 
 // let the frontend server listen to *:3000
@@ -638,10 +654,10 @@ Backend server example in [examples/relay/server_private.js](examples/relay/serv
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.Server({
-  add: function(args, callback) {
+const server = new jayson.server({
+  add: function (args, callback) {
     callback(null, args[0] + args[1]);
-  }
+  },
 });
 
 // let the backend listen to *:3001
@@ -662,26 +678,26 @@ Server example with custom routing logic in [examples/method_routing/server.js](
 const jayson = require('jayson');
 
 const methods = {
-  add: function(args, callback) {
+  add: function (args, callback) {
     callback(null, args[0] + args[1]);
-  }
+  },
 };
 
 const server = new jayson.Server(methods, {
-  router: function(method, params) {
+  router: function (method, params) {
     // regular by-name routing first
     const fn = Object.prototype.hasOwnProperty.call(this._methods, method) ? this._methods[method] : null;
-    if(typeof fn === 'function') {
+    if (typeof fn === 'function') {
       return fn;
     }
-    if(method === 'add_2') {
+    if (method === 'add_2') {
       const fn = server.getMethod('add').getHandler();
-      return new jayson.Method(function(args, done) {
+      return new jayson.Method(function (args, done) {
         args.unshift(2);
         fn(args, done);
       });
     }
-  }
+  },
 });
 
 server.http().listen(3000);
@@ -693,13 +709,15 @@ Client example in [examples/method_routing/client.js](examples/method_routing/cl
 const jayson = require('jayson');
 
 // create a client
-const client = jayson.Client.http({
-  port: 3000
+const client = new jayson.client.http({
+  port: 3000,
 });
 
 // invoke "add_2"
-client.request('add_2', [3], function(err, response) {
-  if(err) throw err;
+client.request('add_2', [3], function (err, response) {
+  if (err) {
+    throw err;
+  }
   console.log(response.result); // 5!
 });
 ```
@@ -711,29 +729,32 @@ const jayson = require('jayson');
 
 const methods = {
   foo: {
-    bar: function(callback) {
+    bar: function (callback) {
       callback(null, 'ping pong');
-    }
+    },
   },
   math: {
-    add: function(args, callback) {
+    add: function (args, callback) {
       callback(null, args[0] + args[1]);
-    }
-  }
+    },
+  },
 };
 
 // this reduction produces an object like this: {'foo.bar': [Function], 'math.add': [Function]}
 const map = Object.keys(methods).reduce(collapse('', '.', methods), {});
-const server = new jayson.Server(map);
+const server = new jayson.server(map);
 
 function collapse(stem, sep, obj) {
-  return function(map, key) {
+  return function (map, key) {
     const prop = stem ? stem + sep + key : key;
     const value = obj[key];
-    if(typeof value === 'function') map[prop] = value;
-    else if(typeof value === 'object' && value !== null) map = Object.keys(value).reduce(collapse(prop, sep, value), map);
+    if (typeof value === 'function') {
+      map[prop] = value;
+    } else if (typeof value === 'object' && value !== null) {
+      map = Object.keys(value).reduce(collapse(prop, sep, value), map);
+    }
     return map;
-  }
+  };
 }
 ```
 
@@ -761,49 +782,56 @@ Server example showcasing most features and options in [examples/method_definiti
 const jayson = require('jayson');
 
 const methods = {
-
   // this function will be wrapped in jayson.Method with options given to the server
-  sum: function(args, done) {
+  sum: function (args, done) {
     done(null, sum(args));
   },
 
   // this function always receives a context object as second arg
   // it can be overriden on the server level
-  context: jayson.Method(function(args, context, done) {
-    done(null, context);
-  }, {useContext: true}),
+  context: jayson.Method(
+    function (args, context, done) {
+      done(null, context);
+    },
+    { useContext: true }
+  ),
 
   // specifies some default values (alternate definition too)
-  sumDefault: jayson.Method(function(args, done) {
-    const total = sum(args);
-    done(null, total);
-  }, {
-    params: {a: 2, b: 5} // map of defaults
-  }),
+  sumDefault: jayson.Method(
+    function (args, done) {
+      const total = sum(args);
+      done(null, total);
+    },
+    {
+      params: { a: 2, b: 5 }, // map of defaults
+    }
+  ),
 
   // this method returns true when it gets an array (which it always does)
   isArray: new jayson.Method({
-    handler: function(args, done) {
+    handler: function (args, done) {
       const result = Array.isArray(args);
       done(null, result);
     },
-    params: Array // could also be "Object"
-  })
-
+    params: Array, // could also be "Object"
+  }),
 };
 
-const server = new jayson.Server(methods, {
+const server = new jayson.server(methods, {
   // these options are given as options to jayson.Method when adding the method "sum".
   // this is because it is not wrapped in jayson.Method like the others.
   useContext: false,
-  params: Array
+  params: Array,
 });
 
 server.http().listen(3000);
 
 // sums all numbers in an array or object
 function sum(list) {
-  return Object.keys(list).reduce(function(sum, key) { return sum + list[key]; }, 0);
+  return Object.keys(list).reduce(function (sum, key) {
+    const val = list[key];
+    return sum + val;
+  }, 0);
 }
 ```
 
@@ -812,37 +840,47 @@ Client example in [examples/method_definitions/client.js](examples/method_defini
 ```javascript
 const jayson = require('jayson');
 
-const client = jayson.Client.http({
-  port: 3000
+const client = new jayson.client.http({
+  port: 3000,
 });
 
 // invoke "sum" with array
-client.request('sum', [3, 5, 9, 11], function(err, response) {
-  if(err) throw err;
+client.request('sum', [3, 5, 9, 11], function (err, response) {
+  if (err) {
+    throw err;
+  }
   console.log(response.result); // 28
 });
 
 // invoke "sum" with an object
-client.request('sum', {a: 2, b: 3, c: 4}, function(err, response) {
-  if(err) throw err;
+client.request('sum', { a: 2, b: 3, c: 4 }, function (err, response) {
+  if (err) {
+    throw err;
+  }
   console.log(response.result); // 9
 });
 
 // invoke "sumDefault" with object missing some defined members
-client.request('sumDefault', {b: 10}, function(err, response) {
-  if(err) throw err;
+client.request('sumDefault', { b: 10 }, function (err, response) {
+  if (err) {
+    throw err;
+  }
   console.log(response.result); // 12
 });
 
 // invoke "isArray" with an Object
-client.request('isArray', {a: 5, b: 2, c: 9}, function(err, response) {
-  if(err) throw err;
+client.request('isArray', { a: 5, b: 2, c: 9 }, function (err, response) {
+  if (err) {
+    throw err;
+  }
   console.log(response.result); // true
 });
 
 // invoke "context"
-client.request('context', {hello: 'world'}, function(err, response) {
-  if(err) throw err;
+client.request('context', { hello: 'world' }, function (err, response) {
+  if (err) {
+    throw err;
+  }
   console.log(response.result); // {} - just an empty object
 });
 ```
@@ -864,14 +902,14 @@ If you should like to return an error from an method request to indicate a failu
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.Server({
-  i_cant_find_anything: function(args, callback) {
-    const error = {code: 404, message: 'Cannot find ' + args.id};
+const server = new jayson.server({
+  i_cant_find_anything: function (args, callback) {
+    const error = { code: 404, message: 'Cannot find ' + args.id };
     callback(error); // will return the error object as given
   },
-  i_cant_return_a_valid_error: function(callback) {
-    callback({message: 'I forgot to enter a code'}); // will return a pre-defined "Internal Error"
-  }
+  i_cant_return_a_valid_error: function (callback) {
+    callback({ message: 'I forgot to enter a code' }); // will return a pre-defined "Internal Error"
+  },
 });
 ```
 
@@ -884,11 +922,11 @@ It is also possible to cause a method to return one of the predefined [JSON-RPC 
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.Server({
-  invalid_params: function(args, callback) {
+const server = new jayson.server({
+  invalid_params: function (args, callback) {
     const error = this.error(-32602); // returns an error with the default properties set
     callback(error);
-  }
+  },
 });
 ```
 
@@ -897,14 +935,14 @@ You can even override the default messages:
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.Server({
-  error_giver_of_doom: function(callback) {
-    callback(true) // invalid error format, which causes an Internal Error to be returned instead
-  }
+const server = new jayson.server({
+  error_giver_of_doom: function (callback) {
+    callback(true); // invalid error format, which causes an Internal Error to be returned instead
+  },
 });
 
 // Override the default message
-server.errorMessages[Server.errors.INTERNAL_ERROR] = 'I has a sad. I cant do anything right';
+server.errorMessages[jayson.Server.errors.INTERNAL_ERROR] = 'I has a sad. I cant do anything right';
 ```
 
 #### Server CORS
@@ -919,13 +957,13 @@ const connect = require('connect');
 const jsonParser = require('body-parser').json;
 const app = connect();
 
-const server = new jayson.Server({
-  myNameIs: function(args, callback) {
+const server = new jayson.server({
+  myNameIs: function (args, callback) {
     callback(null, 'Your name is: ' + args.name);
-  }
+  },
 });
 
-app.use(cors({methods: ['POST']}));
+app.use(cors({ methods: ['POST'] }));
 app.use(jsonParser());
 app.use(server.middleware());
 
@@ -948,31 +986,37 @@ const jsonParser = require('body-parser').json;
 const express = require('express');
 const app = express();
 
-const server = new jayson.Server({
+const server = new jayson.server(
+  {
+    getHeaders: function (args, context, callback) {
+      callback(null, context.headers);
+    },
 
-  getHeaders: function(args, context, callback) {
-    callback(null, context.headers);
+    // old method not receiving a context object (here for reference)
+    oldMethod: new jayson.Method(
+      function (args, callback) {
+        callback(null, {});
+      },
+      {
+        // this setting overrides the server option set below for this particular method
+        useContext: false,
+      }
+    ),
   },
-
-  // old method not receiving a context object (here for reference)
-  oldMethod: new jayson.Method(function(args, callback) {
-    callback(null, {});
-  }, {
-    // this setting overrides the server option set below for this particular method only
-    useContext: false
-  })
-
-}, {
-  // all methods will receive a context object as the second arg
-  useContext: true
-});
+  {
+    // all methods will receive a context object as the second arg
+    useContext: true,
+  }
+);
 
 app.use(jsonParser());
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   // prepare a context object passed into the JSON-RPC method
-  const context = {headers: req.headers};
-  server.call(req.body, context, function(err, result) {
-    if(err) return next(err);
+  const context = { headers: req.headers };
+  server.call(req.body, context, function (err, result) {
+    if (err) {
+      return next(err);
+    }
     res.send(result || {});
   });
 });
@@ -986,13 +1030,15 @@ Client example in [examples/context/client.js](examples/context/client.js):
 const jayson = require('jayson');
 
 // create a client
-const client = jayson.Client.http({
-  port: 3001
+const client = new jayson.client.http({
+  port: 3001,
 });
 
 // invoke "getHeaders"
-client.request('getHeaders', {}, function(err, response) {
-  if(err) throw err;
+client.request('getHeaders', {}, function (err, response) {
+  if (err) {
+    throw err;
+  }
   console.log(response.result);
 });
 ```
@@ -1015,25 +1061,27 @@ Shared code between the server and the client in [examples/reviving_and_replacin
 ```javascript
 'use strict';
 
-const Counter = exports.Counter = function(value) {
+const Counter = (exports.Counter = function (value) {
   this.count = value || 0;
-};
+});
 
-Counter.prototype.increment = function() {
+Counter.prototype.increment = function () {
   this.count += 1;
 };
 
-exports.replacer = function(key, value) {
-  if(value instanceof Counter) {
-    return {$class: 'counter', $props: {count: value.count}};
+exports.replacer = function (key, value) {
+  if (value instanceof Counter) {
+    return { $class: 'counter', $props: { count: value.count } };
   }
   return value;
 };
 
-exports.reviver = function(key, value) {
-  if(value && value.$class === 'counter') {
+exports.reviver = function (key, value) {
+  if (value && value.$class === 'counter') {
     const obj = new Counter();
-    for(const prop in value.$props) obj[prop] = value.$props[prop];
+    for (const prop in value.$props) {
+      obj[prop] = value.$props[prop];
+    }
     return obj;
   }
   return value;
@@ -1049,16 +1097,19 @@ const shared = require('./shared');
 // Set the reviver/replacer options
 const options = {
   reviver: shared.reviver,
-  replacer: shared.replacer
+  replacer: shared.replacer,
 };
 
 // create a server
-const server = new jayson.Server({
-  increment: function(args, callback) {
-    args.counter.increment();
-    callback(null, args.counter);
-  }
-}, options);
+const server = new jayson.server(
+  {
+    increment: function (args, callback) {
+      args.counter.increment();
+      callback(null, args.counter);
+    },
+  },
+  options
+);
 
 server.http().listen(3000);
 ```
@@ -1069,20 +1120,22 @@ A client example in [examples/reviving_and_replacing/client.js](examples/revivin
 const jayson = require('jayson');
 const shared = require('./shared');
 
-const client = jayson.Client.http({
+const client = new jayson.client.http({
   port: 3000,
   reviver: shared.reviver,
-  replacer: shared.replacer
+  replacer: shared.replacer,
 });
 
 // create the object
 const params = {
-  counter: new shared.Counter(2)
+  counter: new shared.Counter(2),
 };
 
 // invoke "increment"
-client.request('increment', params, function(err, response) {
-  if(err) throw err;
+client.request('increment', params, function (err, response) {
+  if (err) {
+    throw err;
+  }
   const result = response.result;
   console.log(
     result instanceof shared.Counter, // true
@@ -1105,12 +1158,14 @@ Client example in [examples/named_parameters/client.js](examples/named_parameter
 ```javascript
 const jayson = require('jayson');
 
-const client = jayson.Client.http({
-  port: 3000
+const client = new jayson.client.http({
+  port: 3000,
 });
 
-client.request('add', {b: 1, a: 2}, function(err, response) {
-  if(err) throw err;
+client.request('add', { b: 1, a: 2 }, function (err, response) {
+  if (err) {
+    throw err;
+  }
   console.log(response.result); // 3!
 });
 ```
@@ -1120,10 +1175,10 @@ Server example in [examples/named_parameters/server.js](examples/named_parameter
 ```javascript
 const jayson = require('jayson');
 
-const server = new jayson.Server({
-  add: function(params, callback) {
+const server = new jayson.server({
+  add: function (params, callback) {
     callback(null, params.a + params.b);
-  }
+  },
 });
 
 server.http().listen(3000);
@@ -1154,19 +1209,17 @@ Server example in [examples/promise/server.js](examples/promise/server.js) showi
 ```javascript
 const jayson = require('jayson/promise');
 
-const server = new jayson.Server({
-
-  add: async function(args) {
-    const sum = Object.keys(args).reduce(function(sum, key) { return sum + args[key]; }, 0);
+const server = new jayson.server({
+  add: async function (args) {
+    const sum = Object.keys(args).reduce((sum, key) => sum + args[key], 0);
     return sum;
   },
 
   // example on how to reject
-  rejection: async function(args) {
+  rejection: async function (args) {
     // server.error just returns {code: 501, message: 'not implemented'}
     throw server.error(501, 'not implemented');
-  }
-
+  },
 });
 
 server.http().listen(3000);
@@ -1177,16 +1230,13 @@ Client example in [examples/promise/client.js](examples/promise/client.js) showi
 ```javascript
 const jayson = require('jayson/promise');
 
-const client = jayson.Client.http({
-  port: 3000
+const client = new jayson.client.http({
+  port: 3000,
 });
 
-const reqs = [
-  client.request('add', [1, 2, 3, 4, 5]),
-  client.request('rejection', [])
-];
+const reqs = [client.request('add', [1, 2, 3, 4, 5]), client.request('rejection', [])];
 
-Promise.all(reqs).then(function(responses) {
+Promise.all(reqs).then(function (responses) {
   console.log(responses[0].result);
   console.log(responses[1].error);
 });
@@ -1210,8 +1260,8 @@ Client example in [examples/promise_batches/client.js](examples/promise_batches/
 ```javascript
 const jayson = require('jayson/promise');
 
-const client = jayson.Client.http({
-  port: 3000
+const client = new jayson.client.http({
+  port: 3000,
 });
 
 const batch = [
@@ -1219,7 +1269,7 @@ const batch = [
   client.request('add', [5, 6, 7, 8, 9], undefined, false),
 ];
 
-client.request(batch).then(function(responses) {
+client.request(batch).then(function (responses) {
   console.log(responses[0].result); // 15
   console.log(responses[1].result); // 35
 });
@@ -1239,26 +1289,29 @@ A browser client that has no dependencies on node.js core libraries is available
 const jaysonPromiseBrowserClient = require('jayson/promise/lib/client/browser');
 const fetch = require('node-fetch');
 
-const callServer = function(request) {
+const callServer = function (request) {
   const options = {
     method: 'POST',
     body: request,
     headers: {
       'Content-Type': 'application/json',
-    }
+    },
   };
-  return fetch('http://localhost:3000', options).then(res => res.text());
+  return fetch('http://localhost:3000', options).then((res) => res.text());
 };
 
 const client = new jaysonPromiseBrowserClient(callServer, {
   // other options go here
 });
 
-client.request('multiply', [5, 5]).then(function(result) {
-  console.log(result);
-}, function(err) {
-  console.error(err);
-});
+client.request('multiply', [5, 5]).then(
+  function (result) {
+    console.log(result);
+  },
+  function (err) {
+    console.error(err);
+  }
+);
 ```
 
 Please refer to the [regular browser client](#clientbrowser) section of the README for more information.
@@ -1293,28 +1346,32 @@ const express = require('express');
 const app = express();
 
 // create a plain jayson server
-const server = new jayson.Server({
-  add: function(numbers, callback) {
-    const sum = Object.keys(numbers).reduce(function(sum, key) { return sum + numbers[key]; }, 0);
-    callback(null, sum);
-  }
+const server = new jayson.server({
+  add: function (numbers, callback) {
+    callback(
+      null,
+      Object.keys(numbers).reduce((sum, key) => sum + numbers[key], 0)
+    );
+  },
 });
 
 app.use(jsonParser()); // <- here we can deal with maximum body sizes, etc
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   const request = req.body;
   // <- here we can check headers, modify the request, do logging, etc
-  server.call(request, function(err, response) {
-    if(err) {
+  server.call(request, function (err, response) {
+    if (err) {
       // if err is an Error, err is NOT a json-rpc error
-      if(err instanceof Error) return next(err);
+      if (err instanceof Error) {
+        return next(err);
+      }
       // <- deal with json-rpc errors here, typically caused by the user
       res.status(400);
       res.send(err);
       return;
     }
     // <- here we can mutate the response, set response headers, etc
-    if(response) {
+    if (response) {
       res.send(response);
     } else {
       // empty response (could be a notification)
@@ -1334,26 +1391,29 @@ const jayson = require('jayson');
 const request = require('superagent');
 
 // generate a json-rpc version 2 compatible request (non-notification)
-const requestBody = jayson.Utils.request('add', [1,2,3,4], undefined, {
+const requestBody = jayson.Utils.request('add', [1, 2, 3, 4], undefined, {
   version: 2, // generate a version 2 request
 });
 
-request.post('http://localhost:3001')
+request
+  .post('http://localhost:3001')
   // <- here we can setup timeouts, set headers, cookies, etc
-  .timeout({response: 5000, deadline: 60000})
+  .timeout({ response: 5000, deadline: 60000 })
   .send(requestBody)
-  .end(function(err, response) {
-    if(err) {
+  .end(function (err, response) {
+    if (err) {
       // superagent considers 300-499 status codes to be errors
       // @see http://visionmedia.github.io/superagent/#error-handling
-      if(!err.status) throw err;
+      if (!err.status) {
+        throw err;
+      }
       const body = err.response.body;
       // body may be a JSON-RPC error, or something completely different
       // it can be handled here
-      if(body && body.error && jayson.Utils.Response.isValidError(body.error, 2)) {
+      if (body && body.error && jayson.Utils.Response.isValidError(body.error, 2)) {
         // the error body was a valid JSON-RPC version 2
         // we may wish to deal with it differently
-        console.err(body.error);
+        console.error(body.error);
         return;
       }
       throw err; // error was something completely different
@@ -1362,13 +1422,13 @@ request.post('http://localhost:3001')
     const body = response.body;
 
     // check if we got a valid JSON-RPC 2.0 response
-    if(!jayson.Utils.Response.isValidResponse(body, 2)) {
-      console.err(body);
+    if (!jayson.Utils.Response.isValidResponse(body, 2)) {
+      console.error(body);
     }
 
-    if(body.error) {
+    if (body.error) {
       // we have a json-rpc error...
-      console.err(body.error); // 10!
+      console.error(body.error); // 10!
     } else {
       // do something useful with the result
       console.log(body.result); // 10!

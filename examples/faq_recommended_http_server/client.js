@@ -26,7 +26,7 @@ request
       if (body && body.error && jayson.Utils.Response.isValidError(body.error, 2)) {
         // the error body was a valid JSON-RPC version 2
         // we may wish to deal with it differently
-        console.err(body.error);
+        console.error(body.error);
         return;
       }
       throw err; // error was something completely different
@@ -36,12 +36,12 @@ request
 
     // check if we got a valid JSON-RPC 2.0 response
     if (!jayson.Utils.Response.isValidResponse(body, 2)) {
-      console.err(body);
+      console.error(body);
     }
 
     if (body.error) {
       // we have a json-rpc error...
-      console.err(body.error); // 10!
+      console.error(body.error); // 10!
     } else {
       // do something useful with the result
       console.log(body.result); // 10!

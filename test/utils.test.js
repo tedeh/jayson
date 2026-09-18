@@ -97,6 +97,23 @@ describe('jayson.utils', function () {
       stream.end('ue":1}\n[2,3]\n');
     });
 
+    it('should handle a delimiter within a JSON string', function (done) {
+      const stream = new PassStream();
+      const obj = { value: 'hello | "world" \\ goodbye' };
+      const json = JSON.stringify(obj);
+
+      utils.parseStream(stream, { delimiter: '|' }, function (err, value) {
+        if (err) {
+          return done(err);
+        }
+        value.should.eql(obj);
+        done();
+      });
+
+      stream.write(json.slice(0, 12));
+      stream.end(json.slice(12) + '|');
+    });
+
     it('should support a custom delimiter and reviver', function (done) {
       const stream = new PassStream();
 

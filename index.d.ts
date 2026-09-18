@@ -15,6 +15,7 @@ type ConstructorOf<Proto, CtorArgs extends any[]> = {
 
 export interface UtilsJSONParseOptions {
   reviver?: Function;
+  delimiter?: string;
 }
 
 export interface UtilsJSONStringifyOptions {
@@ -287,6 +288,7 @@ declare class HttpsServer extends https.Server {
 }
 
 export interface TcpServerOptions extends ServerOptions {
+  delimiter?: string;
 }
 
 declare class TcpServer extends net.Server {
@@ -294,6 +296,7 @@ declare class TcpServer extends net.Server {
 }
 
 export interface TlsServerOptions extends tls.TlsOptions {
+  delimiter?: string;
 }
 
 declare class TlsServer extends tls.Server {
@@ -329,6 +332,7 @@ declare class HttpClient extends Client {
 }
 
 export interface TlsClientOptions extends ClientOptions, tls.ConnectionOptions {
+  delimiter?: string;
 }
 
 declare class TlsClient extends Client {
@@ -336,6 +340,7 @@ declare class TlsClient extends Client {
 }
 
 export interface TcpClientOptions extends ClientOptions, net.TcpSocketConnectOpts {
+  delimiter?: string;
 }
 
 declare class TcpClient extends Client {

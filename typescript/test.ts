@@ -88,6 +88,7 @@ export function test_example_5() {
   const options = {
     port: 3000,
     host: 'localhost',
+    delimiter: '\r\n',
   };
 
   // create a client
@@ -654,6 +655,18 @@ export function test_Middleware() {
 }
 
 export function test_ServerOptions() {
+  const tcpServerOptions: jayson.TcpServerOptions = { delimiter: '\r\n' };
+  const tlsServerOptions: jayson.TlsServerOptions = { delimiter: '\r\n' };
+  const tcpClientOptions: jayson.TcpClientOptions = { port: 3000, delimiter: '\r\n' };
+  const tlsClientOptions: jayson.TlsClientOptions = { delimiter: '\r\n' };
+
+  new jayson.Server({}).tcp(tcpServerOptions);
+  new jayson.Server({}).tls(tlsServerOptions);
+  jayson.Client.tcp(tcpClientOptions);
+  jayson.Client.tls(tlsClientOptions);
+  jaysonPromise.Client.tcp(tcpClientOptions);
+  jaysonPromise.Client.tls(tlsClientOptions);
+
   const server = new jayson.Server(
     {},
     {
@@ -712,6 +725,9 @@ export function test_Method() {
 }
 
 export function test_Utils() {
+  const stream = require('stream');
+  jayson.Utils.parseStream(stream, { delimiter: '\r\n' }, function () {});
+
   jayson.Utils.response(null, {}, null, 2);
   jayson.Utils.response({ code: 1234, message: 'hello', data: { test: true } }, {}, null, 2);
   jayson.Utils.response({ code: 1234, message: 'hello', data: { test: true } }, {}, null, 1);

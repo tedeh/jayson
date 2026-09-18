@@ -56,7 +56,7 @@ client.request(program.method, program.params, function (err, response) {
   }
 
   if (!response) {
-    std.err.noise('<- %s'), 'empty response';
+    std.err.noise('<- %s', 'empty response');
     return process.exit(-1);
   }
 

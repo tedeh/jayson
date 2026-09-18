@@ -41,7 +41,7 @@
   "scripts": {
     "test": "mocha",
     "test-ci": "mocha -w -R min",
-    "test-tsc": "tsc --strict --lib es6 --esModuleInterop typescript/test.ts",
+    "test-tsc": "tsc --strict --lib es6 --noEmit --esModuleInterop typescript/test.ts",
     "coverage": "nyc mocha",
     "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
     "docs": "jsdoc -t node_modules/ink-docstrap/template -R README.md -c ./jsdoc.conf.json",

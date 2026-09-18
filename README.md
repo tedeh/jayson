@@ -113,7 +113,7 @@ Install the latest version of _jayson_ from [npm](https://www.npmjs.com) by exec
 
 - *5.0.0*
   - Removed `uuid` package dependency. Now native (node or browser) `crypto` implementation is used to generate uuids. If your browser doesn't have it: provide your own `generator` as described below.
-  - Removed `stream-json` package dependency. TCP and TLS messages must now end with the configured `delimiter` (`\n` by default); concatenated JSON without delimiters is no longer supported.
+  - Removed `stream-json` package dependency. TCP and TLS messages must now end with the configured `delimiter` (`\n` by default); concatenated JSON without delimiters is no longer supported. This probably breaks backwards compatibility. If you require advanced parsing in TCP or TLS streams, see the section on recommended use.
 - *4.1.0*
   - New server option `maxBatchLength`
 - *4.0.0*

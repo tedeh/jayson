@@ -16,8 +16,6 @@ Jayson is a [JSON-RPC 2.0][jsonrpc-spec] and [1.0][jsonrpc1-spec] compliant serv
 ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/jayson)
 [![npm version][badge-npm]][jayson-npm]
 [![npm][badge-downloads-month]][jayson-npm]
-![npm bundle size](https://img.shields.io/bundlephobia/min/jayson)
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/jayson)
 [![Known Vulnerabilities](https://snyk.io/test/npm/jayson/badge.svg)](https://snyk.io/test/npm/jayson)
 
 ## Table of contents

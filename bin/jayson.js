@@ -8,7 +8,6 @@ const util = require('util');
 const pkg = require('../package.json');
 const jayson = require('../');
 const program = require('commander');
-const eyes = require('eyes');
 const net = require('net')
 
 // initialize program and define arguments
@@ -19,13 +18,7 @@ program.version(pkg.version)
        .option('-q, --quiet', 'Only output the response value and any errors', Boolean)
        .option('-s, --socket [path] or [ip:port]', 'Path to UNIX socket, or TCP socket address', parseSocket)
        .option('-j, --json', 'Only output the response value as JSON (implies --quiet)')
-       .option('-c, --color', 'Color output', Boolean)
        .parse(process.argv);
-
-const inspect = eyes.inspector({
-  stream: null,
-  styles: program.color ? eyes.defaults.styles : {all: false}
-});
 
 // quiet is implied if json is specified
 if(program.json) program.quiet = true;
@@ -49,19 +42,19 @@ const client = (program.socket && program.socket.host)
     : jayson.client.http(program.url || program.socket);
 
 std.out.noise(
-  colorize('magenta', '-> %s(%s)'),
+  '-> %s(%s)',
   program.method,
   Array.isArray(program.params) ? program.params.join(', ') : JSON.stringify(program.params)
 );
 
 client.request(program.method, program.params, function(err, response) {
   if(err) {
-    std.err.noise(colorize('red', '<- %s'), err.stack);
+    std.err.noise(('<- %s'), err.stack);
     return process.exit(-1);
   }
-       
+
   if(!response) {
-    std.err.noise(colorize('red', '<- %s'), 'empty response');
+    std.err.noise('<- %s'), 'empty response';
     return process.exit(-1);
   }    
 
@@ -70,7 +63,7 @@ client.request(program.method, program.params, function(err, response) {
     return process.exit(0);
   }
 
-  std.out.noise('<- %s', inspect(response), true);
+  std.out.noise('<- %s', response, true);
   process.exit(response.error ? response.error.code : 0);
 });
 
@@ -82,12 +75,6 @@ function parseSocket(value) {
   }
 
   return {socketPath: path.normalize(value)};
-}
-
-function colorize(color, format) {
-  return program.color
-       ? eyes.stylize(format, color, {}) 
-       : format;
 }
 
 function getPrinter(options) {

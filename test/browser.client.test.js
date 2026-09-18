@@ -29,6 +29,7 @@ describe('jayson.client.browser', function() {
   };
 
   const client = jayson.client.browser(callServer, {
+    generator: jayson.utils.generateId,
     reviver: support.server.options().reviver,
     replacer: support.server.options().replacer,
   });

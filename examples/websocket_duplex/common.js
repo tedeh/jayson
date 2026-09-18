@@ -1,5 +1,5 @@
 const jayson = require('../../');
-const uuid = require('uuid');
+const crypto = require('crypto');
 
 exports.getJaysonServer = function () {
 
@@ -17,7 +17,7 @@ exports.randomlyCallClient = function (client) {
   return setInterval(function () {
 
     setTimeout(function () {
-      const id = uuid.v4();
+      const id = crypto.randomUUID();
       const args = [random(1, 1000), random(1, 1000)]
       const request = jayson.utils.request('add', args, id);
       console.log(`${id} add(${args.join(', ')})`)

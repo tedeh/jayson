@@ -109,6 +109,8 @@ Install the latest version of _jayson_ from [npm](https://www.npmjs.com) by exec
 
 ## Changelog (only notable milestones/changes)
 
+- *5.0.0*
+  - Removed `uuid` package dependency. Now native (node or browser) `crypto` implementation is used to generate uuids. If your browser doesn't have it: provide your own `generator` as described below.
 - *4.1.0*
   - New server option `maxBatchLength`
 - *4.0.0*

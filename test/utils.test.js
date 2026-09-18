@@ -7,6 +7,18 @@ const utils = jayson.utils;
 
 describe('jayson.utils', function() {
 
+  describe('generateId', function() {
+
+    it('generates native UUID v4 IDs', function() {
+      const pattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+      utils.generateId().should.match(pattern);
+      utils.generateId({disableEntropyCache: 'invalid'}, {}).should.match(pattern);
+      utils.request('method').id.should.match(pattern);
+      jayson.client().request('method', []).id.should.match(pattern);
+    });
+
+  });
+
   describe('request', function() {
 
     it('exists', function() {

@@ -113,6 +113,7 @@ describe('jayson/promise', function() {
             return fetch('http://localhost:3999', options)
               .then(function(res) { return res.text(); });
           }, {
+            generator: function() { return require('crypto').randomUUID(); },
             reviver: support.server.options().reviver,
             replacer: support.server.options().replacer,
             host: 'localhost',

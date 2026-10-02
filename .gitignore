@@ -3,5 +3,6 @@
 !.gitignore
 !.travis.yml
 !.npmignore
+!.github
 /coverage
 /yarn-error.log
